@@ -72,7 +72,8 @@
         <field name="arch" type="xml">
             <tree string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0">
                 <field name="qty_available" widget="integer"/>
-                <field name="first_mpn"/>
+                <field name="first_mpn" widget="search_mpn_online"
+                       options="{'search_engines': 'google', 'first_mpn': True}"/>
                 <field name="template_name_with_dismantle_notes" widget="section_and_note_text"
                        decoration-warning="'\n' in template_name_with_dismantle_notes"/>
                 <field name="dismantle_results" widget="selection"/>
