@@ -43,8 +43,7 @@
                 <field name="manufacturers" widget="many2many_tags"/>
                 <field name="configuration" widget="many2many_tags"/>
                 <field name="stroke" widget="many2many_tags"/>
-                <field name="excluded_parts" widget="many2many_tags"/>
-                <field name="excluded_tests" widget="many2many_tags"/>
+                <field name="excluded_by_parts" widget="many2many_tags"/>
                 <field name="sequence"/>
             </tree>
         </field>
@@ -82,8 +81,13 @@
                         </group>
 
                         <group string="Exclusions" colspan="2">
-                            <field name="excluded_parts"/>
-                            <field name="excluded_tests"/>
+                            <field name="excluded_by_parts"/>
+                            <field name="excluded_by_tests">
+                                <tree editable="bottom">
+                                    <field name="conditional_test"/>
+                                    <field name="condition_value"/>
+                                </tree>
+                            </field>
                         </group>
                         <group string="HTML Description" colspan="2">
                             <field name="website_description" widget="html_template"

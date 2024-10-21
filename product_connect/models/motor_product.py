@@ -12,6 +12,16 @@ class MotorDismantleResult(models.Model):
     name = fields.Char(required=True)
 
 
+class MotorProductTemplateCondition(models.Model):
+    _name = "motor.product.template.condition"
+    _description = "Motor Product Template Condition"
+
+    template = fields.Many2one("motor.product.template", ondelete="cascade")
+    conditional_test = fields.Many2one("motor.test.template", ondelete="cascade", required=True)
+    condition_value = fields.Char(required=True)
+    excluded_by_tests = fields.One2many("motor.product", "template", string="Excluded by Tests")
+
+
 class MotorProductTemplate(models.Model):
     _name = "motor.product.template"
     _description = "Motor Product Template"
@@ -22,8 +32,8 @@ class MotorProductTemplate(models.Model):
     stroke = fields.Many2many("motor.stroke")
     configuration = fields.Many2many("motor.configuration")
     manufacturers = fields.Many2many("product.manufacturer", domain=[("is_motor_manufacturer", "=", True)])
-    excluded_parts = fields.Many2many("motor.part.template")
-    excluded_tests = fields.Many2many("motor.test.template")
+    excluded_by_parts = fields.Many2many("motor.part.template")
+    excluded_by_tests = fields.One2many("motor.product.template.condition", "template")
     is_quantity_listing = fields.Boolean(default=False)
     include_year_in_name = fields.Boolean(default=True)
     include_hp_in_name = fields.Boolean(default=True, string="Include HP in Name")
@@ -131,8 +141,6 @@ class MotorProduct(models.Model):
     reference_product = fields.Many2one("product.template", compute="_compute_reference_product", store=True)
 
     sequence = fields.Integer(related="template.sequence", index=True, store=True)
-    excluded_parts = fields.Many2many("motor.part.template", related="template.excluded_parts")
-    excluded_tests = fields.Many2many("motor.test.template", related="template.excluded_tests")
 
     dismantle_notes = fields.Text()
     template_name_with_dismantle_notes = fields.Char(compute="_compute_template_name_with_dismantle_notes", store=False)
