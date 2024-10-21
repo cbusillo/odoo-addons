@@ -116,6 +116,7 @@ class MotorTest(models.Model):
         "motor.test.selection",
         domain="[('id', 'in', selection_options)]",
     )
+    selection_result_value = fields.Char(related="selection_result.value")
 
     numeric_result = fields.Float()
     text_result = fields.Text()

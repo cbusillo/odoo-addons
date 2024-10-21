@@ -175,7 +175,8 @@ export class MotorTestWidget extends Component {
             )
             if (templateTest) {
                 const resultType = templateTest.data.result_type
-                const result = templateTest.data[`${resultType}_result`]
+                const result = resultType === 'selection' ?
+                    templateTest.data[`${resultType}_result_value`] : templateTest.data[`${resultType}_result`]
                 return this.evaluateCondition(result, resultType, condition)
             }
             return false
@@ -200,7 +201,8 @@ export class MotorTestWidget extends Component {
             )
             if (templateTest) {
                 const resultType = templateTest.data.result_type
-                const result = templateTest.data[`${resultType}_result`]
+                const result = resultType === 'selection' ?
+                    templateTest.data[`${resultType}_result_value`] : templateTest.data[`${resultType}_result`]
                 return this.evaluateCondition(result, resultType, condition)
             }
             return true

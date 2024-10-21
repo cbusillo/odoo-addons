@@ -140,6 +140,7 @@
                                             <field name="yes_no_result"/>
                                             <field name="selection_options" widget="many2many_tags"/>
                                             <field name="selection_result"/>
+                                            <field name="selection_result_value"/>
                                             <field name="numeric_result"/>
                                             <field name="text_result"/>
                                             <field name="file_result"/>
