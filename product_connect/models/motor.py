@@ -315,44 +315,51 @@ class Motor(models.Model):
 
     def create_motor_products(self) -> None:
         product_templates = self.env["motor.product.template"].search([])
-        current_product_ids = set(self.products.ids)  # Existing product IDs related to this motor
 
-        for product_template in product_templates:
-            if product_template.stroke and self.stroke not in product_template.stroke:
-                continue
-            if product_template.configuration and self.configuration not in product_template.configuration:
-                continue
-            if product_template.manufacturers and self.manufacturer not in product_template.manufacturers:
-                continue
+        for motor in self:
+            current_product_ids = set(motor.products.ids)
 
-            excluded_parts_ids = product_template.excluded_parts.mapped("id")
-            if set(self.parts.mapped("template.id")) & set(excluded_parts_ids):
-                continue
+            for product_template in product_templates:
+                if product_template.stroke and motor.stroke not in product_template.stroke:
+                    continue
+                if product_template.configuration and motor.configuration not in product_template.configuration:
+                    continue
+                if product_template.manufacturers and motor.manufacturer not in product_template.manufacturers:
+                    continue
 
-            excluded_tests_ids = product_template.excluded_tests.mapped("id")
-            if set(self.tests.mapped("template.id")) & set(excluded_tests_ids):
-                continue
+                if any(
+                    part.template.id in product_template.excluded_by_parts.ids and part.is_missing
+                    for part in motor.parts
+                ):
+                    continue
 
-            existing_product = self.products.filtered(lambda p: p.template == product_template)
+                if any(
+                    test.template.id in product_template.excluded_by_tests.conditional_test.ids
+                    and product_template.excluded_by_tests.condition_value.lower() == test.computed_result.lower()
+                    for test in motor.tests
+                ):
+                    continue
 
-            if existing_product:
-                current_product_ids.discard(existing_product.id)
-            else:
-                condition_id = self.env.ref("product_connect.product_condition_used").id
-                self.products.create(
-                    {
-                        "motor": self.id,
-                        "template": product_template.id,
-                        "qty_available": product_template.qty_available or 1,
-                        "bin": product_template.bin,
-                        "weight": product_template.weight,
-                        "condition": condition_id,
-                        "manufacturer": self.manufacturer.id,
-                    }
-                )
+                existing_product = motor.products.filtered(lambda p: p.template == product_template)
 
-        if current_product_ids:
-            self.products.filtered(lambda p: p.id in current_product_ids).unlink()
+                if existing_product:
+                    current_product_ids.discard(existing_product.id)
+                else:
+                    condition_id = self.env.ref("product_connect.product_condition_used").id
+                    motor.products.create(
+                        {
+                            "motor": motor.id,
+                            "template": product_template.id,
+                            "qty_available": product_template.qty_available or 1,
+                            "bin": product_template.bin,
+                            "weight": product_template.weight,
+                            "condition": condition_id,
+                            "manufacturer": motor.manufacturer.id,
+                        }
+                    )
+
+            if current_product_ids:
+                motor.products.filtered(lambda p: p.id in current_product_ids).unlink()
 
     def _get_cylinder_count(self) -> int:
         match = re.search(r"\d+", self.configuration.name)
