@@ -36,7 +36,6 @@ export class HtmlTemplateWidget extends HtmlField {
                 [],
             )
             this.state.tags = [...serverTags, ...this.state.propTags]
-            console.log("Tags loaded", this.state.tags)
         } catch (error) {
             console.error(`Error while loading tags from ${this.serverTagModel}.${this.serverTagMethod}`, error)
         }
