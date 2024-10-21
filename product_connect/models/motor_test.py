@@ -73,13 +73,14 @@ class MotorTestTemplateCondition(models.Model):
     _description = "Motor Test Template Condition"
 
     template = fields.Many2one("motor.test.template", ondelete="cascade")
-    conditional_test = fields.Many2one("motor.test.template", ondelete="cascade")
+    conditional_test = fields.Many2one("motor.test.template", ondelete="cascade", required=True)
     condition_value = fields.Char(required=True)
     action_type = fields.Selection(
         [
             ("show", "Show Test"),
             ("hide", "Hide Test"),
         ],
+        required=True,
     )
 
 
