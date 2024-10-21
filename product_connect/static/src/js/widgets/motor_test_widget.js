@@ -169,18 +169,9 @@ export class MotorTestWidget extends Component {
                 return null
             }).filter(Boolean)
 
-        const hideConditionsMet = hideConditions.some((condition) => {
-            const templateTest = this.allTests.find(
-                (t) => t.data.template[0] === condition.template[0],
-            )
-            if (templateTest) {
-                const resultType = templateTest.data.result_type
-                const result = resultType === 'selection' ?
-                    templateTest.data[`${resultType}_result_value`] : templateTest.data[`${resultType}_result`]
-                return this.evaluateCondition(result, resultType, condition)
-            }
-            return false
-        })
+        const hideConditionsMet = hideConditions.some((condition) =>
+            this.evaluateTemplateTestCondition(condition)
+        )
 
         if (hideConditionsMet) {
             return false
@@ -195,23 +186,27 @@ export class MotorTestWidget extends Component {
                 return null
             }).filter(Boolean)
 
-        const showConditionsMet = showConditions.every((condition) => {
-            const templateTest = this.allTests.find(
-                (t) => t.data.template[0] === condition.template[0],
-            )
-            if (templateTest) {
-                const resultType = templateTest.data.result_type
-                const result = resultType === 'selection' ?
-                    templateTest.data[`${resultType}_result_value`] : templateTest.data[`${resultType}_result`]
-                return this.evaluateCondition(result, resultType, condition)
-            }
-            return true
-        })
+        const showConditionsMet = showConditions.every((condition) =>
+            this.evaluateTemplateTestCondition(condition)
+        )
 
         if (showConditions.length > 0) {
             return showConditionsMet
         }
         return true
+    }
+
+    evaluateTemplateTestCondition(condition) {
+        const templateTest = this.allTests.find(
+            (t) => t.data.template[0] === condition.template[0],
+        )
+        if (templateTest) {
+            const resultType = templateTest.data.result_type
+            const result = resultType === 'selection' ?
+                templateTest.data[`${resultType}_result_value`] : templateTest.data[`${resultType}_result`]
+            return this.evaluateCondition(result, resultType, condition)
+        }
+        return false
     }
 
     evaluateCondition(result, resultType, condition) {
