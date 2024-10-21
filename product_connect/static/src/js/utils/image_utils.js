@@ -3,7 +3,8 @@
 export async function resizeImage(file, maxWidth, maxHeight) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
-        reader.onload = (e) => {
+        reader.onload = (event) => {
+            const imageDataURL = event.target.result.toString()
             const image = new Image()
             image.onload = () => {
                 const scale = Math.min(maxWidth / image.width, maxHeight / image.height, 1)
@@ -26,7 +27,7 @@ export async function resizeImage(file, maxWidth, maxHeight) {
                 resolve(canvas.toDataURL(outputType, 0.8).split(',')[1])
             }
             image.onerror = (error) => reject(error)
-            image.src = e.target.result
+            image.src = imageDataURL
         }
         reader.onerror = (error) => reject(error)
         reader.readAsDataURL(file)
