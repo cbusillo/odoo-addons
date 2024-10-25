@@ -27,7 +27,7 @@
                         <field name="image_1920" widget="image"/>
                         <field name="products">
                             <tree editable="bottom" create="0">
-                                <field name="name"/>
+                                <field name="name" readonly="1"/>
                                 <field name="manufacturer"/>
                             </tree>
                         </field>
