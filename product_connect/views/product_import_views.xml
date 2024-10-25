@@ -39,7 +39,7 @@
         <field name="name">product.import.tree</field>
         <field name="model">product.import</field>
         <field name="arch" type="xml">
-            <tree class="product_import_tree_view" string="Product Import" editable="bottom" multi_edit="1"
+            <tree class="product_import_tree_view" string="Product Import" editable="top" multi_edit="1"
                   open_form_view="1"
                   decoration-warning="not name or not list_price or list_price == 0 or not standard_price or standard_price == 0"
                   decoration-danger="has_recent_messages">
