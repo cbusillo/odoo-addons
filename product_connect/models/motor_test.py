@@ -57,7 +57,7 @@ class MotorTestTemplate(models.Model):
         ],
         required=True,
     )
-    section = fields.Many2one("motor.test.section")
+    section = fields.Many2one("motor.test.section", required=True)
     sequence = fields.Integer(default=10, index=True)
 
     def _compute_value(self) -> None:
