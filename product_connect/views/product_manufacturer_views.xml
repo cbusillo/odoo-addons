@@ -4,7 +4,7 @@
         <field name="name">product.manufacturer.tree.view</field>
         <field name="model">product.manufacturer</field>
         <field name="arch" type="xml">
-            <tree string="Product Manufacturer" editable="bottom">
+            <tree string="Product Manufacturer" editable="bottom" open_form_view="1">
                 <field name="name"/>
                 <field name="name_normalized"/>
                 <field name="is_motor_manufacturer"/>
