@@ -4,7 +4,7 @@
         <field name="name">motor.test.selection.tree</field>
         <field name="model">motor.test.selection</field>
         <field name="arch" type="xml">
-            <tree string="Motor Test Selections">
+            <tree string="Motor Test Selections" editable="bottom" open_form_view="1">
                 <field name="name" readonly="True"/>
                 <field name="value"/>
                 <field name="display_value"/>
