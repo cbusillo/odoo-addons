@@ -144,7 +144,7 @@ class MotorProduct(models.Model):
 
     dismantle_notes = fields.Text()
     template_name_with_dismantle_notes = fields.Char(compute="_compute_template_name_with_dismantle_notes", store=False)
-    dismantle_results = fields.Many2one(comodel_name="motor.dismantle.result")
+    dismantle_results = fields.Many2one(comodel_name="motor.dismantle.result", ondelete="restrict")
 
     is_dismantled = fields.Boolean(default=False)
     is_dismantled_qc = fields.Boolean(default=False)
