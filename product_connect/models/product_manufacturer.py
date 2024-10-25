@@ -19,6 +19,7 @@ class ProductManufacturer(models.Model):
     name_normalized = fields.Char(compute="_compute_name_normalized", store=True, readonly=True)
     image_1920 = fields.Image(max_width=1920, max_height=1920, store=True, attachment=True, string="Image")
     is_motor_manufacturer = fields.Boolean(default=False)
+    products = fields.One2many("product.template", "manufacturer")
 
     @api.depends("name")
     def _compute_name_normalized(self) -> None:

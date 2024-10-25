@@ -25,6 +25,7 @@
                         <field name="name_normalized" readonly="1"/>
                         <field name="is_motor_manufacturer"/>
                         <field name="image_1920" widget="image"/>
+                        <field name="products"/>
                     </group>
                 </sheet>
             </form>
