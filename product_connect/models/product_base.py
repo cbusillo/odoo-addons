@@ -49,9 +49,7 @@ class ProductBase(models.AbstractModel):
 
     name = fields.Char(index=True)
     motor = fields.Many2one("motor", ondelete="restrict", readonly=True)
-    default_code = fields.Char(
-        "SKU", index=True, copy=False, required=True, readonly=True, default=lambda self: self.get_next_sku()
-    )
+    default_code = fields.Char("SKU", index=True, copy=False, readonly=True)
     create_date = fields.Datetime(index=True)
 
     images = fields.One2many("product.image", "product_tmpl_id")
@@ -81,6 +79,12 @@ class ProductBase(models.AbstractModel):
     active = fields.Boolean(default=True)
     has_recent_messages = fields.Boolean(compute="_compute_has_recent_messages", store=True)
     is_listable = fields.Boolean(default=False)
+
+    @api.model
+    def create(self, vals: dict[str, Any]) -> "odoo.model.product_base":
+        if "default_code" not in vals:
+            vals["default_code"] = self.get_next_sku()
+        return super(ProductBase, self).create(vals)
 
     # noinspection PyShadowingNames
     @api.model
@@ -118,15 +122,18 @@ class ProductBase(models.AbstractModel):
                 raise ValidationError(_("SKU must be 4-8 digits."))
 
     def get_next_sku(self) -> str:
-        sequence = self.env["ir.sequence"].search([("code", "=", "product.template.default_code")])
+        sequence = self.env.ref("product_connect.sequence_product_template_default_code")
         padding = sequence.padding
         max_sku = "9" * padding
+        search_model_names = [
+            "product.template",
+            "product.import",
+            "motor.product",
+        ]
+        search_models = [self.env[model_name].sudo() for model_name in search_model_names]
         while (new_sku := self.env["ir.sequence"].next_by_code("product.template.default_code")) <= max_sku:
-            if not (
-                self.env["motor.product"].search_count([("default_code", "=", new_sku)])
-                or self.env["product.template"].search_count([("default_code", "=", new_sku)])
-                or self.env["product.import"].search_count([("default_code", "=", new_sku)])
-            ):
+            domain = [("default_code", "=", new_sku)]
+            if not any(model.search(domain, limit=1) for model in search_models):
                 return new_sku
         raise ValidationError("SKU limit reached.")
 
