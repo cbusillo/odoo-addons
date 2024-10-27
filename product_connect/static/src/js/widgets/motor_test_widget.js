@@ -20,6 +20,7 @@ import { PdfViewerField } from '@web/views/fields/pdf_viewer/pdf_viewer_field'
  * @property {Array<ConditionalTest>} data.conditional_tests
  * @property {number} data.section_sequence
  * @property {Array<int>} data.manufacturers
+ * @property {Array<int>} data.configurations
  */
 /**
  * @typedef {Object} MotorPartRecord
@@ -160,8 +161,14 @@ export class MotorTestWidget extends Component {
         }
         const motorManufacturerId = this.props.record.data.manufacturer[0]
         const testManufacturers = test.data.manufacturers.records.map(record => record.resId)
+        const motorConfigurationId = this.props.record.data.configuration[0]
+        const testConfigurations = test.data.configurations.records.map(record => record.resId)
 
         if (testManufacturers.length > 0 && !testManufacturers.includes(motorManufacturerId)) {
+            return false
+        }
+
+        if (testConfigurations.length > 0 && testConfigurations.includes(motorConfigurationId)) {
             return false
         }
 

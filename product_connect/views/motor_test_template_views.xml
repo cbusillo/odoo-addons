@@ -34,10 +34,17 @@
                         <field name="sequence"/>
 
                     </group>
+                    <group>
                         <group>
                             <field name="manufacturers" widget="many2many_checkboxes"
                                    string="Manufacturers this test applies to"/>
                         </group>
+                        <group>
+                            <field name="configurations" widget="many2many_checkboxes"
+                                   string="Configurations this test applies to"/>
+                        </group>
+                    </group>
+
                     <label for="conditions" string="Tests based on this test"/>
                     <field name="conditions">
                         <tree editable="bottom">
