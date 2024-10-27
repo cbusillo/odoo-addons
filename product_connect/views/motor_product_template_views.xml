@@ -85,6 +85,7 @@
                             <field name="excluded_by_tests">
                                 <tree editable="bottom">
                                     <field name="conditional_test"/>
+                                    <field name="conditional_operator"/>
                                     <field name="condition_value"/>
                                 </tree>
                             </field>

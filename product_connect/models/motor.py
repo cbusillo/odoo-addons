@@ -335,7 +335,7 @@ class Motor(models.Model):
 
                 if any(
                     test.template.id in product_template.excluded_by_tests.conditional_test.ids
-                    and product_template.excluded_by_tests.condition_value.lower() == test.computed_result.lower()
+                    and product_template.excluded_by_tests.is_condition_met(test.computed_result)
                     for test in motor.tests
                 ):
                     continue

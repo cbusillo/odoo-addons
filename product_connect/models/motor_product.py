@@ -2,7 +2,7 @@ import re
 from typing import Self
 
 import odoo
-from odoo import api, fields, models
+from odoo import api, fields, models, exceptions
 
 
 class MotorDismantleResult(models.Model):
@@ -19,7 +19,40 @@ class MotorProductTemplateCondition(models.Model):
     template = fields.Many2one("motor.product.template", ondelete="cascade")
     conditional_test = fields.Many2one("motor.test.template", ondelete="cascade", required=True)
     condition_value = fields.Char(required=True)
+    conditional_operator = fields.Selection(
+        [
+            (">", "Greater Than"),
+            ("<", "Less Than"),
+            (">=", "Greater Than or Equal To"),
+            ("<=", "Less Than or Equal To"),
+            ("=", "Equal To"),
+            ("!=", "Not Equal To"),
+        ],
+        required=True,
+        default="=",
+    )
     excluded_by_tests = fields.One2many("motor.product", "template", string="Excluded by Tests")
+
+    def is_condition_met(self, test_value: str | float) -> bool:
+        self.ensure_one()
+        if not self.conditional_operator or not self.condition_value:
+            return False
+
+        if self.conditional_test.result_type == "selection":
+            if self.conditional_operator not in ["=", "!="]:
+                raise exceptions.UserError("Conditional Operator must be equal to '=' or '!=' for Selection Test Type.")
+
+        conditional_map = {
+            ">": lambda x, y: x > y,
+            "<": lambda x, y: x < y,
+            ">=": lambda x, y: x >= y,
+            "<=": lambda x, y: x <= y,
+            "=": lambda x, y: x == y,
+            "!=": lambda x, y: x != y,
+        }
+
+        operation = conditional_map.get(self.conditional_operator)
+        return operation(test_value, self.condition_value)
 
 
 class MotorProductTemplate(models.Model):
