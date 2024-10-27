@@ -77,6 +77,18 @@ class MotorTestTemplateCondition(models.Model):
     template = fields.Many2one("motor.test.template", ondelete="cascade")
     conditional_test = fields.Many2one("motor.test.template", ondelete="cascade", required=True)
     condition_value = fields.Char(required=True)
+    conditional_operator = fields.Selection(
+        [
+            (">", "> Greater Than"),
+            ("<", "< Less Than"),
+            (">=", ">= Greater Than or Equal To"),
+            ("<=", "<=Less Than or Equal To"),
+            ("=", "= Equal To"),
+            ("!=", "!= Not Equal To"),
+        ],
+        required=True,
+        default="=",
+    )
     action_type = fields.Selection(
         [
             ("show", "Show Test"),

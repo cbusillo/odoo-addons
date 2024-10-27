@@ -48,17 +48,18 @@
                     <label for="conditions" string="Tests based on this test"/>
                     <field name="conditions">
                         <tree editable="bottom">
-                            <field name="condition_value"/>
-                            <field name="action_type"/>
                             <field name="conditional_test" string="Test Name"/>
+                            <field name="action_type"/>
+                            <field name="conditional_operator"/>
+                            <field name="condition_value"/>
                         </tree>
                     </field>
                     <label for="conditional_tests" string="Tests that affect this test"/>
                     <field name="conditional_tests">
                         <tree editable="bottom">
                             <field name="template" string="Test Name"/>
-                            <field name="condition_value"/>
                             <field name="action_type"/>
+                            <field name="condition_value"/>
                         </tree>
                     </field>
                     <label for="missing_parts" string="Missing Parts that affect this test"/>

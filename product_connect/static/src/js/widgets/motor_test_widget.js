@@ -47,6 +47,7 @@ export class MotorTestWidget extends Component {
         this.selectionFieldDomains = useState({})
         this.conditionsById = {}
         this.allTests = []
+        this.notification = useService('notification')
         this.orm = useService('orm')
 
         onMounted(() => {
@@ -80,7 +81,7 @@ export class MotorTestWidget extends Component {
             const conditions = await this.orm.searchRead(
                 'motor.test.template.condition',
                 [['id', 'in', conditionIds]],
-                ['action_type', 'condition_value', 'template', 'conditional_test'],
+                ['action_type', 'condition_value', 'conditional_operator', 'template', 'conditional_test'],
             )
 
             this.conditionsById = Object.fromEntries(
@@ -96,7 +97,11 @@ export class MotorTestWidget extends Component {
                 missingParts,
             )
         } catch (error) {
-            console.error('Error loading motor tests:', error)
+            this.notification.add('Error loading motor tests: ' + error.message, {
+                title: 'Error',
+                type: 'danger',
+                sticky: true,
+            })
         }
     }
 
@@ -224,21 +229,68 @@ export class MotorTestWidget extends Component {
     }
 
     evaluateCondition(result, resultType, condition) {
-        const conditionRecord = Object.values(this.conditionsById).find(
-            (c) => c.id === condition.id,
-        )
+        if (!result) return false
 
-        const { condition_value: conditionValue } = conditionRecord
+        const conditionRecord = Object.values(this.conditionsById)
+            .find(c => c.id === condition.id)
 
-        if (!result || !conditionValue) {
-            return false
-        } else if (resultType === 'selection') {
-            return result.toLowerCase() === conditionValue.toLowerCase()
-        } else if (resultType === 'numeric') {
-            return parseFloat(result) > parseFloat(conditionValue)
-        } else if (resultType === 'yes_no') {
-            return result.toLowerCase() === conditionValue.toLowerCase()
+        const { condition_value: conditionValue, conditional_operator: operator } = conditionRecord
+
+        if (!conditionValue) return false
+
+        const compareEquality = (val1, val2, caseInsensitive = true) => {
+            if (caseInsensitive) {
+                val1 = val1.toLowerCase()
+                val2 = val2.toLowerCase()
+            }
+            switch (operator) {
+                case '=':
+                    return val1 === val2
+                case '!=':
+                    return val1 !== val2
+                default:
+                    this.notification.add('Invalid operator: ' + operator, {
+                        title: 'Error',
+                        type: 'danger',
+                        sticky: true,
+                    })
+                    return false
+            }
         }
+
+        const compareNumeric = (val1, val2) => {
+            val1 = parseFloat(val1)
+            val2 = parseFloat(val2)
+
+            switch (operator) {
+                case '=':
+                    return val1 === val2
+                case '!=':
+                    return val1 !== val2
+                case '>':
+                    return val1 > val2
+                case '<':
+                    return val1 < val2
+                case '>=':
+                    return val1 >= val2
+                case '<=':
+                    return val1 <= val2
+                default:
+                    throw new Error('Invalid operator: ' + operator)
+            }
+        }
+
+        switch (resultType) {
+            case 'selection':
+                return compareEquality(result, conditionValue)
+            case 'yes_no':
+                return compareEquality(result, conditionValue)
+            case 'text':
+                return compareEquality(result, conditionValue)
+            case 'numeric':
+                return compareNumeric(result, conditionValue)
+        }
+        return false
     }
 
     setSelectionFieldDomain({
