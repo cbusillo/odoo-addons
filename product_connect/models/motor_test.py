@@ -88,6 +88,7 @@ class MotorTestTemplateCondition(models.Model):
 class MotorTestSelection(models.Model):
     _name = "motor.test.selection"
     _description = "Motor Test Selection"
+    _sql_constraints = [("unique_selection_value", "unique(value)", "The value must be unique.")]
 
     name = fields.Char(required=True)
     value = fields.Char(required=True)
