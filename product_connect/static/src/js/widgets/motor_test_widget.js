@@ -200,7 +200,7 @@ export class MotorTestWidget extends Component {
                 return null
             }).filter(Boolean)
 
-        const showConditionsMet = showConditions.every((condition) =>
+        const showConditionsMet = showConditions.some((condition) =>
             this.evaluateTemplateTestCondition(condition)
         )
 
