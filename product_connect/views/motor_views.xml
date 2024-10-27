@@ -145,6 +145,7 @@
                                             <field name="text_result"/>
                                             <field name="file_result"/>
                                             <field name="default_value"/>
+                                            <field name="manufacturers"/>
                                             <field name="conditions"/>
                                             <field name="conditional_tests"/>
                                         </tree>

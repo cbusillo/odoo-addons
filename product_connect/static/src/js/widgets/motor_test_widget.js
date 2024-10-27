@@ -157,6 +157,12 @@ export class MotorTestWidget extends Component {
         if (hiddenByParts) {
             return false
         }
+        const motorManufacturerId = this.props.record.data.manufacturer[0]
+        const testManufacturers = test.data.manufacturers.records.map(record => record.resId)
+
+        if (testManufacturers.length > 0 && testManufacturers.includes(motorManufacturerId)) {
+            return false
+        }
 
         const hideConditions = test.data.conditional_tests.records.map(
             (condition) => {
