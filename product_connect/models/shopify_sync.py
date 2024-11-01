@@ -247,12 +247,9 @@ class ShopifySync(models.AbstractModel):
         odoo_product_product = self.env["product.product"].search(
             [
                 "|",
-                (
-                    "shopify_product_id",
-                    "=",
-                    self.extract_id_from_gid(shopify_product["id"]),
-                ),
+                ("shopify_product_id", "=", self.extract_id_from_gid(shopify_product["id"])),
                 ("default_code", "=", shopify_sku),
+                ("active", "in", [True, False]),
             ],
             limit=1,
         )
