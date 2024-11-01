@@ -2,7 +2,8 @@ import re
 from typing import Self
 
 import odoo
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 class MotorDismantleResult(models.Model):
@@ -187,6 +188,13 @@ class MotorProduct(models.Model):
             for product in self:
                 product.motor.notify_changes()
         return result
+
+    def import_to_products(self) -> None:
+        products_to_import = self.filtered(lambda p: p.is_listable and p.is_ready_to_list)
+        if not products_to_import:
+            raise UserError(_("No products to import."))
+
+        super(MotorProduct, products_to_import).import_to_products()
 
     @api.depends("mpn")
     def _compute_reference_product(self) -> None:
