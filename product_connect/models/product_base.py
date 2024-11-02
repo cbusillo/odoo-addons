@@ -80,7 +80,7 @@ class ProductBase(models.AbstractModel):
     has_recent_messages = fields.Boolean(compute="_compute_has_recent_messages", store=True)
     is_listable = fields.Boolean(default=False)
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals: dict[str, Any]) -> "odoo.model.product_base":
         if "default_code" not in vals:
             vals["default_code"] = self.get_next_sku()

@@ -50,7 +50,7 @@ class MotorTestTemplate(models.Model):
     missing_parts = fields.Many2many(
         "motor.part.template",
         string="Missing Parts",
-        domain=lambda self: [("hidden_tests", "=", self.ids)],
+        domain=lambda self: [("hidden_tests", "in", self.ids)],
     )
     stage = fields.Selection(
         [
