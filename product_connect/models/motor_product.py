@@ -1,5 +1,4 @@
 import re
-from typing import Self
 
 import odoo
 from odoo import api, exceptions, fields, models, _
@@ -187,14 +186,6 @@ class MotorProduct(models.Model):
     is_pictured_qc = fields.Boolean(default=False)
     is_ready_to_list = fields.Boolean(compute="_compute_ready_to_list", store=True)
 
-    @api.model_create_multi
-    def create(self, vals_list: list["odoo.values.motor_product"]) -> Self:
-        motor_products = super().create(vals_list)
-        for product in motor_products:
-            product.website_description = product.template.get_templated_description(product.motor)
-
-        return motor_products
-
     def write(self, vals: "odoo.values.motor_product") -> bool:
         qc_reset_fields = {
             "is_dismantled",
@@ -233,6 +224,9 @@ class MotorProduct(models.Model):
         products_to_import = self.filtered(lambda p: p.is_listable and p.is_ready_to_list)
         if not products_to_import:
             raise exceptions.UserError(_("No products to import."))
+
+        for product in products_to_import:
+            product.website_description = product.template.get_templated_description(product.motor)
 
         super(MotorProduct, products_to_import).import_to_products()
 
