@@ -173,7 +173,7 @@ export class MotorTestWidget extends Component {
             return false
         }
 
-        if (testConfigurations.length > 0 && testConfigurations.includes(motorConfigurationId)) {
+        if (testConfigurations.length > 0 && !testConfigurations.includes(motorConfigurationId)) {
             return false
         }
 
