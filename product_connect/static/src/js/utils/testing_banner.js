@@ -7,7 +7,7 @@ export class TestingBanner extends Component {
     static template = "product_connect.TestingBanner"
 
     get bannerClasses() {
-        const baseClasses = "testing-banner fixed top-0 left-0 w-full py-2 text-center font-bold"
+        const baseClasses = "testing-banner text-center font-bold"
 
         const environmentClasses = {
             dev: "environment-dev",
