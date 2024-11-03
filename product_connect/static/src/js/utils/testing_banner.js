@@ -4,6 +4,7 @@ import { Component, onMounted, useState } from "@odoo/owl"
 import { registry } from "@web/core/registry"
 
 export class TestingBanner extends Component {
+    static props = {}
     static template = "product_connect.TestingBanner"
 
     get bannerClasses() {
