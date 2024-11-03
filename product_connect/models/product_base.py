@@ -85,7 +85,7 @@ class ProductBase(models.AbstractModel):
         for vals in vals_list:
             if "default_code" not in vals:
                 vals["default_code"] = self.get_next_sku()
-        return super(ProductBase, self).create(vals_list)
+        return super().create(vals_list)
 
     # noinspection PyShadowingNames
     @api.model
