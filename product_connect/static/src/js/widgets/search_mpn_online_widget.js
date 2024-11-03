@@ -15,6 +15,7 @@ export class SearchMpnOnlineWidget extends CharField {
         this.searchEnginesMap = {
             ebay: "https://www.ebay.com/sch/i.html?_nkw=",
             google: "https://www.google.com/search?q=",
+            google_images: "https://www.google.com/search?tbm=isch&q=",
             amazon: "https://www.amazon.com/s?k=",
             crowley: "https://www.crowleymarine.com/search?q=",
         }
