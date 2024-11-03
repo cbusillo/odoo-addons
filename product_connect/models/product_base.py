@@ -81,10 +81,11 @@ class ProductBase(models.AbstractModel):
     is_listable = fields.Boolean(default=False)
 
     @api.model_create_multi
-    def create(self, vals: dict[str, Any]) -> "odoo.model.product_base":
-        if "default_code" not in vals:
-            vals["default_code"] = self.get_next_sku()
-        return super(ProductBase, self).create(vals)
+    def create(self, vals_list: list["odoo.values.product_base"]) -> "odoo.model.product_base":
+        for vals in vals_list:
+            if "default_code" not in vals:
+                vals["default_code"] = self.get_next_sku()
+        return super(ProductBase, self).create(vals_list)
 
     # noinspection PyShadowingNames
     @api.model
