@@ -165,9 +165,9 @@ export class MotorTestWidget extends Component {
             return false
         }
         const motorManufacturerId = this.props.record.data.manufacturer[0]
-        const testManufacturers = (test.data.manufacturers && test.data.manufacturers.records.map(record => record.resId)) || []
+        const testManufacturers = test.data.manufacturers.records.map(record => record.resId)
         const motorConfigurationId = this.props.record.data.configuration[0]
-        const testConfigurations = (test.data.configurations && test.data.configurations.records.map(record => record.resId)) || []
+        const testConfigurations = test.data.configurations.records.map(record => record.resId)
 
         if (testManufacturers.length > 0 && !testManufacturers.includes(motorManufacturerId)) {
             return false
