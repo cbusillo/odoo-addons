@@ -127,7 +127,7 @@ class MotorTest(models.Model):
     file_result = fields.Binary()
     computed_result = fields.Char(compute="_compute_result", store=True)
     default_value = fields.Char(related="template.default_value")
-    is_applicable = fields.Boolean(default=True)
+    is_applicable = fields.Boolean(compute="_compute_is_applicable", store=True)
 
     manufacturers = fields.Many2many(related="template.manufacturers")
     configurations = fields.Many2many(related="template.configurations")
@@ -153,3 +153,33 @@ class MotorTest(models.Model):
                 test.computed_result = test.selection_result
             elif test.result_type == "file":
                 test.computed_result = "File Uploaded" if test.file_result else ""
+
+    @api.depends(
+        "motor.configuration",
+        "motor.manufacturer",
+        "motor.parts.is_missing",
+        "motor.parts.hidden_tests",
+        "motor.tests.computed_result",
+        "configurations",
+        "manufacturers",
+        "conditional_tests.conditional_test",
+        "conditional_tests.condition_value",
+    )
+    def _compute_is_applicable(self) -> None:
+        for test in self:
+            test.is_applicable = False
+            if test.configurations and test.motor.configuration not in test.configurations:
+                continue
+            if test.manufacturers and test.motor.manufacturer not in test.manufacturers:
+                continue
+
+            if any(part.is_missing and test.template.id in part.hidden_tests.ids for part in test.motor.parts):
+                continue
+
+            if test.conditional_tests and all(
+                not conditional_test.is_condition_met(test.computed_result)
+                for conditional_test in test.conditional_tests
+            ):
+                continue
+
+            test.is_applicable = True

@@ -226,11 +226,13 @@
 
                             <group string="Basic Testing">
                                 <field name="basic_tests" readonly="1" string="">
-                                    <tree decoration-danger="not computed_result or computed_result == 0">
+                                    <tree decoration-danger="(not computed_result or computed_result == 0) and is_applicable"
+                                          decoration-muted="not is_applicable">
                                         <field name="name"/>
                                         <field name="result_type" string="Test Type"/>
                                         <field name="computed_result" string="Test Result"/>
                                         <field name="file_result" widget="pdf_viewer"/>
+                                        <field name="is_applicable" column_invisible="1"/>
                                     </tree>
                                 </field>
                             </group>
@@ -244,11 +246,13 @@
 
                             <group string="Extended Testing">
                                 <field name="extended_tests" readonly="1" string="">
-                                    <tree decoration-danger="not computed_result or computed_result == 0">
+                                    <tree decoration-danger="(not computed_result or computed_result == 0) and is_applicable"
+                                          decoration-muted="not is_applicable">
                                         <field name="name"/>
                                         <field name="result_type" string="Test Type"/>
                                         <field name="computed_result" string="Test Result"/>
                                         <field name="file_result" widget="pdf_viewer"/>
+                                        <field name="is_applicable" column_invisible="1"/>
                                     </tree>
                                 </field>
                             </group>
