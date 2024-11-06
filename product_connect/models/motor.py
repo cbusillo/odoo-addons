@@ -54,7 +54,7 @@ class Motor(models.Model):
     )
 
     @api.model
-    def _read_group_stages(self, stages, domain, order) -> "odoo.model.motor_stage":
+    def _read_group_stages(self, *_args) -> "odoo.model.motor_stage":
         return self.env["motor.stage"].search([])
 
     sequence = fields.Integer(default=10)
