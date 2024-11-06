@@ -32,27 +32,57 @@
         <field name="model">motor</field>
         <field name="arch" type="xml">
             <form string="Motor Check-In" js_class="motor_form">
+                <header>
+                    <field name="stage" widget="statusbar_duration"
+                           options="{'clickable': '1'}" domain="[('name', '!=', 'Hold')]"/>
+                </header>
 
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_products"
+                                icon="fa-cubes">
+                            <field string="Products" name="product_count" widget="statinfo"/>
+                        </button>
+
+                        <button class="oe_stat_button" type="object" name="action_view_tests"
+                                icon="fa-check-square">
+                            <field string="Tests Done" name="test_count" widget="statinfo"/>
+                        </button>
+
+                        <button class="oe_stat_button" type="object"
+                                name="download_zip_of_images" icon="fa-camera">
+                            <field string="Download Images" name="image_count" widget="statinfo"/>
+                        </button>
+                    </div>
+
+
                     <field name="active" invisible="1"/>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
-                            invisible="active" widget_id="widget_1"/>
+                            invisible="active"/>
 
                     <div class="row">
                         <div class="col-md-9">
-                            <div class="oe_title">
-                                <label for="display_name" string="Motor Name"/>
-                                <h2>
-                                    <field class="text-break" name="display_name" placeholder="Motor Name"
-                                           options="{'line_breaks': False}" on_change="1"/>
+                            <div class="oe_title pe-0">
+                                <h2 class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex w-100">
+                                        <field name="priority" widget="priority" class="me-3"/>
+
+                                        <field name="display_name" options="{'line_breaks': False}" widget="text"
+                                               class="o_task_name text-truncate w-md-75 w-100 pe-2"
+                                               placeholder="Motor Title..."/>
+                                    </div>
                                 </h2>
                             </div>
 
                             <group>
                                 <group>
-                                    <field name="create_date" readonly="1"/>
+                                    <field name="users" widget="many2many_avatar_user"/>
+                                    <field name="date_deadline"/>
+                                    <field name="tags" widget="many2many_tags" options="{'color_field': 'color'}"
+                                           optional="hide"/>
                                 </group>
                                 <group>
+                                    <field name="create_date" readonly="1"/>
                                     <field name="write_date" readonly="1"/>
                                 </group>
                             </group>
@@ -308,7 +338,8 @@
         <field name="name">motor.kanban</field>
         <field name="model">motor</field>
         <field name="arch" type="xml">
-            <kanban class="o_kanban_small_column" style="padding: 5px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+            <kanban class="o_project_kanban o_kanban_small_column o_kanban_project_tasks">
+                <progressbar field="stage" colors='{"0": "bg-secondary", "50": "bg-warning", "100": "bg-success"}'/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click" style="overflow: hidden;">
@@ -320,17 +351,18 @@
                                     <img t-att-src="kanban_image('motor', 'image_icon', record.id.raw_value)"
                                          style="border-radius: 5px; max-width: none;" alt="Motor Image"/>
                                 </div>
+
                             </t>
                             <!-- Motor details -->
                             <div style="float: left; width: 45%; vertical-align: top;">
                                 <div style="margin-bottom: 5px;">
-                                    <field name="motor_number"/>
+                                    <field name="motor_number" style="white-space: nowrap;"/>
                                 </div>
                                 <div style="margin-bottom: 5px;">
                                     <field name="location"/>
                                 </div>
                                 <div style="margin-bottom: 5px;">
-                                    <field name="manufacturer"/>
+                                    <field name="manufacturer" style="white-space: nowrap;"/>
                                 </div>
                                 <div style="margin-bottom: 5px;">
                                     <strong>Model: </strong>
@@ -340,12 +372,23 @@
                                     <strong>HP: </strong>
                                     <field name="horsepower_formatted"/>
                                 </div>
-                                <div style="white-space: nowrap;">
+                                <div>
                                     <strong>Serial: </strong>
-                                    <field name="serial_number"/>
+                                    <field name="serial_number" style="white-space: nowrap;"/>
                                 </div>
                             </div>
                             <div style="clear: both;"></div>
+                            <div style="position: absolute; bottom: 10px; width: 100%;">
+                                <div class="d-flex justify-content-start">
+                                    <field name="priority" widget="priority" style="margin-right: 5px;"/>
+                                    <field name="tags" widget="many2many_tags" options="{'color_field': 'color'}"
+                                           style="margin-right: 5px;"/>
+
+                                    <field name="users" widget="many2many_avatar_user" style="margin-right: 5px;"/>
+
+
+                                </div>
+                            </div>
                         </div>
                     </t>
                 </templates>
@@ -379,6 +422,14 @@
         <field name="search_view_id" ref="view_motor_search"/>
     </record>
 
+    <record model="ir.actions.act_window" id="action_motor_stages">
+        <field name="name">Motor Stages</field>
+        <field name="res_model">motor</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="view_motor_kanban"/>
+        <field name="context">{'group_by': 'stage'}</field>
+    </record>
+
 
     <record id="server_action_motor_print_labels" model="ir.actions.server">
         <field name="name">Print Motor Label(s)</field>
@@ -394,8 +445,10 @@
     <!-- Menu -->
     <menuitem id="menu_subheader_motor" name="Motors" parent="stock.menu_stock_inventory_control"/>
     <menuitem id="menu_subheader_config_motor" name="Motors" parent="stock.menu_stock_config_settings"/>
-    <menuitem id="menu_motor" name="Motor Check-in" parent="menu_subheader_motor" action="action_motor_form"
+    <menuitem id="menu_motor" name="Motor List" parent="menu_subheader_motor" action="action_motor_form"
               sequence="10"/>
+    <menuitem id="menu_motor_stages" name="Motor Stages" parent="menu_subheader_motor" action="action_motor_stages"
+              sequence="20"/>
 
 
 </odoo>

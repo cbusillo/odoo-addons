@@ -11,7 +11,10 @@ access_product_condition,product.condition,model_product_condition,base.group_us
 access_product_import_image_wizard,access_product_import_image_wizard,model_product_import_image_wizard,base.group_user,1,1,1,1
 
 access_motor,access_motor,model_motor,base.group_user,1,1,1,0
+access_motor_stage_inventory_admin,access_motor_stage_inventory_admin,model_motor_stage,stock.group_stock_manager,1,1,1,1
+access_motor_stage_inventory_user,access_motor_stage_inventory_user,model_motor_stage,base.group_user,1,0,0,0
 access_motor_stroke,access_motor_stroke,model_motor_stroke,base.group_user,1,0,0,0
+access_motor_tag, access_motor_tag,model_motor_tag,base.group_user,1,1,1,0
 access_motor_configuration,access_motor_configuration,model_motor_configuration,base.group_user,1,0,0,0
 
 access_motor_image,access_motor_image,model_motor_image,base.group_user,1,1,1,1

@@ -16,13 +16,116 @@ from odoo.exceptions import ValidationError, UserError
 from ..utils import constants
 
 
+class MotorStage(models.Model):
+    _name = "motor.stage"
+    _description = "Motor Stage"
+    _order = "sequence"
+
+    name = fields.Char(required=True)
+    motors = fields.One2many("motor", "stage")
+    sequence = fields.Integer(default=10)
+    fold = fields.Boolean()
+
+
+class MotorTag(models.Model):
+    _name = "motor.tag"
+    _description = "Motor Tag"
+
+    name = fields.Char(required=True)
+    color = fields.Integer(string="Color Index")
+
+    _sql_constraints = [
+        ("name_uniq", "unique (name)", "Tag name already exists!"),
+    ]
+
+
 class Motor(models.Model):
     _name = "motor"
-    _inherit = ["label.mixin"]
+    _inherit = ["label.mixin", "mail.thread", "mail.activity.mixin", "mail.tracking.duration.mixin"]
     _description = "Motor Information"
-    _order = "id desc"
+    _track_duration_field = "stage"
+    _order = "priority desc, sequence, date_deadline asc, id desc"
 
-    # Basic Info
+    stage = fields.Many2one("motor.stage", tracking=True, group_expand="_read_group_stages")
+
+    @api.model
+    def _read_group_stages(self, stages, domain, order) -> "odoo.model.motor_stage":
+        return self.env["motor.stage"].search([])
+
+    sequence = fields.Integer(default=10)
+    priority = fields.Selection(
+        [
+            ("0", "Low"),
+            ("1", "Normal"),
+            ("2", "High"),
+        ],
+        default="1",
+        index=True,
+        tracking=True,
+    )
+    date_deadline = fields.Date(string="Deadline", index=True, tracking=True)
+    date_last_stage_update = fields.Datetime(
+        string="Last Stage Update",
+        index=True,
+        copy=False,
+        readonly=True,
+        help="Date on which the state of your task has last been modified.\n"
+        "Based on this information you can identify tasks that are stalling and get statistics on the time it usually takes to move tasks from one stage/state to another.",
+    )
+
+    users = fields.Many2many(
+        "res.users",
+        "motor_user_rel",
+        "motor_id",
+        "user_id",
+        string="Assignees",
+        tracking=True,
+        domain="[('share', '=', False)]",
+    )
+    tags = fields.Many2many("motor.tag", string="Tags")
+    product_count = fields.Integer(compute="_compute_product_count")
+    test_count = fields.Integer(compute="_compute_test_count")
+
+    def _compute_product_count(self) -> None:
+        for motor in self:
+            motor.product_count = len(motor.products)
+
+    def _compute_test_count(self) -> None:
+        for motor in self:
+            motor.test_count = len(motor.tests.filtered(lambda test: test.computed_result and test.is_applicable))
+
+    def action_view_products(self):
+        return {
+            "name": "Motor Products",
+            "type": "ir.actions.act_window",
+            "res_model": "motor.product",
+            "view_mode": "tree,form",
+            "domain": [("motor", "=", self.id)],
+            "context": {"default_motor": self.id},
+        }
+
+    def action_view_tests(self):
+        return {
+            "name": "Motor Tests",
+            "type": "ir.actions.act_window",
+            "res_model": "motor.test",
+            "view_mode": "tree,form",
+            "domain": [("motor", "=", self.id)],
+            "context": {"default_motor": self.id},
+        }
+
+    @api.model
+    def action_open_form_popup(self):
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Edit Deadline",
+            "res_model": "motor",
+            "view_mode": "form",
+            "res_id": self.id,
+            "target": "new",
+            "views": [(self.env.ref("product_connect.view_motor_kanban").id, "form")],
+        }
+
     active = fields.Boolean(default=True)
     motor_number = fields.Char()
     location = fields.Char()
@@ -143,6 +246,8 @@ class Motor(models.Model):
 
     def write(self, vals: "odoo.values.motor") -> bool:
         vals = self._sanitize_vals(vals)
+        if "stage" in vals:
+            vals["date_last_stage_update"] = fields.Datetime.now()
 
         result = super().write(vals)
         if "configuration" in vals:
