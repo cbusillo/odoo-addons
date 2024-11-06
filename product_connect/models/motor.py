@@ -52,6 +52,7 @@ class Motor(models.Model):
         group_expand="_read_group_stages",
         default=lambda self: self.env["motor.stage"].search([("name", "=", "Checkin")], limit=1),
     )
+    stage_name = fields.Char(related="stage.name")
 
     @api.model
     def _read_group_stages(self, *_args) -> "odoo.model.motor_stage":
