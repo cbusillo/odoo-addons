@@ -62,7 +62,7 @@ class MotorProductTemplate(models.Model):
     name = fields.Char(required=True)
 
     stroke = fields.Many2many("motor.stroke")
-    configuration = fields.Many2many("motor.configuration")
+    configurations = fields.Many2many("motor.configuration")
     manufacturers = fields.Many2many("product.manufacturer", domain=[("is_motor_manufacturer", "=", True)])
     excluded_by_parts = fields.Many2many("motor.part.template")
     excluded_by_tests = fields.One2many("motor.product.template.condition", "template")

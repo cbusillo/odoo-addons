@@ -322,7 +322,7 @@ class Motor(models.Model):
             for product_template in product_templates:
                 if product_template.stroke and motor.stroke not in product_template.stroke:
                     continue
-                if product_template.configuration and motor.configuration not in product_template.configuration:
+                if product_template.configurations and motor.configuration not in product_template.configurations:
                     continue
                 if product_template.manufacturers and motor.manufacturer not in product_template.manufacturers:
                     continue
