@@ -21,10 +21,17 @@ class MotorStage(models.Model):
     _description = "Motor Stage"
     _order = "sequence"
 
-    name = fields.Char(required=True)
+    name = fields.Char(required=True, index=True)
     motors = fields.One2many("motor", "stage")
-    sequence = fields.Integer(default=10)
-    fold = fields.Boolean()
+    sequence = fields.Integer(default=10, index=True)
+    fold_by_default = fields.Boolean(default=False)
+    fold = fields.Boolean(compute="_compute_fold")
+
+    @api.depends("fold_by_default")
+    def _compute_fold(self) -> None:
+        user_folded_stages = self.env.user.folded_motor_stages
+        for stage in self:
+            stage.fold = stage.id in user_folded_stages.ids or stage.fold_by_default
 
 
 class MotorTag(models.Model):
@@ -56,7 +63,12 @@ class Motor(models.Model):
 
     @api.model
     def _read_group_stages(self, *_args) -> "odoo.model.motor_stage":
-        return self.env["motor.stage"].search([])
+        search_domain = []
+        all_stages = self.env["motor.stage"].search(search_domain)
+        self.env["motor"].search([("stage", "=", False), ("active", "in", [True, False])]).write(
+            {"stage": all_stages.search([("name", "=", "Checkin")], limit=1).id}
+        )
+        return all_stages
 
     sequence = fields.Integer(default=10)
     priority = fields.Selection(

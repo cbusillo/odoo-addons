@@ -6,9 +6,11 @@
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
             <data>
-                <xpath expr="//field[@name='login']" position="after">
-                    <label for="is_technician" class="col-sm-2 col-form-label"/>
-                    <field name="is_technician"/>
+                <xpath expr="//page[@name='preferences']" position="inside">
+                    <group string="Motor Settings">
+                        <field name="is_technician"/>
+                        <field name="folded_motor_stages" widget="many2many_tags"/>
+                    </group>
                 </xpath>
             </data>
         </field>
