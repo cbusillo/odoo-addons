@@ -99,7 +99,7 @@ class Motor(models.Model):
         for motor in self:
             motor.test_count = len(motor.tests.filtered(lambda test: test.computed_result and test.is_applicable))
 
-    def action_view_products(self):
+    def action_view_products(self) -> "odoo.values.ir_actions_act_window":
         return {
             "name": "Motor Products",
             "type": "ir.actions.act_window",
@@ -109,7 +109,7 @@ class Motor(models.Model):
             "context": {"default_motor": self.id},
         }
 
-    def action_view_tests(self):
+    def action_view_tests(self) -> "odoo.values.ir_actions_act_window":
         return {
             "name": "Motor Tests",
             "type": "ir.actions.act_window",
@@ -120,7 +120,7 @@ class Motor(models.Model):
         }
 
     @api.model
-    def action_open_form_popup(self):
+    def action_open_form_popup(self) -> "odoo.values.ir_actions_act_window":
         return {
             "type": "ir.actions.act_window",
             "name": "Edit Deadline",
