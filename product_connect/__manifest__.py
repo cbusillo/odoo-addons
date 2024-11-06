@@ -45,7 +45,6 @@
         "views/product_image_views.xml",
         "views/product_type_views.xml",
         "views/product_manufacturer_views.xml",
-        "views/project_task_views.xml",
         "views/res_users_views.xml",
         "security/ir.model.access.csv",
     ],
