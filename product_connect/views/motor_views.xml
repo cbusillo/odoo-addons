@@ -385,7 +385,8 @@
                                            style="margin-right: 5px;"/>
 
                                     <field name="users" widget="many2many_avatar_user" style="margin-right: 5px;"/>
-
+                                    <field name="tags" widget="many2many_tags"/>
+                                    <field name="date_deadline" widget="datetime"/>
 
                                 </div>
                             </div>
