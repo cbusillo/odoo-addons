@@ -195,7 +195,6 @@
                                 </page>
                             </notebook>
                         </page>
-                        <!-- Summary page-->
                         <page string="Summary" invisible="stage != 'finalization'">
                             <group string="Notes">
                                 <field name="notes" readonly="1" string=""/>
