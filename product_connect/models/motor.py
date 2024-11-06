@@ -46,7 +46,12 @@ class Motor(models.Model):
     _track_duration_field = "stage"
     _order = "priority desc, sequence, date_deadline asc, id desc"
 
-    stage = fields.Many2one("motor.stage", tracking=True, group_expand="_read_group_stages")
+    stage = fields.Many2one(
+        "motor.stage",
+        tracking=True,
+        group_expand="_read_group_stages",
+        default=lambda self: self.env["motor.stage"].search([("name", "=", "Checkin")], limit=1),
+    )
 
     @api.model
     def _read_group_stages(self, stages, domain, order) -> "odoo.model.motor_stage":
