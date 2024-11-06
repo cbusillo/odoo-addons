@@ -6,14 +6,6 @@ YES_NO_SELECTION: list[tuple[str, str]] = [
     (NO, "No"),
 ]
 
-MOTOR_STAGE_SELECTION: list[tuple[str, str]] = [
-    ("basic_info", "Basic Info"),
-    ("images", "Images"),
-    ("parts", "Parts"),
-    ("basic_testing", "Basic Testing"),
-    ("extended_testing", "Extended Testing"),
-    ("finalization", "Finalization"),
-]
 
 MOTOR_IMAGE_NAME_AND_ORDER: list[str] = [
     "Port Side",

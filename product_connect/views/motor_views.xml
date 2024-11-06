@@ -33,7 +33,6 @@
         <field name="arch" type="xml">
             <form string="Motor Check-In" js_class="motor_form">
 
-                <field name="stage" invisible="1"/>
                 <sheet>
                     <field name="active" invisible="1"/>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
@@ -93,8 +92,7 @@
                                 <field name="notes"/>
                             </group>
                         </page>
-                        <page string="Images"
-                              invisible="stage not in ['images', 'parts', 'basic_testing', 'extended_testing', 'finalization']">
+                        <page string="Images">
                             <header>
                                 <button name="download_zip_of_images" type="object" class="btn btn-primary">
                                     <i class="fa fa-download"/>&#160;Download Images
@@ -109,8 +107,7 @@
                             </field>
                         </page>
 
-                        <page string="Missing Parts"
-                              invisible="stage not in ['parts', 'basic_testing', 'extended_testing', 'finalization']">
+                        <page string="Missing Parts">
                             <field name="parts">
                                 <tree editable="bottom" create="False" delete="False" open_form_view="0">
                                     <field name="is_missing" widget="boolean_toggle"
@@ -126,8 +123,7 @@
                         </page>
                         <page string="Testing">
                             <notebook class="motor_nested_notebook">
-                                <page id="basic_testing" string="Basic Testing"
-                                      invisible="stage not in ['basic_testing', 'extended_testing', 'finalization']">
+                                <page id="basic_testing" string="Basic Testing">
                                     <field name="basic_tests" widget="motor_test_widget">
                                         <tree>
                                             <field name="id"/>
@@ -155,8 +151,7 @@
                                         <field name="notes"/>
                                     </group>
                                 </page>
-                                <page string="Compression"
-                                      invisible="hide_compression_page or stage not in ['basic_testing', 'extended_testing', 'finalization']">
+                                <page string="Compression" invisible="hide_compression_page">
                                     <field name="cylinders">
                                         <tree editable="bottom" delete="False" create="False">
                                             <field name="cylinder_number" readonly="1"/>
@@ -165,8 +160,7 @@
                                     </field>
                                     <field name="hide_compression_page" invisible="1"/>
                                 </page>
-                                <page id="extended_testing" string="Extended Testing"
-                                      invisible="stage not in ['extended_testing', 'finalization']">
+                                <page id="extended_testing" string="Extended Testing">
                                     <field name="extended_tests" widget="motor_test_widget">
                                         <tree>
                                             <field name="id"/>
@@ -195,7 +189,7 @@
                                 </page>
                             </notebook>
                         </page>
-                        <page string="Summary" invisible="stage != 'finalization'">
+                        <page string="Summary">
                             <group string="Notes">
                                 <field name="notes" readonly="1" string=""/>
                             </group>
@@ -256,7 +250,7 @@
                                 </field>
                             </group>
                         </page>
-                        <page string="Listing" invisible="stage != 'finalization'">
+                        <page string="Listing">
                             <notebook class="motor_nested_notebook">
                                 <page string="Admin" groups="stock.group_stock_manager" limit="200">
                                     <div class="mb-3">
@@ -282,23 +276,23 @@
                                     </div>
                                     <field name="products" mode="tree"/>
                                 </page>
-                                <page string="Reference" invisible="stage != 'finalization'" limit="200">
+                                <page string="Reference" limit="200">
                                     <field name="products_with_reference_product"
                                            context="{'tree_view_ref': 'product_connect.view_motor_product_kanban'}"/>
                                 </page>
-                                <page string="Dismantle" invisible="stage != 'finalization'" limit="200">
+                                <page string="Dismantle" limit="200">
                                     <field name="products_to_dismantle" mode="tree"
                                            context="{'tree_view_ref': 'product_connect.view_motor_product_tree_dismantle'}"/>
                                 </page>
-                                <page string="Clean" invisible="stage != 'finalization'" limit="200">
+                                <page string="Clean" limit="200">
                                     <field name="products_to_clean" mode="tree"
                                            context="{'tree_view_ref': 'product_connect.view_motor_product_tree_clean'}"/>
                                 </page>
-                                <page string="Picture" invisible="stage != 'finalization'" limit="200">
+                                <page string="Picture" limit="200">
                                     <field name="products_to_picture" mode="tree"
                                            context="{'tree_view_ref': 'product_connect.view_motor_product_tree_picture'}"/>
                                 </page>
-                                <page string="Stock" invisible="stage != 'finalization'" limit="200">
+                                <page string="Stock" limit="200">
                                     <field name="products_to_stock" mode="tree"
                                            context="{'tree_view_ref': 'product_connect.view_motor_product_tree_stock'}"/>
                                 </page>

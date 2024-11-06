@@ -125,8 +125,6 @@ class Motor(models.Model):
         ],
     )
 
-    stage = fields.Selection(constants.MOTOR_STAGE_SELECTION, default="basic_info", required=True)
-
     @api.model_create_multi
     def create(self, vals_list: list["odoo.values.motor"]) -> Self:
         vals_list = [self._sanitize_vals(vals) for vals in vals_list]
@@ -144,15 +142,12 @@ class Motor(models.Model):
         return motors
 
     def write(self, vals: "odoo.values.motor") -> bool:
-        if self.env.context.get("_stage_updating"):
-            return super().write(vals)
         vals = self._sanitize_vals(vals)
 
         result = super().write(vals)
         if "configuration" in vals:
             self._compute_compression()
-        for motor in self.with_context(_stage_updating=True):
-            motor._update_stage()
+
         return result
 
     @api.depends("products.reference_product", "products.reference_product.image_256")
@@ -398,35 +393,6 @@ class Motor(models.Model):
                     "name": name,
                 }
             )
-
-    def _update_stage(self) -> None:
-        stages_with_required_fields = {
-            "basic_testing": [
-                "motor_number",
-                "manufacturer",
-                "stroke",
-                "configuration",
-                "color",
-            ],
-            "extended_testing": [
-                # "engine_ecu_hours",
-                # "shaft_length",
-                # "compression_numbers",
-                # "fuel_pump_status",
-                # "trim_tilt_unit_status",
-                # "lower_unit_fluid_condition",
-                # "lower_unit_pressure_status",
-            ],
-            "finalization": [
-                # "lower_unit_gear_engages_when_removed",
-            ],
-        }
-
-        for stage, stage_fields in stages_with_required_fields.items():
-            if all(getattr(self, f, None) for f in stage_fields):
-                self.stage = stage
-            else:
-                break
 
     def download_zip_of_images(self) -> dict[str, str]:
         temp_path = Path(tempfile.mkdtemp())
