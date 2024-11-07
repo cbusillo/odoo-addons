@@ -4,6 +4,10 @@ $o-brand-primary: #1071B6;
 .large-toggle .o_boolean_toggle {
   transform: scale(1.5);
   transform-origin: left center;
+  width: 100%;
+  padding: 0.5em 0;
+  display: inline-flex;
+  align-items: center;
 }
 
 .o_spacer_column {
