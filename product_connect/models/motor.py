@@ -355,6 +355,7 @@ class Motor(models.Model):
                             "weight": product_template.weight,
                             "condition": condition_id,
                             "manufacturer": motor.manufacturer.id,
+                            "website_description": product_template.website_description,
                         }
                     )
 
