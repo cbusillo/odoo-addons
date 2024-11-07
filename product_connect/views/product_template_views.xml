@@ -78,6 +78,7 @@
 
             </field>
             <xpath expr="//group[@name='description']" position="attributes">
+                <attribute name="string">Descriptions</attribute>
                 <attribute name="colspan">2</attribute>
             </xpath>
             <field name="description_sale" position="before">
