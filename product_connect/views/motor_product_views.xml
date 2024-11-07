@@ -36,7 +36,7 @@
                     <button string="Import" type="object" name="import_to_products" icon="fa-upload" title="Import"/>
                 </header>
                 <field name="computed_name" column_invisible="1"/>
-                <field name="is_listable" widget="boolean_toggle" string="Listable"/>
+                <field name="is_listable" widget="boolean_toggle" class="large-toggle" string="Listable"/>
                 <field name="is_ready_to_list" column_invisible="1"/>
                 <button name="import_to_products" type="object" icon="fa-upload"
                         invisible="not is_ready_to_list" title="Upload"/>
@@ -77,8 +77,9 @@
                 <field name="template_name_with_dismantle_notes" widget="section_and_note_text"
                        decoration-warning="'\n' in template_name_with_dismantle_notes"/>
                 <field name="dismantle_results" widget="selection"/>
-                <field name="is_dismantled" widget="boolean_toggle" string="Done"/>
-                <field name="is_dismantled_qc" widget="boolean_toggle" string="QC" readonly="not is_dismantled"/>
+                <field name="is_dismantled" widget="boolean_toggle" string="Done" class="large-toggle"/>
+                <field name="is_dismantled_qc" widget="boolean_toggle" string="QC" class="large-toggle"
+                       readonly="not is_dismantled"/>
             </tree>
         </field>
     </record>
@@ -90,8 +91,9 @@
                 <field name="qty_available" widget="integer"/>
                 <field name="first_mpn"/>
                 <field name="template_name"/>
-                <field name="is_cleaned" widget="boolean_toggle" string="Done"/>
-                <field name="is_cleaned_qc" widget="boolean_toggle" string="QC" readonly="not is_cleaned"/>
+                <field name="is_cleaned" widget="boolean_toggle" string="Done" class="large-toggle"/>
+                <field name="is_cleaned_qc" widget="boolean_toggle" string="QC" class="large-toggle"
+                       readonly="not is_cleaned"/>
             </tree>
         </field>
     </record>
@@ -115,8 +117,9 @@
                 <field name="width" string="W" optional="hide"/>
                 <field name="height" string="H" optional="hide"/>
 
-                <field name="is_pictured" widget="boolean_toggle" string="Done" readonly="image_count&lt;1"/>
-                <field name="is_pictured_qc" widget="boolean_toggle" string="QC"
+                <field name="is_pictured" widget="boolean_toggle" string="Done" class="large-toggle"
+                       readonly="image_count&lt;1"/>
+                <field name="is_pictured_qc" widget="boolean_toggle" string="QC" class="large-toggle"
                        readonly="image_count&lt;1 or not is_pictured"/>
             </tree>
         </field>
@@ -231,7 +234,7 @@
                                     <field name="weight" widget="integer"/>
                                 </group>
                                 <group>
-                                    <field name="is_listable" widget="boolean_toggle"/>
+                                    <field name="is_listable" widget="boolean_toggle" class="large-toggle"/>
                                 </group>
                             </group>
                             <group>
