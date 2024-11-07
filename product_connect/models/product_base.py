@@ -305,6 +305,9 @@ class ProductBase(models.AbstractModel):
             self._post_missing_data_message(product_not_ready)
 
         for product in self - product_not_ready:
+        templated_descriptions = self.env.context.get("website_description", {})
+        templated_names = self.env.context.get("name", {})
+
             existing_products_with_mpn = product.products_from_mpn_condition_new()
             if existing_products_with_mpn:
                 existing_products_display = [
@@ -320,6 +323,11 @@ class ProductBase(models.AbstractModel):
                 raise UserError(
                     f"A product with the same SKU already exists.  Its SKU is {existing_product.default_code}"
                 )
+            website_description = templated_descriptions.get(product.id, product.website_description)
+            website_description = website_description.replace("{mpn}", " ".join(product.get_list_of_mpns()))
+
+            name = templated_names.get(product.id, product.name)
+            name = name.replace("{mpn}", " ".join(product.get_list_of_mpns()))
 
             new_product = self.env["product.product"].create(
                 {
@@ -327,10 +335,8 @@ class ProductBase(models.AbstractModel):
                     "mpn": product.mpn,
                     "manufacturer": product.manufacturer.id,
                     "bin": product.bin,
-                    "name": product.name,
-                    "website_description": product.website_description.replace(
-                        "{mpn}", " ".join(product.get_list_of_mpns())
-                    ),
+                    "name": name,
+                    "website_description": website_description,
                     "part_type": product.part_type.id,
                     "weight": product.weight,
                     "list_price": product.list_price,

@@ -73,41 +73,6 @@ class MotorProductTemplate(models.Model):
 
         return template_tags
 
-    def get_templated_description(self, motor: "odoo.model.motor") -> str:
-        if not self.website_description:
-            return ""
-
-        used_tags = re.findall(r"{(.*?)}", self.website_description)
-        template_tags = self.get_template_tags()
-        values = {}
-
-        for tag in used_tags:
-            tag = tag.lower()
-            if tag not in template_tags:
-                continue
-            tag_value = template_tags.get(tag, tag)
-
-            if tag_value.startswith("tests."):
-                test_index = int(tag_value.split(".")[1])
-                test = motor.tests.filtered(lambda t: t.template.id == test_index)[0]
-                if test.selection_result:
-                    value = test.selection_result.display_value
-                else:
-                    value = test.computed_result
-            else:
-                value = motor
-                for field in tag_value.split("."):
-                    value = getattr(value, field, "")
-
-            if isinstance(value, list):
-                value = ", ".join(v for v in value)
-            values[tag] = str(value)
-
-        description = self.website_description
-        for tag, value in values.items():
-            description = description.replace(f"{{{tag}}}", value)
-        return description
-
 
 class MotorProductImage(models.Model):
     _name = "motor.product.image"
@@ -187,14 +152,15 @@ class MotorProduct(models.Model):
         return result
 
     def import_to_products(self) -> None:
-        products_to_import = self.filtered(lambda p: p.is_listable and p.is_ready_to_list)
-        if not products_to_import:
+        products = self.filtered(lambda p: p.is_listable and p.is_ready_to_list)
+        if not products:
             raise exceptions.UserError(_("No products to import."))
 
-        for product in products_to_import:
-            product.website_description = product.template.get_templated_description(product.motor)
-
-        super(MotorProduct, products_to_import).import_to_products()
+        products_with_template = products.with_context(
+            website_description={p.id: p.replace_template_tags(p.website_description) for p in products},
+            name={p.id: p.replace_template_tags(p.name) for p in products},
+        )
+        super(MotorProduct, products_with_template).import_to_products()
 
     @api.depends("mpn")
     def _compute_reference_product(self) -> None:
@@ -279,3 +245,43 @@ class MotorProduct(models.Model):
         for product in self:
             product.name = ""
             product._compute_name()
+
+    def replace_template_tags(self, templated_content: str) -> str:
+        if not templated_content:
+            return ""
+
+        used_tags = re.findall(r"{(.*?)}", templated_content)
+        template_tags = self.template.get_template_tags()
+        values = {}
+
+        for tag in used_tags:
+            tag = tag.lower()
+            if tag not in template_tags:
+                continue
+
+            tag_value = template_tags.get(tag, tag)
+            value = self._resolve_tag_value(tag_value) or ""
+            values[tag] = str(value)
+
+        return self._apply_tag_values(templated_content, values)
+
+    def _resolve_tag_value(self, tag_value: str) -> str | list:
+        if tag_value.startswith("tests."):
+            test_index = int(tag_value.split(".")[1])
+            test = self.motor.tests.filtered(lambda t: t.template.id == test_index)[0]
+            return (
+                test.selection_result.display_value or test.selection_result.value
+                if test.selection_result
+                else test.computed_result
+            )
+
+        value = self.motor
+        for field in tag_value.split("."):
+            value = getattr(value, field, "")
+        return value if not isinstance(value, list) else ", ".join(str(v) for v in value)
+
+    @staticmethod
+    def _apply_tag_values(content: str, values: dict[str, str]) -> str:
+        for tag, value in values.items():
+            content = content.replace(f"{{{tag}}}", value).replace("  ", " ")
+        return content
