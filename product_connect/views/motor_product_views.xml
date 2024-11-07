@@ -36,7 +36,7 @@
                     <button string="Import" type="object" name="import_to_products" icon="fa-upload" title="Import"/>
                 </header>
                 <field name="computed_name" column_invisible="1"/>
-                <field name="is_listable" widget="boolean_toggle" string="Listable"/>
+                <field name="is_listable" widget="boolean_toggle" class="large-toggle" string="Listable"/>
                 <field name="is_ready_to_list" column_invisible="1"/>
                 <button name="import_to_products" type="object" icon="fa-upload"
                         invisible="not is_ready_to_list" title="Upload"/>
@@ -53,7 +53,8 @@
                         title="Reset Name" invisible="computed_name == name"/>
                 <field name="name" decoration-warning="computed_name != name"/>
                 <field name="dismantle_notes" optional="show"/>
-                <field name="website_description" optional="show" widget="text" class="text-nowrap" width="3"/>
+                <field name="website_description" optional="show" widget="text"
+                       class="sc_text_limited_lines" width="3"/>
                 <field name="dismantle_results" optional="show" readonly="1" widget="selection"/>
                 <field name="part_type" optional="hide"/>
                 <field name="weight" optional="hide" width="70px" widget="integer"/>
@@ -77,8 +78,9 @@
                 <field name="template_name_with_dismantle_notes" widget="section_and_note_text"
                        decoration-warning="'\n' in template_name_with_dismantle_notes"/>
                 <field name="dismantle_results" widget="selection"/>
-                <field name="is_dismantled" widget="boolean_toggle" string="Done"/>
-                <field name="is_dismantled_qc" widget="boolean_toggle" string="QC" readonly="not is_dismantled"/>
+                <field name="is_dismantled" widget="boolean_toggle" string="Done" class="large-toggle"/>
+                <field name="is_dismantled_qc" widget="boolean_toggle" string="QC" class="large-toggle"
+                       readonly="not is_dismantled"/>
             </tree>
         </field>
     </record>
@@ -90,8 +92,9 @@
                 <field name="qty_available" widget="integer"/>
                 <field name="first_mpn"/>
                 <field name="template_name"/>
-                <field name="is_cleaned" widget="boolean_toggle" string="Done"/>
-                <field name="is_cleaned_qc" widget="boolean_toggle" string="QC" readonly="not is_cleaned"/>
+                <field name="is_cleaned" widget="boolean_toggle" string="Done" class="large-toggle"/>
+                <field name="is_cleaned_qc" widget="boolean_toggle" string="QC" class="large-toggle"
+                       readonly="not is_cleaned"/>
             </tree>
         </field>
     </record>
@@ -115,8 +118,9 @@
                 <field name="width" string="W" optional="hide"/>
                 <field name="height" string="H" optional="hide"/>
 
-                <field name="is_pictured" widget="boolean_toggle" string="Done" readonly="image_count&lt;1"/>
-                <field name="is_pictured_qc" widget="boolean_toggle" string="QC"
+                <field name="is_pictured" widget="boolean_toggle" string="Done" class="large-toggle"
+                       readonly="image_count&lt;1"/>
+                <field name="is_pictured_qc" widget="boolean_toggle" string="QC" class="large-toggle"
                        readonly="image_count&lt;1 or not is_pictured"/>
             </tree>
         </field>
@@ -202,12 +206,12 @@
                         <label for="name" string="Motor Product Name"></label>
                         <button name="reset_name" type="object" icon="fa-refresh" class="sc_refresh_button_row"
                                 title="Reset Name"/>
-                        <h1>
+                        <h2>
                             <div class="d-flex caution">
                                 <field class="text-break" name="name" options="{'line_breaks': False}"
                                        decoration-warning="computed_name != name"/>
                             </div>
-                        </h1>
+                        </h2>
                     </div>
                     <notebook>
                         <page string="Details">
@@ -231,7 +235,7 @@
                                     <field name="weight" widget="integer"/>
                                 </group>
                                 <group>
-                                    <field name="is_listable" widget="boolean_toggle"/>
+                                    <field name="is_listable" widget="boolean_toggle" class="large-toggle"/>
                                 </group>
                             </group>
                             <group>

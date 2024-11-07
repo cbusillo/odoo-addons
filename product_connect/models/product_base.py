@@ -299,12 +299,25 @@ class ProductBase(models.AbstractModel):
         if self._name in ["product.template", "product.product"]:
             raise UserError("This method is not available for Odoo base products.")
 
-        product_not_ready = self.filtered(lambda p: self._check_fields_and_images(p))
+        not_ready_products = self.filtered(lambda p: self._check_fields_and_images(p))
+        ready_products = self - not_ready_products
 
-        if product_not_ready:
-            self._post_missing_data_message(product_not_ready)
+        if not ready_products:
+            raise UserError("No products are ready to import.")
 
-        for product in self - product_not_ready:
+        if not_ready_products:
+            self._post_missing_data_message(not_ready_products)
+            message = f"{len(not_ready_products)} product(s) are not ready to import.  See the messages for details."
+            self.env["bus.bus"]._sendone(
+                self.env.user.partner_id,
+                "simple_notification",
+                {"title": "Import Warning", "message": message, "sticky": False},
+            )
+
+        templated_descriptions = self.env.context.get("website_description", {})
+        templated_names = self.env.context.get("name", {})
+
+        for product in ready_products:
             existing_products_with_mpn = product.products_from_mpn_condition_new()
             if existing_products_with_mpn:
                 existing_products_display = [
@@ -320,6 +333,11 @@ class ProductBase(models.AbstractModel):
                 raise UserError(
                     f"A product with the same SKU already exists.  Its SKU is {existing_product.default_code}"
                 )
+            website_description = templated_descriptions.get(product.id, product.website_description)
+            website_description = website_description.replace("{mpn}", " ".join(product.get_list_of_mpns()))
+
+            name = templated_names.get(product.id, product.name)
+            name = name.replace("{mpn}", " ".join(product.get_list_of_mpns()))
 
             new_product = self.env["product.product"].create(
                 {
@@ -327,10 +345,8 @@ class ProductBase(models.AbstractModel):
                     "mpn": product.mpn,
                     "manufacturer": product.manufacturer.id,
                     "bin": product.bin,
-                    "name": product.name,
-                    "website_description": product.website_description.replace(
-                        "{mpn}", " ".join(product.get_list_of_mpns())
-                    ),
+                    "name": name,
+                    "website_description": website_description,
                     "part_type": product.part_type.id,
                     "weight": product.weight,
                     "list_price": product.list_price,
