@@ -124,6 +124,7 @@ class MotorProduct(models.Model):
             "is_pictured",
         }
         ui_refresh_fields = {
+            "is_listable",
             "is_dismantled",
             "is_dismantled_qc",
             "is_cleaned",
