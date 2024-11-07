@@ -139,6 +139,14 @@ class MotorProduct(models.Model):
             if field in vals and not vals[field]:
                 vals[f"{field}_qc"] = False
 
+        if "is_pictured" in vals and vals["is_pictured"] and not self.images:
+            vals["is_pictured"] = False
+            self.env["bus.bus"]._sendone(
+                self.env.user.partner_id,
+                "simple_notification",
+                {"title": "Missing Pictures", "message": "Please upload pictures before proceeding.", "sticky": False},
+            )
+
         result = super(MotorProduct, self).write(vals)
 
         if "images" in vals:
