@@ -53,7 +53,8 @@
                         title="Reset Name" invisible="computed_name == name"/>
                 <field name="name" decoration-warning="computed_name != name"/>
                 <field name="dismantle_notes" optional="show"/>
-                <field name="website_description" optional="show" widget="text" class="text-nowrap" width="3"/>
+                <field name="website_description" optional="show" widget="text"
+                       class="sc_text_limited_lines" width="3"/>
                 <field name="dismantle_results" optional="show" readonly="1" widget="selection"/>
                 <field name="part_type" optional="hide"/>
                 <field name="weight" optional="hide" width="70px" widget="integer"/>

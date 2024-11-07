@@ -55,3 +55,23 @@ $o-brand-primary: #1071B6;
 .o_list_view .o_data_cell .green_checkmark:before {
   content: "\f00c"; /* FontAwesome checkmark */
 }
+
+/* Default collapsed view: single line with ellipsis */
+.sc_text_limited_lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* Display as a single line */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-height 0.2s ease-in-out;
+  max-height: 1.5em; /* Height for a single line */
+}
+
+/* Expanded view with a max height of 5 lines when the row is active */
+.o_list_view .o_data_row:focus-within .sc_text_limited_lines {
+  -webkit-line-clamp: unset; /* Disable line clamping */
+  white-space: normal;
+  overflow-y: auto;
+  max-height: 15em; /* Approximately five lines based on font size */
+}
