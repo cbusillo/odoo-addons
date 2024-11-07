@@ -434,10 +434,48 @@
     <record model="ir.actions.act_window" id="action_motor_stages">
         <field name="name">Motor Stages</field>
         <field name="res_model">motor</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,tree,pivot,graph,form</field>
         <field name="view_id" ref="view_motor_kanban"/>
         <field name="context">{'group_by': 'stage'}</field>
     </record>
+
+    <record id="view_motor_cohort" model="ir.ui.view">
+        <field name="name">motor.cohort</field>
+        <field name="model">motor</field>
+        <field name="arch" type="xml">
+            <cohort string="Motor Stage Progress"
+                    date_start="create_date"
+                    date_stop="date_last_stage_update"
+                    interval="week"
+                    mode="churn"
+                    timeline="backward">
+                <field name="stage"/>
+                <field name="manufacturer"/>
+            </cohort>
+        </field>
+    </record>
+
+
+    <!-- Update the main motor action to include all views -->
+    <record id="action_motor_analysis" model="ir.actions.act_window">
+        <field name="name">Motors Analysis</field>
+        <field name="res_model">motor</field>
+        <field name="view_mode">kanban,tree,form,pivot,graph,calendar,gantt,activity,cohort</field>
+        <field name="context">{
+            'search_default_group_manufacturer': 1,
+            'group_by': ['stage']
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No motors found.
+            </p>
+            <p>
+                Add a new motor to start tracking.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu items -->
 
 
     <record id="server_action_motor_print_labels" model="ir.actions.server">
@@ -458,6 +496,8 @@
               sequence="10"/>
     <menuitem id="menu_motor_stages" name="Motor Stages" parent="menu_subheader_motor" action="action_motor_stages"
               sequence="20"/>
+    <menuitem id="menu_motor_analysis" name="Motors Analysis" parent="menu_subheader_motor"
+              action="action_motor_analysis" sequence="30"/>
 
 
 </odoo>
