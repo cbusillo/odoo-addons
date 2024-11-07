@@ -177,7 +177,7 @@ class Motor(models.Model):
     shaft_length = fields.Char(compute="_compute_shaft_length")
 
     is_tag_readable = fields.Selection(constants.YES_NO_SELECTION, default=constants.YES)
-    notes = fields.Text()
+    notes = fields.Text(tracking=True)
     has_notes = fields.Boolean(compute="_compute_has_notes", store=True)
     images = fields.One2many("motor.image", "motor")
     image_count = fields.Integer(compute="_compute_image_count")
@@ -185,7 +185,7 @@ class Motor(models.Model):
     parts = fields.One2many("motor.part", "motor")
     missing_parts = fields.One2many("motor.part", "motor", domain=[("is_missing", "=", True)])
     missing_parts_names = fields.Char(compute="_compute_missing_parts_names", store=True)
-    tests = fields.One2many("motor.test", "motor")
+    tests = fields.One2many("motor.test", "motor", tracking=True)
     test_sections = fields.One2many("motor.test.section", "motor")
     basic_tests = fields.One2many("motor.test", "motor", domain=[("template.stage", "=", "basic")])
     extended_tests = fields.One2many("motor.test", "motor", domain=[("template.stage", "=", "extended")])
