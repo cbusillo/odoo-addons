@@ -140,6 +140,34 @@ class MotorTest(models.Model):
         related="template.conditional_tests",
     )
 
+    @api.model
+    def write(self, vals: "odoo.values.motor_test") -> bool:
+        result = super().write(vals)
+        if self.motor and not self.env.context.get("tracking_motor_test"):
+            message = f"Test '{self.name}' updated"
+            if "computed_result" in vals or any(key.endswith("_result") for key in vals):
+                message = f"Test '{self.name}' result updated to: {self.computed_result}"
+
+            field = self.env["ir.model.fields"].search([("model", "=", "motor"), ("name", "=", "tests")], limit=1)
+
+            if field:
+                tracking = (
+                    self.env["mail.tracking.value"]
+                    .sudo()
+                    .create(
+                        {
+                            "field_id": field.id,
+                            "old_value_char": "",
+                            "new_value_char": message,
+                            "mail_message_id": self.motor.message_ids[0].id if self.motor.message_ids else None,
+                        }
+                    )
+                )
+
+                self.motor.message_post(body=message, tracking_value_ids=[(4, tracking.id)])
+
+        return result
+
     @api.depends("yes_no_result", "numeric_result", "text_result", "selection_result", "file_result")
     def _compute_result(self) -> None:
         for test in self:
