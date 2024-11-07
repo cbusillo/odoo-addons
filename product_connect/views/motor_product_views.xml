@@ -206,12 +206,12 @@
                         <label for="name" string="Motor Product Name"></label>
                         <button name="reset_name" type="object" icon="fa-refresh" class="sc_refresh_button_row"
                                 title="Reset Name"/>
-                        <h1>
+                        <h2>
                             <div class="d-flex caution">
                                 <field class="text-break" name="name" options="{'line_breaks': False}"
                                        decoration-warning="computed_name != name"/>
                             </div>
-                        </h1>
+                        </h2>
                     </div>
                     <notebook>
                         <page string="Details">
