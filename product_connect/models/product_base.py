@@ -377,7 +377,7 @@ class ProductBase(models.AbstractModel):
                     }
                 )
                 image.unlink()
-            product.unlink()
+            product.action_archive()
 
     def print_bin_labels(self) -> None:
         unique_bins = [
