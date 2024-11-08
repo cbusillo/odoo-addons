@@ -84,6 +84,7 @@
                                 <group>
                                     <field name="create_date" readonly="1"/>
                                     <field name="write_date" readonly="1"/>
+                                    <field name="price" widget="monetary"/>
                                 </group>
                             </group>
                             <div invisible="not notes" class="alert alert-warning" role="alert">

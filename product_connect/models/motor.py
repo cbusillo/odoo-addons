@@ -171,6 +171,7 @@ class Motor(models.Model):
     year = fields.Selection(_get_years, string="Model Year")
     color = fields.Many2one("product.color", domain="[('applicable_tags.name', '=', 'Motors')]")
     cost = fields.Float()
+    price = fields.Float(compute="_compute_price_of_motor", store=True)
 
     # from tests
     hours = fields.Float(compute="_compute_hours")
@@ -555,13 +556,19 @@ class Motor(models.Model):
             "target": "self",
         }
 
-    def apply_cost(self) -> None:
-        products = self.products.filtered(lambda p: p.is_listable and p.qty_available > 0)
-        total_price = sum(record.list_price * record.qty_available for record in products)
+    @api.depends("products", "cost")
+    def _compute_price_of_motor(self) -> None:
+        for motor in self:
+            products = motor.products.filtered(lambda p: p.is_listable and p.qty_available > 0)
+            self.price = sum(record.list_price * record.qty_available for record in products)
 
-        for product in products:
-            cost_proportion = (product.list_price * product.qty_available) / total_price if total_price else 0
-            product.standard_price = (cost_proportion * self.cost) / product.qty_available
+    def apply_cost(self) -> None:
+        for motor in self:
+            products = self.products.filtered(lambda p: p.is_listable and p.qty_available > 0)
+
+            for product in products:
+                cost_proportion = (product.list_price * product.qty_available) / motor.price if motor.price else 0
+                product.standard_price = (cost_proportion * self.cost) / product.qty_available
 
     def import_to_products(self) -> None:
         self.products.import_to_products()
