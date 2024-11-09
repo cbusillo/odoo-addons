@@ -85,11 +85,11 @@
                                     <field name="date_deadline"/>
                                     <field name="tags" widget="many2many_tags" options="{'color_field': 'color'}"
                                            optional="hide"/>
+                                    <field name="price" widget="monetary"/>
                                 </group>
                                 <group>
                                     <field name="create_date" readonly="1"/>
                                     <field name="write_date" readonly="1"/>
-                                    <field name="price" widget="monetary"/>
                                 </group>
                             </group>
                             <div invisible="not notes" class="alert alert-warning" role="alert">
