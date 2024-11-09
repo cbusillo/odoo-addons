@@ -46,7 +46,13 @@
 
                         <button class="oe_stat_button" type="object" name="action_view_tests"
                                 icon="fa-check-square">
-                            <field string="Tests Done" name="test_count" widget="statinfo"/>
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Completed tests</span>
+                                <span class="o_stat_value">
+                                    <field name="completed_test_count"/>&#160;/&#160;<field
+                                        name="applicable_test_count"/>
+                                </span>
+                            </div>
                         </button>
 
                         <button class="oe_stat_button" type="object"

@@ -93,15 +93,22 @@ class Motor(models.Model):
 
     tags = fields.Many2many("motor.tag", string="Tags")
     product_count = fields.Integer(compute="_compute_product_count")
-    test_count = fields.Integer(compute="_compute_test_count")
+    completed_test_count = fields.Integer(compute="_compute_completed_test_count")
+    applicable_test_count = fields.Integer(compute="_compute_applicable_test_count")
 
     def _compute_product_count(self) -> None:
         for motor in self:
             motor.product_count = len(motor.products)
 
-    def _compute_test_count(self) -> None:
+    def _compute_completed_test_count(self) -> None:
         for motor in self:
-            motor.test_count = len(motor.tests.filtered(lambda test: test.computed_result and test.is_applicable))
+            motor.completed_test_count = len(
+                motor.tests.filtered(lambda test: test.computed_result and test.is_applicable)
+            )
+
+    def _compute_applicable_test_count(self) -> None:
+        for motor in self:
+            motor.applicable_test_count = len(motor.tests.filtered(lambda test: test.is_applicable))
 
     def action_view_products(self) -> "odoo.values.ir_actions_act_window":
         return {
