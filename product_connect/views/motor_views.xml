@@ -157,73 +157,42 @@
                                 <field name="notes"/>
                             </group>
                         </page>
-                        <page string="Testing">
-                            <notebook class="motor_nested_notebook">
-                                <page id="basic_testing" string="Basic Testing">
-                                    <field name="basic_tests" widget="motor_test_widget">
-                                        <tree>
-                                            <field name="id"/>
-                                            <field name="name"/>
-                                            <field name="result_type"/>
-                                            <field name="section"/>
-                                            <field name="sequence"/>
-                                            <field name="section_sequence"/>
-                                            <field name="template"/>
-                                            <field name="yes_no_result"/>
-                                            <field name="selection_options" widget="many2many_tags"/>
-                                            <field name="selection_result"/>
-                                            <field name="selection_result_value"/>
-                                            <field name="numeric_result"/>
-                                            <field name="text_result"/>
-                                            <field name="file_result"/>
-                                            <field name="default_value"/>
-                                            <field name="manufacturers"/>
-                                            <field name="configurations"/>
-                                            <field name="conditions"/>
-                                            <field name="conditional_tests"/>
-                                        </tree>
-                                    </field>
-                                    <group>
-                                        <field name="notes"/>
-                                    </group>
-                                </page>
-                                <page string="Compression" invisible="hide_compression_page">
-                                    <field name="cylinders">
-                                        <tree editable="bottom" delete="False" create="False">
-                                            <field name="cylinder_number" readonly="1"/>
-                                            <field name="compression_psi" string="PSI"/>
-                                        </tree>
-                                    </field>
-                                    <field name="hide_compression_page" invisible="1"/>
-                                </page>
-                                <page id="extended_testing" string="Extended Testing">
-                                    <field name="extended_tests" widget="motor_test_widget">
-                                        <tree>
-                                            <field name="id"/>
-                                            <field name="name"/>
-                                            <field name="result_type"/>
-                                            <field name="section"/>
-                                            <field name="sequence"/>
-                                            <field name="section_sequence"/>
-                                            <field name="template"/>
-                                            <field name="yes_no_result"/>
-                                            <field name="selection_options" widget="many2many_tags"/>
-                                            <field name="selection_result"/>
-                                            <field name="numeric_result"/>
-                                            <field name="text_result"/>
-                                            <field name="file_result"/>
-                                            <field name="default_value"/>
-                                            <field name="manufacturers"/>
-                                            <field name="configurations"/>
-                                            <field name="conditions"/>
-                                            <field name="conditional_tests"/>
-                                        </tree>
-                                    </field>
-                                    <group>
-                                        <field name="notes"/>
-                                    </group>
-                                </page>
-                            </notebook>
+                        <page id="basic_testing" string="Basic Testing">
+                            <field name="basic_tests" widget="motor_test_widget">
+                                <tree>
+                                    <field name="id"/>
+                                    <field name="name"/>
+                                    <field name="result_type"/>
+                                    <field name="section"/>
+                                    <field name="sequence"/>
+                                    <field name="section_sequence"/>
+                                    <field name="template"/>
+                                    <field name="yes_no_result"/>
+                                    <field name="selection_options" widget="many2many_tags"/>
+                                    <field name="selection_result"/>
+                                    <field name="selection_result_value"/>
+                                    <field name="numeric_result"/>
+                                    <field name="text_result"/>
+                                    <field name="file_result"/>
+                                    <field name="default_value"/>
+                                    <field name="manufacturers"/>
+                                    <field name="configurations"/>
+                                    <field name="conditions"/>
+                                    <field name="conditional_tests"/>
+                                </tree>
+                            </field>
+                            <group>
+                                <field name="notes"/>
+                            </group>
+                        </page>
+                        <page string="Compression" invisible="hide_compression_page">
+                            <field name="cylinders">
+                                <tree editable="bottom" delete="False" create="False">
+                                    <field name="cylinder_number" readonly="1"/>
+                                    <field name="compression_psi" string="PSI"/>
+                                </tree>
+                            </field>
+                            <field name="hide_compression_page" invisible="1"/>
                         </page>
                         <page string="Summary">
                             <group string="Notes">
@@ -323,6 +292,33 @@
                                 <page string="Clean" limit="200">
                                     <field name="products_to_clean" mode="tree"
                                            context="{'tree_view_ref': 'product_connect.view_motor_product_tree_clean'}"/>
+                                </page>
+                                <page id="extended_testing" string="Extended Testing">
+                                    <field name="extended_tests" widget="motor_test_widget">
+                                        <tree>
+                                            <field name="id"/>
+                                            <field name="name"/>
+                                            <field name="result_type"/>
+                                            <field name="section"/>
+                                            <field name="sequence"/>
+                                            <field name="section_sequence"/>
+                                            <field name="template"/>
+                                            <field name="yes_no_result"/>
+                                            <field name="selection_options" widget="many2many_tags"/>
+                                            <field name="selection_result"/>
+                                            <field name="numeric_result"/>
+                                            <field name="text_result"/>
+                                            <field name="file_result"/>
+                                            <field name="default_value"/>
+                                            <field name="manufacturers"/>
+                                            <field name="configurations"/>
+                                            <field name="conditions"/>
+                                            <field name="conditional_tests"/>
+                                        </tree>
+                                    </field>
+                                    <group>
+                                        <field name="notes"/>
+                                    </group>
                                 </page>
                                 <page string="Picture" limit="200">
                                     <field name="products_to_picture" mode="tree"
