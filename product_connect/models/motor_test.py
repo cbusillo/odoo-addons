@@ -144,27 +144,24 @@ class MotorTest(models.Model):
     def write(self, vals: "odoo.values.motor_test") -> bool:
         result = super().write(vals)
         if self.motor and not self.env.context.get("tracking_motor_test"):
-            message = f"Test '{self.name}' updated"
+            message_text = f"Test '{self.name}' updated"
             if "computed_result" in vals or any(key.endswith("_result") for key in vals):
-                message = f"Test '{self.name}' result updated to: {self.computed_result}"
+                message_text = f"Test '{self.name}' result updated to: {self.computed_result}"
 
-            field = self.env["ir.model.fields"].search([("model", "=", "motor"), ("name", "=", "tests")], limit=1)
+            message = self.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
 
-            if field:
-                tracking = (
-                    self.env["mail.tracking.value"]
-                    .sudo()
-                    .create(
-                        {
-                            "field_id": field.id,
-                            "old_value_char": "",
-                            "new_value_char": message,
-                            "mail_message_id": self.motor.message_ids[0].id if self.motor.message_ids else None,
-                        }
-                    )
-                )
+            field = (
+                self.env["ir.model.fields"].sudo().search([("model", "=", "motor"), ("name", "=", "tests")], limit=1)
+            )
 
-                self.motor.message_post(body=message, tracking_value_ids=[(4, tracking.id)])
+            self.env["mail.tracking.value"].sudo().create(
+                {
+                    "field_id": field.id,
+                    "old_value_char": "",
+                    "new_value_char": message,
+                    "mail_message_id": message.id,
+                }
+            )
 
         return result
 
