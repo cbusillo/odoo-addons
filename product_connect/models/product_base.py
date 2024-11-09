@@ -295,6 +295,8 @@ class ProductBase(models.AbstractModel):
                     partner_ids=[self.env.user.partner_id.id],
                 )
 
+        self.env.cr.commit()
+
     def import_to_products(self) -> None:
         if self._name in ["product.template", "product.product"]:
             raise UserError("This method is not available for Odoo base products.")
@@ -302,11 +304,10 @@ class ProductBase(models.AbstractModel):
         not_ready_products = self.filtered(lambda p: self._check_fields_and_images(p))
         ready_products = self - not_ready_products
 
-        if not ready_products:
-            raise UserError("No products are ready to import.")
-
         if not_ready_products:
             self._post_missing_data_message(not_ready_products)
+            if not ready_products:
+                raise UserError("No products are ready to import.")
             message = f"{len(not_ready_products)} product(s) are not ready to import.  See the messages for details."
             self.env["bus.bus"]._sendone(
                 self.env.user.partner_id,
