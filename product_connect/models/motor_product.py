@@ -113,6 +113,7 @@ class MotorProduct(models.Model):
     is_dismantled_qc = fields.Boolean(default=False)
     is_cleaned = fields.Boolean(default=False)
     is_cleaned_qc = fields.Boolean(default=False)
+    is_picture_taken = fields.Boolean(default=False)
     is_pictured = fields.Boolean(default=False)
     is_pictured_qc = fields.Boolean(default=False)
     is_ready_to_list = fields.Boolean(compute="_compute_ready_to_list", store=True)
@@ -146,6 +147,9 @@ class MotorProduct(models.Model):
                 "simple_notification",
                 {"title": "Missing Pictures", "message": "Please upload pictures before proceeding.", "sticky": False},
             )
+
+        if "is_pictured" in vals and vals["is_pictured"]:
+            vals["is_picture_taken"] = True
 
         result = super(MotorProduct, self).write(vals)
 

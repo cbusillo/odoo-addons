@@ -118,6 +118,7 @@
                 <field name="width" string="W" optional="hide"/>
                 <field name="height" string="H" optional="hide"/>
 
+                <field name="is_picture_taken" widget="boolean_toggle" string="Taken" class="large-toggle"/>
                 <field name="is_pictured" widget="boolean_toggle" string="Done" class="large-toggle"/>
                 <field name="is_pictured_qc" widget="boolean_toggle" string="QC" class="large-toggle"
                        readonly="image_count&lt;1 or not is_pictured"/>
