@@ -554,7 +554,7 @@ class Motor(models.Model):
             "target": "self",
         }
 
-    @api.depends("products", "cost")
+    @api.depends("products.is_listable", "products.list_price", "products.qty_available", "cost")
     def _compute_price_of_motor(self) -> None:
         for motor in self:
             products = motor.products.filtered(lambda p: p.is_listable and p.qty_available > 0)
