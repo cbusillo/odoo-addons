@@ -91,15 +91,6 @@ class Motor(models.Model):
         "Based on this information you can identify tasks that are stalling and get statistics on the time it usually takes to move tasks from one stage/state to another.",
     )
 
-    users = fields.Many2many(
-        "res.users",
-        "motor_user_rel",
-        "motor_id",
-        "user_id",
-        string="Assignees",
-        tracking=True,
-        domain="[('share', '=', False)]",
-    )
     tags = fields.Many2many("motor.tag", string="Tags")
     product_count = fields.Integer(compute="_compute_product_count")
     test_count = fields.Integer(compute="_compute_test_count")
