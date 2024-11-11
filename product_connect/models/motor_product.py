@@ -86,6 +86,24 @@ class MotorProductImage(models.Model):
         last_index = self.search([("product", "=", self.product.id)], order="index desc", limit=1).index
         return (last_index or 0) + 1
 
+    @api.model_create_multi
+    def create(self, val_list: list["odoo.values.motor_product_image"]) -> "odoo.model.motor_product_image":
+        for vals in val_list:
+            if "image_1920" in vals:
+                motor_product = self.env["motor.product"].browse(vals["product"])
+                message_text = f"Image {vals.get('index', 0 + 1)} added to product '{motor_product.template_name}'"
+                motor_product.motor.message_post(
+                    body=message_text, message_type="comment", subtype_xmlid="mail.mt_note"
+                )
+        return super().create(val_list)
+
+    @api.model
+    def write(self, vals: "odoo.values.motor_product_image") -> bool:
+        if "image_1920" in vals:
+            message_text = f"Image {vals.get('index', 0) + 1} updated for product '{self.product.template_name}'"
+            self.product.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
+        return super().write(vals)
+
 
 class MotorProduct(models.Model):
     _name = "motor.product"
