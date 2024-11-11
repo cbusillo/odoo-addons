@@ -103,6 +103,7 @@ class MotorTestSelection(models.Model):
 class MotorTest(models.Model):
     _name = "motor.test"
     _description = "Motor Test Instance"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "section_sequence, sequence, id"
 
     name = fields.Char(related="template.name")
@@ -116,16 +117,13 @@ class MotorTest(models.Model):
     yes_no_result = fields.Selection(YES_NO_SELECTION)
     selection_options = fields.Many2many(related="template.selection_options")
 
-    selection_result = fields.Many2one(
-        "motor.test.selection",
-        domain="[('id', 'in', selection_options)]",
-    )
+    selection_result = fields.Many2one("motor.test.selection", domain="[('id', 'in', selection_options)]")
     selection_result_value = fields.Char(related="selection_result.value")
 
     numeric_result = fields.Float()
     text_result = fields.Text()
     file_result = fields.Binary()
-    computed_result = fields.Char(compute="_compute_result", store=True)
+    computed_result = fields.Char(compute="_compute_result", store=True, tracking=True)
     default_value = fields.Char(related="template.default_value")
     is_applicable = fields.Boolean(compute="_compute_is_applicable", store=True)
 
@@ -147,22 +145,7 @@ class MotorTest(models.Model):
             message_text = f"Test '{self.name}' updated"
             if "computed_result" in vals or any(key.endswith("_result") for key in vals):
                 message_text = f"Test '{self.name}' result updated to: {self.computed_result}"
-
-            message = self.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
-
-            field = (
-                self.env["ir.model.fields"].sudo().search([("model", "=", "motor"), ("name", "=", "tests")], limit=1)
-            )
-
-            self.env["mail.tracking.value"].sudo().create(
-                {
-                    "field_id": field.id,
-                    "old_value_char": "",
-                    "new_value_char": message,
-                    "mail_message_id": message.id,
-                }
-            )
-
+            self.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
         return result
 
     @api.depends("yes_no_result", "numeric_result", "text_result", "selection_result", "file_result")

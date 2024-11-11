@@ -184,7 +184,7 @@ class Motor(models.Model):
     parts = fields.One2many("motor.part", "motor")
     missing_parts = fields.One2many("motor.part", "motor", domain=[("is_missing", "=", True)])
     missing_parts_names = fields.Char(compute="_compute_missing_parts_names", store=True)
-    tests = fields.One2many("motor.test", "motor", tracking=True)
+    tests = fields.One2many("motor.test", "motor")
     test_sections = fields.One2many("motor.test.section", "motor")
     basic_tests = fields.One2many("motor.test", "motor", domain=[("template.stage", "=", "basic")])
     extended_tests = fields.One2many("motor.test", "motor", domain=[("template.stage", "=", "extended")])

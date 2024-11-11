@@ -89,7 +89,7 @@ class MotorProductImage(models.Model):
 
 class MotorProduct(models.Model):
     _name = "motor.product"
-    _inherit = ["product.base"]
+    _inherit = ["product.base", "mail.thread", "mail.activity.mixin"]
     _description = "Motor Product"
     _order = "sequence, is_listable desc, part_type_name, id"
 
@@ -109,7 +109,7 @@ class MotorProduct(models.Model):
     template_name_with_dismantle_notes = fields.Char(compute="_compute_template_name_with_dismantle_notes", store=False)
     dismantle_results = fields.Many2one(comodel_name="motor.dismantle.result", ondelete="restrict")
 
-    is_dismantled = fields.Boolean(default=False)
+    is_dismantled = fields.Boolean(default=False, tracking=True)
     is_dismantled_qc = fields.Boolean(default=False)
     is_cleaned = fields.Boolean(default=False)
     is_cleaned_qc = fields.Boolean(default=False)
@@ -150,6 +150,10 @@ class MotorProduct(models.Model):
 
         if "is_pictured" in vals and vals["is_pictured"]:
             vals["is_picture_taken"] = True
+
+        if "is_dismantled" in vals and vals["is_dismantled"]:
+            message_text = f"Product '{self.template_name}' dismantled"
+            self.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
 
         result = super(MotorProduct, self).write(vals)
 
