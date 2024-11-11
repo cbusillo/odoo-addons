@@ -63,8 +63,7 @@ class Motor(models.Model):
 
     @api.model
     def _read_group_stages(self, *_args) -> "odoo.model.motor_stage":
-        search_domain = []
-        all_stages = self.env["motor.stage"].search(search_domain)
+        all_stages = self.env["motor.stage"].search([])
         self.env["motor"].search([("stage", "=", False), ("active", "in", [True, False])]).write(
             {"stage": all_stages.search([("name", "=", "Checkin")], limit=1).id}
         )
