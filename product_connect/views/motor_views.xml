@@ -235,7 +235,7 @@
                                         <field name="result_type" string="Test Type"/>
                                         <field name="computed_result" string="Test Result"/>
                                         <field name="file_result" widget="pdf_viewer"/>
-                                        <field name="is_applicable" column_invisible="1"/>
+                                        <field name="is_applicable" widget="boolean_toggle"/>
                                     </tree>
                                 </field>
                             </group>

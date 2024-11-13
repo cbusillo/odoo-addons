@@ -172,6 +172,8 @@ class MotorTest(models.Model):
         "manufacturers",
         "conditional_tests.conditional_test",
         "conditional_tests.condition_value",
+        "conditions.conditional_test",
+        "conditions.condition_value",
     )
     def _compute_is_applicable(self) -> None:
         for test in self:
@@ -184,8 +186,20 @@ class MotorTest(models.Model):
             if any(part.is_missing and test.template.id in part.hidden_tests.ids for part in test.motor.parts):
                 continue
 
-            if test.conditional_tests and all(
-                not conditional_test.is_condition_met(test.computed_result)
+            motor_id = test.motor.id or test.motor._origin.id
+
+            if test.conditional_tests and any(
+                not conditional_test.is_condition_met(
+                    self.env["motor.test"]
+                    .search(
+                        [
+                            ("template.id", "=", conditional_test.template.id),
+                            ("motor.id", "=", motor_id),
+                        ],
+                        limit=1,
+                    )
+                    .computed_result
+                )
                 for conditional_test in test.conditional_tests
             ):
                 continue
