@@ -170,10 +170,7 @@ class MotorTest(models.Model):
         "motor.tests.computed_result",
         "configurations",
         "manufacturers",
-        "conditional_tests.conditional_test",
-        "conditional_tests.condition_value",
-        "conditions.conditional_test",
-        "conditions.condition_value",
+        "conditional_tests",
     )
     def _compute_is_applicable(self) -> None:
         for test in self:
@@ -188,8 +185,8 @@ class MotorTest(models.Model):
 
             motor_id = test.motor.id or test.motor._origin.id
 
-            if test.conditional_tests and any(
-                not conditional_test.is_condition_met(
+            if test.conditional_tests and not all(
+                conditional_test.is_condition_met(
                     self.env["motor.test"]
                     .search(
                         [
