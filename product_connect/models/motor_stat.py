@@ -16,6 +16,7 @@ class MotorCylinder(models.Model):
     motor = fields.Many2one("motor", ondelete="cascade")
     cylinder_number = fields.Integer(index=True)
     compression_psi = fields.Integer("Compression PSI")
+    is_untestable = fields.Boolean()
 
 
 class MotorImage(models.Model):

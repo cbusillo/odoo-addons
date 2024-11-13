@@ -190,7 +190,6 @@ class Motor(models.Model):
 
     cylinders = fields.One2many("motor.cylinder", "motor")
 
-    compression_formatted_html = fields.Html(compute="_compute_compression_formatted_html")
     hide_compression_page = fields.Boolean(compute="_compute_hide_compression_page", store=True)
     products = fields.One2many("motor.product", "motor")
     products_with_reference_product = fields.Many2many(
@@ -286,11 +285,6 @@ class Motor(models.Model):
         for motor in self:
             motor.image_count = len([image for image in motor.images if image.image_1920])
 
-    def _compute_compression_formatted_html(self) -> None:
-        for motor in self:
-            lines = [f"Cylinder: {c.cylinder_number} Compression: {c.compression_psi} PSI" for c in motor.cylinders]
-            motor.compression_formatted_html = "<br/>".join(lines)
-
     def _compute_missing_parts_names(self) -> None:
         for motor in self:
             missing_parts_names = ", ".join(part.name for part in motor.missing_parts if part.name)
@@ -350,6 +344,11 @@ class Motor(models.Model):
         for motor in self:
             hide_parts = motor.parts.filtered(lambda p: p.is_missing and p.template.hide_compression_page)
             motor.hide_compression_page = bool(hide_parts)
+
+    def set_all_cylinders_untestable(self) -> None:
+        for motor in self:
+            for cylinder in motor.cylinders:
+                cylinder.is_untestable = True
 
     def generate_qr_code(self) -> str:
         qr_code = qrcode.QRCode(

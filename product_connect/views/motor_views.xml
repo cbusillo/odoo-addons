@@ -186,8 +186,13 @@
                             </group>
                         </page>
                         <page string="Compression" invisible="hide_compression_page">
+                            <header>
+                                <button name="set_all_cylinders_untestable" type="object" class="btn btn-secondary"
+                                        string="Mark All Untestable"/>
+                            </header>
                             <field name="cylinders">
                                 <tree editable="bottom" delete="False" create="False">
+                                    <field name="is_untestable" class="large-toggle" widget="boolean_toggle"/>
                                     <field name="cylinder_number" readonly="1"/>
                                     <field name="compression_psi" string="PSI"/>
                                 </tree>
@@ -237,7 +242,13 @@
 
                             <group string="Compression Testing">
                                 <group>
-                                    <field name="compression_formatted_html" readonly="1" string=""/>
+                                    <field name="cylinders" readonly="1">
+                                        <tree decoration-danger="not compression_psi and not is_untestable">
+                                            <field name="is_untestable"/>
+                                            <field name="cylinder_number"/>
+                                            <field name="compression_psi"/>
+                                        </tree>
+                                    </field>
                                 </group>
 
                             </group>
