@@ -53,8 +53,8 @@ class ProductBase(models.AbstractModel):
     create_date = fields.Datetime(index=True)
 
     images = fields.One2many("product.image", "product_tmpl_id")
-    image_count = fields.Integer(compute="_compute_image_count")
-    image_icon = fields.Binary(compute="_compute_icon", store=True)
+    image_count = fields.Integer(compute="_compute_image_count", store=True)
+    image_icon = fields.Binary(related="images.image_1920", string="Image Icon")
 
     mpn = fields.Char(string="MPN", index=True)
     first_mpn = fields.Char(compute="_compute_first_mpn", store=True)
@@ -146,11 +146,6 @@ class ProductBase(models.AbstractModel):
                 if field_value and len(str(abs(field_value))) > 2:
                     raise ValidationError("Dimensions cannot exceed 2 digits.")
 
-    @api.depends("images.image_1920")
-    def _compute_icon(self) -> None:
-        for product in self:
-            product.image_icon = product.images[0].image_128 if product.images else None
-
     @api.depends("mpn")
     def _compute_first_mpn(self) -> None:
         for product in self:
@@ -167,6 +162,7 @@ class ProductBase(models.AbstractModel):
             mpn_parts = re.split(r"[, ]", product.mpn)
             return [mpn.strip() for mpn in mpn_parts if mpn.strip()]
 
+    @api.depends("images.image_1920")
     def _compute_image_count(self) -> None:
         for product in self:
             product.image_count = len([image for image in product.images if image.image_1920])
