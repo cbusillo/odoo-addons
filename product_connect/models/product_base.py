@@ -165,7 +165,14 @@ class ProductBase(models.AbstractModel):
     @api.depends("images.image_1920")
     def _compute_image_count(self) -> None:
         for product in self:
-            product.image_count = len([image for image in product.images if image.image_1920])
+            product.image_count = self.env["ir.attachment"].search_count(
+                [
+                    ("res_model", "=", product.images._name),
+                    ("res_id", "in", product.images.ids),
+                    ("res_field", "=", "image_1920"),
+                    ("file_size", ">", 0),
+                ]
+            )
 
     @api.depends("message_ids")
     def _compute_has_recent_messages(self) -> None:
