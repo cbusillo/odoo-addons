@@ -49,6 +49,7 @@ class ProductBase(models.AbstractModel):
 
     name = fields.Char(index=True)
     motor = fields.Many2one("motor", ondelete="restrict", readonly=True)
+    motor_tests = fields.One2many("motor.test", related="motor.tests")
     default_code = fields.Char("SKU", index=True, copy=False, readonly=True)
     create_date = fields.Datetime(index=True)
 
