@@ -117,6 +117,7 @@ class Motor(models.Model):
             "view_mode": "tree,form",
             "domain": [("motor", "=", self.id)],
             "context": {"default_motor": self.id},
+            "target": "new",
         }
 
     def action_view_tests(self) -> "odoo.values.ir_actions_act_window":

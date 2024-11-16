@@ -41,12 +41,12 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button class="oe_stat_button" type="object" name="action_view_products"
-                                icon="fa-cubes">
+                                icon="fa-cubes" groups="stock.group_stock_manager">
                             <field string="Products" name="product_count" widget="statinfo"/>
                         </button>
 
                         <button class="oe_stat_button" type="object" name="action_view_tests"
-                                icon="fa-check-square">
+                                icon="fa-check-square" groups="stock.group_stock_manager">
                             <div class="o_stat_info">
                                 <span class="o_stat_text">Completed tests</span>
                                 <span class="o_stat_value">
@@ -56,8 +56,8 @@
                             </div>
                         </button>
 
-                        <button class="oe_stat_button" type="object"
-                                name="download_zip_of_images" icon="fa-camera">
+                        <button class="oe_stat_button" type="object" name="download_zip_of_images" icon="fa-camera"
+                                groups="stock.group_stock_manager">
                             <field string="Download Images" name="image_count" widget="statinfo"/>
                         </button>
                     </div>

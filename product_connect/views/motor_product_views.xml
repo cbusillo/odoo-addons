@@ -28,7 +28,7 @@
         <field name="name">motor.product.tree</field>
         <field name="model">motor.product</field>
         <field name="arch" type="xml">
-            <tree string="Motor Products" editable="bottom" open_form_view="1" create="0" limit="200"
+            <tree string="Motor Products" editable="bottom" open_form_view="1" create="0" limit="200" multi_edit="1"
                   decoration-warning="not name or not list_price or list_price == 0 or not standard_price or
                 standard_price == 0"
                   decoration-danger="has_recent_messages">
