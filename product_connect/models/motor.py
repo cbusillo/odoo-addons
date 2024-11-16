@@ -129,18 +129,6 @@ class Motor(models.Model):
             "context": {"default_motor": self.id},
         }
 
-    @api.model
-    def action_open_form_popup(self) -> "odoo.values.ir_actions_act_window":
-        return {
-            "type": "ir.actions.act_window",
-            "name": "Edit Deadline",
-            "res_model": "motor",
-            "view_mode": "form",
-            "res_id": self.id,
-            "target": "new",
-            "views": [(self.env.ref("product_connect.view_motor_kanban").id, "form")],
-        }
-
     active = fields.Boolean(default=True)
     motor_number = fields.Char()
     location = fields.Char()
