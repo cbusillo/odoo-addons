@@ -21,7 +21,8 @@
                 <field name="color"/>
                 <field name="hours" optional="hide" widget="integer"/>
                 <field name="shaft_length" optional="hide"/>
-                <field name="cost" widget="float_factor"/>
+                <field name="cost" widget="monetary"/>
+                <field name="price" widget="monetary" optional="hide"/>
             </tree>
         </field>
     </record>
