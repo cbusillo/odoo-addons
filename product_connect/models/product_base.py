@@ -192,6 +192,11 @@ class ProductBase(models.AbstractModel):
             result.append((product.id, name))
         return result
 
+    @api.constrains("mpn", "bin")
+    def _check_mpn_bin(self) -> None:
+        self._onchange_format_mpn_upper()
+        self._onchange_format_bin_upper()
+
     @api.onchange("mpn")
     def _onchange_format_mpn_upper(self) -> None:
         for product in self.filtered(lambda p: p.mpn and p.mpn.upper() != p.mpn):
