@@ -137,17 +137,15 @@ export class FileDropWidget extends BinaryField {
 
     onDragEnter(ev) {
         ev.preventDefault()
+        ev.stopPropagation()
         ev.target.classList.remove('drag-over')
     }
 
     onDragLeave(ev) {
         ev.preventDefault()
+        ev.stopPropagation()
         ev.target.classList.add('drag-over')
 
-    }
-
-    onDragOver(ev) {
-        ev.preventDefault()
     }
 }
 
