@@ -5,6 +5,7 @@
 
             <div class="o_field_file_drop drag-over px-1 text-center"
                  t-on-drop="onDrop"
+                 t-on-dragover="onDragOver"
                  t-on-dragenter="onDragEnter"
                  t-on-dragleave="onDragLeave"
                  t-att-allowDrop="true">
