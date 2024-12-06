@@ -6,6 +6,7 @@ from odoo.upgrade import util
 _logger = logging.getLogger(__name__)
 
 
+# noinspection SqlResolve,PyUnresolvedReferences
 def migrate(cr: Cursor, version: str) -> None:
     env = util.env(cr)
     product_template = env["product.template"]

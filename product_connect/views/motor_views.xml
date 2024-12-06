@@ -298,7 +298,7 @@
                                                 class="btn btn-primary btn-sm ms-2">
                                             <i class="fa fa-print"/>&#160;Print Product Labels
                                         </button>
-                                        <button name="import_to_products" type="object"
+                                        <button name="enable_ready_for_sale" type="object"
                                                 class="btn btn-primary btn-sm ms-2">
                                             <i class="fa fa-upload"/>&#160;Import All
                                         </button>

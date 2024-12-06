@@ -1,15 +1,23 @@
 <odoo>
     <record id="view_motor_product_search" model="ir.ui.view">
         <field name="name">motor.product.search</field>
-        <field name="model">motor.product</field>
+        <field name="model">product.template</field>
         <field name="arch" type="xml">
             <search string="Search Motor Products">
                 <field name="default_code" string="Product"
-                       filter_domain="['|', '|', ('name', 'ilike', self) , ('default_code', 'ilike', self), ('bin', 'ilike', self)]"/>
-                <field name="name"/>
-                <field name="default_code"/>
+                       filter_domain="['|','|',('default_code','ilike',self),('name','ilike',self),('mpn','ilike',self)]"/>
+                <field name="mpn"/>
                 <field name="bin"/>
-                <filter name="group_by_motor" string="Motor" context="{'group_by': 'motor'}"/>
+                <field name="manufacturer"/>
+                <field name="part_type"/>
+                <filter name="filter_missing_bin" string="Missing Bin"
+                        domain="['|',('bin', '=', False), ('bin', '=','')]"/>
+                <filter name="filter_has_bin" string="Has Bin" domain="[('bin', '!=', False), ('bin', '!=', '')]"/>
+                <filter name="filter_ready_to_list" string="Ready to List" domain="[('is_ready_to_list', '=', True)]"/>
+                <filter name="group_by_motor" string="Motor" context="{'group_by':'motor'}"/>
+                <filter name="group_by_part_type" string="Part Type" context="{'group_by':'part_type'}"/>
+                <filter name="group_by_manufacturer" string="Manufacturer" context="{'group_by':'manufacturer'}"/>
+                <filter name="group_by_bin" string="Bin" context="{'group_by':'bin'}"/>
             </search>
         </field>
     </record>
@@ -26,19 +34,19 @@
 
     <record id="view_motor_product_tree" model="ir.ui.view">
         <field name="name">motor.product.tree</field>
-        <field name="model">motor.product</field>
+        <field name="model">product.template</field>
         <field name="arch" type="xml">
             <tree string="Motor Products" editable="bottom" open_form_view="1" create="0" limit="200" multi_edit="1"
                   decoration-warning="not name or not list_price or list_price == 0 or not standard_price or
                 standard_price == 0"
                   decoration-danger="has_recent_messages">
                 <header>
-                    <button string="Import" type="object" name="import_to_products" icon="fa-upload" title="Import"/>
+                    <button string="Import" type="object" name="enable_ready_for_sale" icon="fa-upload" title="Import"/>
                 </header>
-                <field name="computed_name" column_invisible="1"/>
+                <field name="motor_product_computed_name" column_invisible="1"/>
                 <field name="is_listable" widget="boolean_toggle" class="large-toggle" string="Listable"/>
                 <field name="is_ready_to_list" column_invisible="1"/>
-                <button name="import_to_products" type="object" icon="fa-upload"
+                <button name="enable_ready_for_sale" type="object" icon="fa-upload"
                         invisible="not is_ready_to_list" title="Upload"/>
                 <field name="is_qty_listing" widget="boolean" string="Qty" class="green_checkmark"
                        invisible="not is_qty_listing" width="30px"/>
@@ -47,11 +55,11 @@
                 <field name="image_count" column_invisible="1"/>
                 <field name="manufacturer" options="{'no_create': True}"/>
                 <field name="mpn" width="20px"/>
-                <field name="qty_available" widget="integer" string="Qty" width="50px"/>
+                <field name="initial_quantity" widget="integer" string="Qty" width="50px"/>
                 <field name="bin" width="20px" optional="hide"/>
                 <button name="reset_name" type="object" icon="fa-refresh" class="sc_refresh_button_row"
-                        title="Reset Name" invisible="computed_name == name"/>
-                <field name="name" decoration-warning="computed_name != name"/>
+                        title="Reset Name" invisible="motor_product_computed_name == name"/>
+                <field name="name" decoration-warning="motor_product_computed_name != name"/>
                 <field name="dismantle_notes" optional="show"/>
                 <field name="website_description" optional="show" widget="text"
                        class="sc_text_limited_lines" width="3"/>
@@ -69,10 +77,10 @@
     </record>
     <record id="view_motor_product_tree_dismantle" model="ir.ui.view">
         <field name="name">motor.product.tree</field>
-        <field name="model">motor.product</field>
+        <field name="model">product.template</field>
         <field name="arch" type="xml">
             <tree string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0">
-                <field name="qty_available" widget="integer"/>
+                <field name="initial_quantity" widget="integer"/>
                 <field name="first_mpn" widget="search_mpn_online"
                        options="{'search_engines': 'google_images', 'first_mpn': True}"/>
                 <field name="template_name_with_dismantle_notes" widget="section_and_note_text"
@@ -86,12 +94,12 @@
     </record>
     <record id="view_motor_product_tree_clean" model="ir.ui.view">
         <field name="name">motor.product.tree</field>
-        <field name="model">motor.product</field>
+        <field name="model">product.template</field>
         <field name="arch" type="xml">
             <tree string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0">
-                <field name="qty_available" widget="integer"/>
+                <field name="initial_quantity" widget="integer"/>
                 <field name="first_mpn"/>
-                <field name="template_name"/>
+                <field name="motor_product_template_name"/>
                 <field name="is_cleaned" widget="boolean_toggle" string="Done" class="large-toggle"/>
                 <field name="is_cleaned_qc" widget="boolean_toggle" string="QC" class="large-toggle"
                        readonly="not is_cleaned"/>
@@ -100,7 +108,7 @@
     </record>
     <record id="view_motor_product_tree_picture" model="ir.ui.view">
         <field name="name">motor.product.tree</field>
-        <field name="model">motor.product</field>
+        <field name="model">product.template</field>
         <field name="arch" type="xml">
             <tree string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0">
                 <field name="is_qty_listing" widget="boolean" string="Qty Listing" class="green_checkmark"
@@ -110,8 +118,8 @@
                 <field name="images"/>
                 <field name="image_count" column_invisible="1"/>
                 <field name="first_mpn"/>
-                <field name="qty_available" widget="integer"/>
-                <field name="template_name"/>
+                <field name="initial_quantity" widget="integer"/>
+                <field name="motor_product_template_name"/>
                 <field name="bin" optional="hide"/>
                 <field name="weight" widget="integer" optional="hide"/>
                 <field name="length" string="L" optional="hide"/>
@@ -128,12 +136,12 @@
 
     <record id="view_motor_product_tree_stock" model="ir.ui.view">
         <field name="name">motor.product.tree</field>
-        <field name="model">motor.product</field>
+        <field name="model">product.template</field>
         <field name="arch" type="xml">
             <tree string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0">
                 <field name="default_code" width="80px"/>
-                <field name="qty_available" widget="integer" width="30px"/>
-                <field name="template_name"/>
+                <field name="initial_quantity" widget="integer" width="30px"/>
+                <field name="motor_product_template_name"/>
                 <field name="bin" width="30px" placeholder="A01A1"/>
                 <field name="weight" widget="integer" width="30px"/>
             </tree>
@@ -142,7 +150,7 @@
 
     <record id="view_motor_product_kanban" model="ir.ui.view">
         <field name="name">motor.product.kanban</field>
-        <field name="model">motor.product</field>
+        <field name="model">product.template</field>
         <field name="arch" type="xml">
             <kanban create="0" limit="200">
                 <field name="reference_product"/>
@@ -165,13 +173,13 @@
                                                 <field name="dismantle_notes"/><br/>
                                             </div>
                                         </t>
-                                        <div><field name="template_name"/><br/></div>
+                                        <div><field name="motor_product_template_name"/><br/></div>
                                     </strong>
                                     MPN: <field name="first_mpn"/>
                                 </div>
                                 <div class="oe_kanban_bottom_right">
                                     <span>Quantity: </span>
-                                    <field name="qty_available" widget="integer"/><br/>
+                                    <field name="initial_quantity" widget="integer"/><br/>
                                     <span>Quantity Listing: </span>
                                     <span t-if="record.is_qty_listing.raw_value" class="fa fa-check fa-lg"
                                           style="color: lawngreen;"/>
@@ -187,14 +195,13 @@
 
     <record id="view_motor_product_form" model="ir.ui.view">
         <field name="name">motor.product.form</field>
-        <field name="model">motor.product</field>
+        <field name="model">product.template</field>
         <field name="arch" type="xml">
             <form string="Motor Product">
                 <div class="oe_chatter">
-                    <!--suppress XmlUnresolvedReference -->
-                    <field name="message_follower_ids" widget="mail_followers"/>
-                    <!--suppress XmlUnresolvedReference -->
-                    <field name="message_ids" widget="mail_thread"/>
+                    <field name="message_follower_ids" options="{'post_refresh': True}"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
                 </div>
                 <sheet name="motor_product_form">
                     <field name="active" invisible="1"/>
@@ -209,7 +216,7 @@
                         <h2>
                             <div class="d-flex caution">
                                 <field class="text-break" name="name" options="{'line_breaks': False}"
-                                       decoration-warning="computed_name != name"/>
+                                       decoration-warning="motor_product_computed_name != name"/>
                             </div>
                         </h2>
                     </div>
@@ -219,7 +226,7 @@
                                 <group>
                                     <field name="motor"/>
                                     <field name="manufacturer" options="{'no_create': True}"/>
-                                    <field name="computed_name"/>
+                                    <field name="motor_product_computed_name"/>
                                     <field name="mpn"/>
                                     <field name="bin"/>
                                     <field name="list_price"/>
@@ -228,10 +235,10 @@
                                 </group>
                                 <group>
                                     <field name="reference_product"/>
-                                    <field name="template"/>
+                                    <field name="motor_product_template"/>
                                     <field name="part_type"/>
                                     <field name="default_code"/>
-                                    <field name="qty_available" widget="integer"/>
+                                    <field name="initial_quantity" widget="integer"/>
                                     <field name="weight" widget="integer"/>
                                 </group>
                                 <group>
@@ -245,7 +252,6 @@
                         <page string="Images">
                             <field name="images">
                                 <tree editable="bottom" delete="False">
-                                    <field name="product" column_invisible="1"/>
                                     <field name="image_256" widget="image" column_invisible="1"/>
                                     <field name="image_1920" widget="image_upload"/>
                                     <field name="image_1920_resolution" string="Image Res"/>
@@ -263,11 +269,11 @@
     <record model="ir.actions.act_window" id="action_motor_product_form">
         <field name="name">Motor Products</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">motor.product</field>
+        <field name="res_model">product.template</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="search_view_id" ref="view_motor_product_search"/>
+        <field name="domain">[('source', '=', 'motor')]</field>
         <field name="context">{'search_default_group_by_motor': 1}</field>
-        <field name="domain">[]</field>
     </record>
 
     <record model="ir.actions.act_window" id="action_motor_product_dismantle_result_selection">

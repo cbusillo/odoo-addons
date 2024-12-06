@@ -1,14 +1,11 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_product_import,access.product.import,model_product_import,base.group_user,1,1,1,1
 access_product_type,model_product_type,model_product_type,base.group_user,1,1,1,0
 access_product_manufacturer,model_product_manufacturer,model_product_manufacturer,base.group_user,1,1,1,1
-access_product_import_image,access.product.import_image,model_product_import_image,base.group_user,1,1,1,1
 access_shopify_sync,access.shopify_sync,model_shopify_sync,base.group_user,1,1,1,1
 access_printnode_interface,access.printnode_interface,model_printnode_interface,base.group_user,1,1,1,1
 access_product_color,product.color,model_product_color,base.group_user,1,1,1,0
 access_product_color_tag,product.color.tag,model_product_color_tag,base.group_user,1,1,1,0
 access_product_condition,product.condition,model_product_condition,base.group_user,1,1,1,0
-access_product_import_image_wizard,access_product_import_image_wizard,model_product_import_image_wizard,base.group_user,1,1,1,1
 
 access_motor,access_motor,model_motor,base.group_user,1,1,1,0
 access_motor_stage_inventory_admin,access_motor_stage_inventory_admin,model_motor_stage,stock.group_stock_manager,1,1,1,1
@@ -27,10 +24,8 @@ access_motor_test_selection,access_motor_test_selection,model_motor_test_selecti
 access_motor_test_section,access_motor_test_section,model_motor_test_section,base.group_user,1,1,1,1
 access_motor_test_template_condition,access_motor_test_template_condition,model_motor_test_template_condition,base.group_user,1,1,1,1
 
-access_motor_product,access_motor_product,model_motor_product,base.group_user,1,1,1,1
 access_motor_product_template_condition,access_motor_product_template_condition,model_motor_product_template_condition,base.group_user,1,1,1,1
 access_motor_product_template,access_motor_product_template,model_motor_product_template,base.group_user,1,1,1,1
-access_motor_product_image,access_motor_product_image,model_motor_product_image,base.group_user,1,1,1,1
 access_motor_disassemble_result, access_motor_disassemble_result,model_motor_dismantle_result,base.group_user,1,1,1,1
 
 access_notification_history,access.notification.history,model_notification_history,base.group_user,1,1,1,1

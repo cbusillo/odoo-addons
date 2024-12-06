@@ -6,7 +6,7 @@ from odoo.upgrade import util
 _logger = logging.getLogger(__name__)
 
 
-# noinspection SqlResolve
+# noinspection SqlResolve,PyUnresolvedReferences
 def migrate(cr: Cursor, version: str) -> None:
     _logger.info("Post-migration: set default values for manufacturer and condition")
     env = util.env(cr)

@@ -7,7 +7,6 @@ from . import (
     motor_test,
     printnode_interface,
     product_color,
-    product_import,
     product_manufacturer,
     product_product,
     product_template,

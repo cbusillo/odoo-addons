@@ -51,7 +51,7 @@ class ProductLabelLayout(models.TransientModel):
                         "bin": product.bin,
                         "motor_number": (product.motor.motor_number if product.motor else ""),
                         "condition": (product.condition.name if product.condition else ""),
-                        "qty_available": data["quantity_by_product"].get(product.id, 1),
+                        "initial_quantity": data["quantity_by_product"].get(product.id, 1),
                     }
                 )
         data.update({"products_data": products_data})

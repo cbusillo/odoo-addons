@@ -13,7 +13,7 @@ import qrcode
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError, UserError
 
-from ..utils import constants
+from odoo.addons.product_connect.utils import constants
 
 
 class MotorStage(models.Model):
@@ -113,7 +113,7 @@ class Motor(models.Model):
         return {
             "name": "Motor Products",
             "type": "ir.actions.act_window",
-            "res_model": "motor.product",
+            "res_model": "product.template",
             "view_mode": "tree,form",
             "domain": [("motor", "=", self.id)],
             "context": {"default_motor": self.id},
@@ -180,9 +180,9 @@ class Motor(models.Model):
     cylinders = fields.One2many("motor.cylinder", "motor")
 
     hide_compression_page = fields.Boolean(compute="_compute_hide_compression_page", store=True)
-    products = fields.One2many("motor.product", "motor")
+    products = fields.One2many("product.template", "motor")
     products_with_reference_product = fields.Many2many(
-        "motor.product",
+        "product.template",
         "motor_product_with_reference_product_rel",
         "motor_id",
         "product_id",
@@ -191,13 +191,13 @@ class Motor(models.Model):
     )
 
     products_to_dismantle = fields.One2many(
-        "motor.product",
+        "product.template",
         "motor",
         domain=[("is_listable", "=", True)],
     )
 
     products_to_clean = fields.One2many(
-        "motor.product",
+        "product.template",
         "motor",
         domain=[
             ("is_listable", "=", True),
@@ -207,7 +207,7 @@ class Motor(models.Model):
     )
 
     products_to_picture = fields.One2many(
-        "motor.product",
+        "product.template",
         "motor",
         domain=[
             ("is_listable", "=", True),
@@ -219,7 +219,7 @@ class Motor(models.Model):
     )
 
     products_to_stock = fields.One2many(
-        "motor.product",
+        "product.template",
         "motor",
         domain=[
             ("is_listable", "=", True),
@@ -399,7 +399,7 @@ class Motor(models.Model):
             test_vals.append(
                 {
                     "motor": self.id,
-                    "template": template.id,
+                    "motor_product_template": template.id,
                 }
             )
         if test_vals:
@@ -412,7 +412,7 @@ class Motor(models.Model):
             part_vals.append(
                 {
                     "motor": self.id,
-                    "template": template.id,
+                    "motor_product_template": template.id,
                 }
             )
         if part_vals:
@@ -445,7 +445,7 @@ class Motor(models.Model):
                 ):
                     continue
 
-                existing_product = motor.products.filtered(lambda p: p.template == product_template)
+                existing_product = motor.products.filtered(lambda p: p.motor_product_template == product_template)
 
                 if existing_product:
                     current_product_ids.discard(existing_product.id)
@@ -454,8 +454,8 @@ class Motor(models.Model):
                     motor.products.create(
                         {
                             "motor": motor.id,
-                            "template": product_template.id,
-                            "qty_available": product_template.qty_available or 1,
+                            "motor_product_template": product_template.id,
+                            "initial_quantity": product_template.initial_quantity or 1,
                             "bin": product_template.bin,
                             "weight": product_template.weight,
                             "condition": condition_id,
@@ -541,32 +541,32 @@ class Motor(models.Model):
             "target": "self",
         }
 
-    @api.depends("products.is_listable", "products.list_price", "products.qty_available", "cost")
+    @api.depends("products.is_listable", "products.list_price", "products.initial_quantity", "cost")
     def _compute_price_of_motor(self) -> None:
         for motor in self:
-            products = motor.products.filtered(lambda p: p.is_listable and p.qty_available > 0)
-            self.price = sum(record.list_price * record.qty_available for record in products)
+            products = motor.products.filtered(lambda p: p.is_listable and p.initial_quantity > 0)
+            self.price = sum(record.list_price * record.initial_quantity for record in products)
 
     def apply_cost(self) -> None:
         for motor in self:
-            products = self.products.filtered(lambda p: p.is_listable and p.qty_available > 0)
+            products = self.products.filtered(lambda p: p.is_listable and p.initial_quantity > 0)
 
             for product in products:
-                cost_proportion = (product.list_price * product.qty_available) / motor.price if motor.price else 0
-                product.standard_price = (cost_proportion * self.cost) / product.qty_available
+                cost_proportion = (product.list_price * product.initial_quantity) / motor.price if motor.price else 0
+                product.standard_price = (cost_proportion * self.cost) / product.initial_quantity
 
-    def import_to_products(self) -> None:
-        self.products.import_to_products()
+    def enable_ready_for_sale(self) -> None:
+        self.products.enable_ready_for_sale()
 
     def print_motor_product_labels(self) -> None:
-        products = self.products.filtered(lambda p: p.is_listable and p.qty_available > 0)
+        products = self.products.filtered(lambda p: p.is_listable and p.initial_quantity > 0)
         if not products:
             raise UserError(_("No products to print labels for."))
 
         products.print_product_labels(print_quantity=True)
 
     def print_motor_pull_list(self) -> None:
-        products = self.products.filtered(lambda p: p.is_listable and p.qty_available > 0)
+        products = self.products.filtered(lambda p: p.is_listable and p.initial_quantity > 0)
         if not products:
             raise UserError(_("No products to print pull list for."))
 

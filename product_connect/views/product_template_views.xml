@@ -164,7 +164,8 @@
                   decoration-warning="not (length and height and width and weight and bin)">
                 <field name="name" readonly="1"/>
                 <field name="default_code" readonly="1"/>
-                <field name="qty_available" string="Quantity" readonly="1" widget="float" options="{'digits': [3,0]}"/>
+                <field name="initial_quantity" string="Quantity" readonly="1" widget="float"
+                       options="{'digits': [3,0]}"/>
                 <field name="length"/>
                 <field name="width"/>
                 <field name="height"/>
@@ -192,9 +193,9 @@
                 <filter name="filter_missing_bin" string="Missing Bin"
                         domain="['|',('bin', '=', False), ('bin', '=','')]"/>
                 <filter name="filter_has_bin" string="Has Bin" domain="[('bin', '!=', False), ('bin', '!=', '')]"/>
-                <filter name="filter_has_quantity" string="Has Quantity" domain="[('qty_available', '>', 0)]"/>
+                <filter name="filter_has_quantity" string="Has Quantity" domain="[('initial_quantity', '>', 0)]"/>
                 <filter name="filter_has_bin_and_quantity" string="Has Bin and Quantity"
-                        domain="[('bin', '!=', False), ('bin', '!=', ''), ('qty_available', '>', 0)]"/>
+                        domain="[('bin', '!=', False), ('bin', '!=', ''), ('initial_quantity', '>', 0)]"/>
                 <filter name="group_by_bin" context="{'group_by':'bin', 'order': 'bin'}"/>
             </search>
         </field>

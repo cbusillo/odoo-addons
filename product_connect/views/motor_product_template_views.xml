@@ -2,8 +2,8 @@
 <odoo>
     <record id="server_action_motor_product_print_bin_labels" model="ir.actions.server">
         <field name="name">Print Bin Labels</field>
-        <field name="model_id" ref="model_motor_product"/>
-        <field name="binding_model_id" ref="model_motor_product"/>
+        <field name="model_id" ref="model_product_template"/>
+        <field name="binding_model_id" ref="model_product_template"/>
         <field name="binding_type">action</field>
         <field name="state">code</field>
         <field name="code">
@@ -13,8 +13,8 @@
 
     <record id="server_action_motor_product_print_product_labels" model="ir.actions.server">
         <field name="name">Print Product Labels</field>
-        <field name="model_id" ref="model_motor_product"/>
-        <field name="binding_model_id" ref="model_motor_product"/>
+        <field name="model_id" ref="model_product_template"/>
+        <field name="binding_model_id" ref="model_product_template"/>
         <field name="binding_type">action</field>
         <field name="state">code</field>
         <field name="code">
@@ -24,8 +24,8 @@
 
     <record id="server_action_motor_product_print_product_labels_picture" model="ir.actions.server">
         <field name="name">Print Product Labels (Picture)</field>
-        <field name="model_id" ref="model_motor_product"/>
-        <field name="binding_model_id" ref="model_motor_product"/>
+        <field name="model_id" ref="model_product_template"/>
+        <field name="binding_model_id" ref="model_product_template"/>
         <field name="binding_type">action</field>
         <field name="state">code</field>
         <field name="code">
@@ -59,7 +59,7 @@
                         <group string="Basic Information">
                             <field name="name"/>
                             <field name="part_type"/>
-                            <field name="qty_available" string="Quantity"/>
+                            <field name="initial_quantity" string="Quantity"/>
                             <field name="bin"/>
                             <field name="weight"/>
                         </group>

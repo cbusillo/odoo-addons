@@ -43,7 +43,7 @@
         <template id="report_producttemplatelabel2x1noprice">
             <t t-call="web.html_container">
                 <t t-foreach="products_data" t-as="product">
-                    <t t-foreach="range(product['qty_available'])" t-as="i">
+                    <t t-foreach="range(product['initial_quantity'])" t-as="i">
                         <div class="page"
                              style="padding-top: 1mm; height:29mm; width:57mm; font-family: Arial, sans-serif; page-break-before: always;">
                             <!-- QR Code and Product Info Side-by-Side -->

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Product Connect Module",
-    "version": "17.0.3.11",
+    "version": "17.0.4.0",
     "category": "Industries",
     "author": "Chris Busillo",
     "company": "Shiny Computers",
@@ -39,7 +39,6 @@
         "views/product_color_views.xml",
         "views/product_condition_views.xml",
         "views/product_import_views.xml",
-        "views/product_import_wizard.xml",
         "views/product_product_views.xml",
         "views/product_template_views.xml",
         "views/product_image_views.xml",

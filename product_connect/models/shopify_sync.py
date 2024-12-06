@@ -6,7 +6,7 @@ import re
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Generator, Self
+from typing import Any, Self
 from urllib.error import HTTPError
 from zoneinfo import ZoneInfo
 
@@ -784,87 +784,3 @@ class ShopifySync(models.AbstractModel):
                 self.env.cr.commit()
         message = f"Shopify exported {total_count} items successfully at {self.now_in_localtime_formatted()}"
         self.notify_channel("Shopify sync", message, "shopify_sync")
-
-    def get_orders_since_date(self, last_import_date_str) -> Generator[Any, Any, None]:
-        cursor, has_more_data = None, True
-
-        graph_ql_client, graph_ql_document, _, _ = self.setup_sync_environment()
-
-        while has_more_data:
-            order_edges = self.fetch_shopify_order_edges(
-                cursor, last_import_date_str, graph_ql_client, graph_ql_document
-            )
-
-            for order_edge in order_edges:
-                yield order_edge.get("node")
-
-            if order_edges:
-                cursor = order_edges[-1].get("cursor")
-                has_more_data = bool(cursor)
-            else:
-                has_more_data = False
-
-    def fetch_shopify_order_edges(
-        self, cursor, date_filter, graph_ql_client, graph_ql_document, custom_query=None
-    ) -> list[dict[str, Any]]:
-        result = self.execute_graphql_query(
-            cursor,
-            date_filter,
-            graph_ql_client,
-            graph_ql_document,
-            "GetOrdersLineItems",
-            custom_query,
-        )
-        shopify_response_data = self.parse_and_validate_shopify_response(result)
-        return shopify_response_data.get("data", {}).get("orders", {}).get("edges", [])
-
-    def get_products_with_no_sales(self, date_filter: datetime) -> list[int]:
-        self.initialize_shopify_session()
-        date_filter_iso = date_filter.isoformat(timespec="seconds").replace("+00:00", "Z")
-
-        graph_ql_client, graph_ql_document, _, _ = self.setup_sync_environment()
-
-        _logger.debug("Fetching all orders since %s", date_filter)
-        products_sold = []
-
-        for order in self.get_orders_since_date(date_filter_iso):
-            for line_item_edge in order.get("lineItems", {}).get("edges", []):
-                product = line_item_edge.get("node", {}).get("product")
-                if product:
-                    product_id = self.extract_id_from_gid(product.get("id"))
-                    products_sold.append(product_id)
-
-        products_sold = list(set(products_sold))
-
-        _logger.debug("Fetching all products created before %s", date_filter)
-        products_with_no_sales, cursor, has_more_data, total_count = [], None, True, 0
-        while has_more_data:
-            shopify_product_edges = self.fetch_shopify_product_edges(
-                cursor,
-                "",
-                graph_ql_client,
-                graph_ql_document,
-                f"inventory_total:>0 created_at:<{date_filter_iso}",
-                "GetProductIds",
-            )
-
-            for product_edge in shopify_product_edges:
-                total_count += 1
-                product = product_edge.get("node", {})
-                product_id = self.extract_id_from_gid(product.get("id", ""))
-                if product_id and product_id not in products_sold:
-                    products_with_no_sales.append(product_id)
-
-            if shopify_product_edges:
-                cursor = shopify_product_edges[-1].get("cursor")
-                has_more_data = bool(cursor)
-            else:
-                has_more_data = False
-
-        _logger.debug(
-            "Found %s of %s products with no sales since %s",
-            len(products_with_no_sales),
-            total_count,
-            date_filter,
-        )
-        return products_with_no_sales
