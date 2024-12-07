@@ -233,6 +233,10 @@
     <record id="stock.product_template_action_product" model="ir.actions.act_window">
         <field name="view_mode">tree,kanban,form</field>
         <field name="domain">[('is_ready_for_sale', '=', True)]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('product.product_template_tree_view')}),
+        (0, 0, {'view_mode': 'kanban', 'view_id': ref('product.product_template_kanban_view')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('product.product_template_only_form_view')})]"/>
     </record>
 
 
