@@ -2,6 +2,7 @@ import logging
 
 from odoo import api, SUPERUSER_ID
 from odoo.api import Environment
+from odoo.exceptions import ValidationError
 from odoo.sql_db import Cursor
 from odoo.upgrade import util
 from psycopg2.extras import execute_values
@@ -180,33 +181,23 @@ def prepare_database(cr: Cursor) -> None:
     _logger.info("Database preparation completed")
 
 
-def delete_attachments_in_batches(cr: Cursor, model_name: str, batch_size: int = 1000) -> None:
+def delete_attachments_in_batches(env: Environment, model_name: str, batch_size: int = 1000) -> None:
     _logger.info(f"Starting batched deletion of attachments for {model_name}")
 
     while True:
-        cr.execute(
-            """
-            WITH batch AS (
-                SELECT id 
-                FROM ir_attachment 
-                WHERE res_model = %s
-                LIMIT %s
-                FOR UPDATE SKIP LOCKED
-            )
-            DELETE FROM ir_attachment a
-            USING batch
-            WHERE a.id = batch.id
-            RETURNING a.id
-        """,
-            (model_name, batch_size),
-        )
+        attachments = env["ir.attachment"].search([("res_model", "=", model_name)], limit=batch_size)
 
-        deleted_count = cr.rowcount
-        _logger.info(f"Deleted {deleted_count} attachments for {model_name}")
-        cr.commit()
-
-        if deleted_count < batch_size:
+        if not attachments:
             break
+
+        try:
+            attachments.unlink()
+            env.cr.commit()
+            _logger.info(f"Deleted {len(attachments)} attachments for {model_name}")
+        except Exception as e:
+            env.cr.rollback()
+            _logger.error(f"Failed to delete batch: {str(e)}")
+            raise ValidationError(f"Failed to delete attachments: {str(e)}")
 
 
 # noinspection SqlResolve
@@ -233,7 +224,7 @@ def migrate_data(cr: Cursor, env: Environment, source_table: str, target_table: 
                         default_code,
                         motor, mpn, manufacturer,
                         part_type, condition, length, width, height, bin, qty_available, 
-                        list_price, name, website_description, active,
+                        list_price, name, website_description, true,
                         is_dismantled, is_dismantled_qc, is_cleaned, 
                         is_cleaned_qc, is_picture_taken, is_pictured,
                         is_pictured_qc, is_listable, dismantle_notes,
@@ -260,7 +251,7 @@ def migrate_data(cr: Cursor, env: Environment, source_table: str, target_table: 
                         s.part_type, s.condition, s.length, s.width, s.height, 
                         s.bin, s.qty_available, s.list_price, 
                         jsonb_build_object('en_US', s.website_description), 
-                        s.active, s.is_dismantled, s.is_dismantled_qc, s.is_cleaned, 
+                        true, s.is_dismantled, s.is_dismantled_qc, s.is_cleaned, 
                         s.is_cleaned_qc, s.is_picture_taken, s.is_pictured,
                         s.is_pictured_qc, s.is_listable, s.dismantle_notes,
                         s.template, 'motor',
@@ -282,7 +273,7 @@ def migrate_data(cr: Cursor, env: Environment, source_table: str, target_table: 
                         initial_quantity = EXCLUDED.initial_quantity,
                         list_price = EXCLUDED.list_price,
                         website_description = EXCLUDED.website_description,
-                        active = EXCLUDED.active,
+                        active = true,
                         is_dismantled = EXCLUDED.is_dismantled,
                         is_dismantled_qc = EXCLUDED.is_dismantled_qc,
                         is_cleaned = EXCLUDED.is_cleaned,
@@ -312,7 +303,7 @@ def migrate_data(cr: Cursor, env: Environment, source_table: str, target_table: 
                         default_code,
                         mpn, manufacturer, part_type,
                         condition, length, width, height, bin, qty_available, 
-                        list_price, name, website_description, active,
+                        list_price, name, website_description, true,
                         id as old_id,
                         create_uid, create_date, write_uid, write_date
                     FROM product_import
@@ -334,7 +325,7 @@ def migrate_data(cr: Cursor, env: Environment, source_table: str, target_table: 
                         s.part_type, s.condition, s.length, s.width, s.height, 
                         s.bin, s.qty_available, s.list_price,
                         jsonb_build_object('en_US', s.website_description),
-                        s.active, 'import',
+                        true, 'import',
                         1.0, 'none', %s, 'product', 'no-message', %s, %s,
                         s.create_uid, s.create_date, s.write_uid, s.write_date
                     FROM source s
@@ -351,7 +342,7 @@ def migrate_data(cr: Cursor, env: Environment, source_table: str, target_table: 
                         initial_quantity = EXCLUDED.initial_quantity,
                         list_price = EXCLUDED.list_price,
                         website_description = EXCLUDED.website_description,
-                        active = EXCLUDED.active,
+                        active = true,
                         source = 'import'
                     RETURNING id, default_code
                 )
@@ -368,6 +359,7 @@ def migrate_data(cr: Cursor, env: Environment, source_table: str, target_table: 
     _logger.info(f"Completed migration of {total_records} records from {source_table}")
 
 
+# noinspection SqlResolve
 def migrate(cr: Cursor, version: str) -> None:
     if not version:
         return
@@ -460,13 +452,21 @@ def migrate(cr: Cursor, version: str) -> None:
             FOREIGN KEY (product_id) REFERENCES product_template(id) ON DELETE CASCADE;
         """
         )
-        cr.commit()
+
+        _logger.info("Setting is_ready_for_sale")
+        cr.execute(
+            """
+            UPDATE product_template
+            SET is_ready_for_sale = TRUE
+            WHERE shopify_product_id IS NOT NULL AND shopify_product_id != '';
+        """
+        )
 
         _logger.info("Cleaning up temporary tables and finalizing migration")
         cr.execute("DROP TABLE IF EXISTS id_mapping")
 
         for model in ["product.import.image", "motor.product.image"]:
-            delete_attachments_in_batches(cr, model, batch_size)
+            delete_attachments_in_batches(env, model, batch_size)
 
         for table in ["motor_product_image", "motor_product", "product_import_image", "product_import"]:
             if util.table_exists(cr, table):

@@ -19,11 +19,12 @@ class ProductTemplate(models.Model):
         [("import", "Import Product"), ("motor", "Motor Product"), ("standard", "Standard Product")],
         default="standard",
         required=True,
+        index=True,
     )
 
-    is_ready_for_sale = fields.Boolean()
+    is_ready_for_sale = fields.Boolean(tracking=True, index=True)
 
-    motor = fields.Many2one("motor", ondelete="restrict", readonly=True)
+    motor = fields.Many2one("motor", ondelete="restrict", readonly=True, index=True)
     motor_tests = fields.One2many("motor.test", related="motor.tests")
     default_code = fields.Char("SKU", index=True, copy=False, readonly=True)
     create_date = fields.Datetime(index=True)
@@ -62,7 +63,7 @@ class ProductTemplate(models.Model):
     template_name_with_dismantle_notes = fields.Char(compute="_compute_template_name_with_dismantle_notes", store=False)
     dismantle_results = fields.Many2one(comodel_name="motor.dismantle.result", ondelete="restrict")
 
-    is_listable = fields.Boolean(default=False)
+    is_listable = fields.Boolean(default=False, index=True)
 
     is_dismantled = fields.Boolean(default=False, tracking=True)
     is_dismantled_qc = fields.Boolean(default=False)
@@ -204,6 +205,8 @@ class ProductTemplate(models.Model):
         for vals in vals_list:
             if "default_code" not in vals:
                 vals["default_code"] = self.get_next_sku()
+            if vals.get("source") == "standard":
+                vals["is_ready_for_sale"] = True
         return super().create(vals_list)
 
     @api.constrains("default_code")

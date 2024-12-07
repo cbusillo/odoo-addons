@@ -55,13 +55,14 @@
                 <field name="initial_quantity" sum="Total Quantity" widget="integer"/>
                 <field name="bin"/>
                 <field name="name"/>
-                <field name="website_description" optional="show" widget="text" class="text-nowrap"/>
+                <field name="website_description" optional="show" widget="text" class="text-nowrap"
+                       string="Description"/>
                 <field name="part_type" options="{'no_create': True}" optional="show"/>
                 <field name="weight" optional="show" widget="integer" width="100px"/>
                 <field name="length" string="L" optional="show" width="2"/>
                 <field name="width" string="W" optional="show" width="2"/>
                 <field name="height" string="H" optional="show" width="2"/>
-                <field name="list_price" optional="show" width="7"/>
+                <field name="list_price" optional="show" width="7" string="Price"/>
                 <field name="standard_price" optional="show" width="7"/>
                 <field name="has_recent_messages" column_invisible="1"/>
             </tree>
@@ -139,10 +140,14 @@
         <field name="arch" type="xml">
             <search string="Product">
                 <field name="default_code" string="Product"
-                       filter_domain="['|', '|',  ('name', 'ilike', self) , ('default_code', 'ilike', self), ('bin', 'ilike', self)]"/>
+                       filter_domain="['|', '|', ('name', 'ilike', self) , ('default_code', 'ilike', self), ('bin', 'ilike', self)]"/>
                 <field name="name"/>
                 <field name="default_code"/>
                 <field name="bin"/>
+                <filter name="filter_source_motor" string="Motor Products" domain="[('source', '=', 'motor')]"/>
+                <filter name="filter_source_import" string="Import Products" domain="[('source', '=', 'import')]"/>
+                <filter name="filter_source_standard" string="Standard Products"
+                        domain="[('source', '=', 'standard')]"/>
             </search>
 
         </field>
@@ -160,8 +165,11 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">product.template</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('view_product_import_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('view_product_import_form')})]"/>
         <field name="search_view_id" ref="view_product_import_search"/>
-        <field name="domain">[('source', '=', 'import')]</field>
+        <field name="domain">[('source', '=', 'import'), ('is_ready_for_sale', '=', False)]</field>
     </record>
 
     <!-- Product Import: Sequence -->
