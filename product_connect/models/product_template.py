@@ -153,7 +153,7 @@ class ProductTemplate(models.Model):
         result = super().write(vals)
 
         for product in self:
-            if product.image_count < 1:
+            if product.image_count < 1 and (product.is_pictured or product.is_pictured_qc):
                 product.is_pictured = False
                 product.is_pictured_qc = False
 
@@ -205,9 +205,14 @@ class ProductTemplate(models.Model):
         for vals in vals_list:
             if "default_code" not in vals:
                 vals["default_code"] = self.get_next_sku()
-            if vals.get("source") == "standard":
-                vals["is_ready_for_sale"] = True
-        return super().create(vals_list)
+        products = super().create(vals_list)
+        for product in products:
+            if product.source == "standard":
+                product.is_ready_for_sale = True
+            elif product.source == "motor":
+                product.name = product.motor_product_computed_name
+
+        return products
 
     @api.constrains("default_code")
     def _check_sku(self) -> None:
@@ -221,15 +226,8 @@ class ProductTemplate(models.Model):
         sequence = self.env.ref("product_connect.sequence_product_template_default_code")
         padding = sequence.padding
         max_sku = "9" * padding
-        search_model_names = [
-            "product.template",
-            "product.import",
-            "motor.product",
-        ]
-        search_models = [self.env[model_name].sudo() for model_name in search_model_names]
         while (new_sku := self.env["ir.sequence"].next_by_code("product.template.default_code")) <= max_sku:
-            domain = [("default_code", "=", new_sku)]
-            if not any(model.search(domain, limit=1) for model in search_models):
+            if not self.env["product.template"].sudo().search([("default_code", "=", new_sku)], limit=1):
                 return new_sku
         raise ValidationError("SKU limit reached.")
 
@@ -251,11 +249,11 @@ class ProductTemplate(models.Model):
                 product.first_mpn = ""
 
     def get_list_of_mpns(self) -> list[str]:
-        for product in self:
-            if not product.mpn or not product.mpn.strip():
-                return []
-            mpn_parts = re.split(r"[, ]", product.mpn)
-            return [mpn.strip() for mpn in mpn_parts if mpn.strip()]
+        self.ensure_one()
+        if not self.mpn or not self.mpn.strip():
+            return []
+        mpn_parts = re.split(r"[, ]", self.mpn)
+        return [mpn.strip() for mpn in mpn_parts if mpn.strip()]
 
     @api.depends("images.image_1920")
     def _compute_image_count(self) -> None:
@@ -477,6 +475,9 @@ class ProductTemplate(models.Model):
     @api.depends("name", "motor_product_computed_name", "default_code")
     def _compute_display_name(self) -> None:
         for product in self:
+            if isinstance(product.id, models.NewId):
+                super()._compute_display_name()
+                continue
             name = product.name if product.source == "standard" else product.motor_product_computed_name
             product.display_name = f"{product.default_code} - {name}"
 
@@ -511,10 +512,7 @@ class ProductTemplate(models.Model):
                 product.first_mpn if product.motor_product_template.include_model_in_name else None,
                 "OEM" if product.motor_product_template.include_oem_in_name else None,
             ]
-            new_computed_name = " ".join(part for part in name_parts if part)
-            if not product.name or product.name == product.motor_product_computed_name:
-                product.name = new_computed_name
-            product.motor_product_computed_name = new_computed_name
+            product.motor_product_computed_name = " ".join(part for part in name_parts if part)
 
     @api.depends(
         "is_dismantled",
