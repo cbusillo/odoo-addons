@@ -115,6 +115,24 @@ class ProductTemplate(models.Model):
 
         return groups
 
+    @api.model_create_multi
+    def create(self, vals_list: list["odoo.values.product_template"]) -> "odoo.model.product_template":
+        for vals in vals_list:
+            if "default_code" not in vals:
+                vals["default_code"] = self.get_next_sku()
+            if "source" not in vals:
+                vals["source"] = self._context.get("default_source")
+
+        products = super().create(vals_list)
+        for product in products:
+            if product.source == "motor":
+                product.name = product.motor_product_computed_name
+            elif product.source == "import":
+                product.is_ready_for_sale = False
+                product.is_ready_to_list = True
+
+        return products
+
     def write(self, vals: "odoo.values.product_template") -> bool:
         if not self.motor:
             return super().write(vals)
@@ -200,20 +218,6 @@ class ProductTemplate(models.Model):
             else:
                 product.shopify_product_admin_url = False
                 product.shopify_product_url = False
-
-    @api.model_create_multi
-    def create(self, vals_list: list["odoo.values.product_template"]) -> "odoo.model.product_template":
-        for vals in vals_list:
-            if "default_code" not in vals:
-                vals["default_code"] = self.get_next_sku()
-        products = super().create(vals_list)
-        for product in products:
-            if product.source == "standard":
-                product.is_ready_for_sale = True
-            elif product.source == "motor":
-                product.name = product.motor_product_computed_name
-
-        return products
 
     @api.constrains("default_code")
     def _check_sku(self) -> None:
