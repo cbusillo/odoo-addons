@@ -22,11 +22,13 @@ class ProductTemplate(models.Model):
         index=True,
     )
 
-    is_ready_for_sale = fields.Boolean(tracking=True, index=True)
+    is_ready_for_sale = fields.Boolean(tracking=True, index=True, default=True)
 
     motor = fields.Many2one("motor", ondelete="restrict", readonly=True, index=True)
     motor_tests = fields.One2many("motor.test", related="motor.tests")
     default_code = fields.Char("SKU", index=True, copy=False, readonly=True)
+    standard_price = fields.Float(string="Cost", tracking=True)
+    list_price = fields.Float(string="Price", tracking=True)
     create_date = fields.Datetime(index=True)
 
     images = fields.One2many("product.image", "product_tmpl_id")
@@ -114,11 +116,10 @@ class ProductTemplate(models.Model):
         return groups
 
     def write(self, vals: "odoo.values.product_template") -> bool:
-        qc_reset_fields = {
-            "is_dismantled",
-            "is_cleaned",
-            "is_pictured",
-        }
+        if not self.motor:
+            return super().write(vals)
+
+        qc_reset_fields = {"is_dismantled", "is_cleaned", "is_pictured"}
         ui_refresh_fields = {
             "is_listable",
             "is_dismantled",
@@ -152,13 +153,13 @@ class ProductTemplate(models.Model):
 
         result = super().write(vals)
 
-        for product in self:
+        for product in result:
             if product.image_count < 1 and (product.is_pictured or product.is_pictured_qc):
                 product.is_pictured = False
                 product.is_pictured_qc = False
 
-        if any(field in vals for field in ui_refresh_fields):
-            for product in self:
+        if any(f in vals for f in ui_refresh_fields):
+            for product in result:
                 product.motor.notify_changes()
         return result
 
@@ -269,13 +270,20 @@ class ProductTemplate(models.Model):
 
     @api.depends("message_ids")
     def _compute_has_recent_messages(self) -> None:
+        recent_cutoff = fields.Datetime.now() - timedelta(minutes=30)
+        recent_messages = self.env["mail.message"].search(
+            [
+                ("model", "=", self._name),
+                ("res_id", "in", self.ids),
+                ("create_date", ">=", recent_cutoff),
+                ("subject", "ilike", "Import Error"),
+            ]
+        )
+
+        product_ids_with_recent_messages = recent_messages.mapped("res_id")
+
         for product in self:
-            recent_messages = product.message_ids.filtered(
-                lambda m: fields.Datetime.now() - m.create_date < timedelta(minutes=30)
-                and m.subject
-                and "Import Error" in m.subject
-            )
-            product.has_recent_messages = bool(recent_messages)
+            product.has_recent_messages = product.id in product_ids_with_recent_messages
 
     def name_get(self) -> list[tuple[int, str]]:
         result = []
@@ -327,6 +335,7 @@ class ProductTemplate(models.Model):
             product._fields["list_price"].name,
             product._fields["initial_quantity"].name,
             product._fields["bin"].name,
+            product._fields["weight"].name,
             product._fields["manufacturer"].name,
         ]
 
@@ -360,7 +369,7 @@ class ProductTemplate(models.Model):
         for product in products:
             missing_fields = self._check_fields_and_images(product)
             if missing_fields:
-                missing_fields_display = ", ".join(missing_fields)
+                missing_fields_display = ", ".join(self._fields[f].string for f in missing_fields)
                 product.message_post(
                     body=f"Missing data: {missing_fields_display}",
                     subject="Import Error",
@@ -389,7 +398,9 @@ class ProductTemplate(models.Model):
             job_name="Bin Label",
         )
 
-    def print_product_labels(self, print_quantity: bool = False, printer_job_type: str = "product_label") -> None:
+    def print_product_labels(
+        self, use_available_qty: bool = False, quantity_to_print: int = 1, printer_job_type: str = "product_label"
+    ) -> None:
         labels = []
         for product in self:
             mpn = product.mpn.strip() if product.mpn else ""
@@ -402,7 +413,8 @@ class ProductTemplate(models.Model):
                 f"{product.motor.motor_number or '       '}",
                 product.condition.name if product.condition else "",
             ]
-            quantity = getattr(product, "initial_quantity", 1) if print_quantity else 1
+            quantity_field_name = "qty_available" if product.is_ready_for_sale else "initial_quantity"
+            quantity = getattr(product, quantity_field_name, 1) if use_available_qty else quantity_to_print
             label = self.generate_label_base64(
                 label_data,
                 bottom_text=self.wrap_text(product.name, 50),
@@ -417,39 +429,42 @@ class ProductTemplate(models.Model):
         )
 
     def enable_ready_for_sale(self) -> None:
-        products_to_enable = self.filtered(lambda p: not p.is_ready_for_sale and p.is_ready_to_list)
-
-        products_missing_data = products_to_enable.filtered(lambda p: p._check_fields_and_images(p))
+        products_missing_data = self.filtered(lambda p: p._check_fields_and_images(p))
+        self._post_missing_data_message(products_missing_data)
+        products_to_enable = self.filtered(lambda p: p.is_ready_to_list or p.source == "import")
         ready_to_enable_products = products_to_enable - products_missing_data
 
+        if not ready_to_enable_products:
+            raise UserError("No products are ready to sell. Check messages for details.")
+
         if products_missing_data:
-            self._post_missing_data_message(products_missing_data)
-            if not ready_to_enable_products:
-                raise UserError("No products are ready to sell.")
-            message = f"{len(products_missing_data)} product(s) are not ready to sell.  See the messages for details."
+            message = f"{len(products_missing_data)} product(s) are not ready to sell. Check messages for details."
             self.env["bus.bus"]._sendone(
                 self.env.user.partner_id,
                 "simple_notification",
                 {"title": "Import Warning", "message": message, "sticky": False},
             )
 
-        ready_to_enable_products.filtered(lambda p: p.condition.name == "new").check_for_conflicting_products()
+        ready_to_enable_products.filtered(
+            lambda p: p.condition and p.condition.name == "new"
+        ).check_for_conflicting_products()
 
         for product in ready_to_enable_products:
-            website_description = product.replace_template_tags(product.website_description)
+            website_description = product.replace_template_tags(product.website_description or "")
             website_description = website_description.replace("{mpn}", " ".join(product.get_list_of_mpns()))
             product.website_description = website_description
 
-            name = product.replace_template_tags(product.name)
+            name = product.replace_template_tags(product.name or "")
             name = name.replace("{mpn}", " ".join(product.get_list_of_mpns()))
             product.name = name
             product.detailed_type = "product"
             product.is_published = True
-            product.shopify_next_export = True
-            self.env["product.product"].search([("product_tmpl_id", "=", product.id)]).update_quantity(
-                product.initial_quantity
-            )
-            product.initial_quantity = 0
+            product.product_variant_id.shopify_next_export = True
+
+            product_variant = self.env["product.product"].search([("product_tmpl_id", "=", product.id)], limit=1)
+            if product_variant:
+                product_variant.update_quantity(product.initial_quantity)
+            product.is_ready_for_sale = True
 
     @api.depends("mpn")
     def _compute_reference_product(self) -> None:
@@ -478,7 +493,7 @@ class ProductTemplate(models.Model):
             if isinstance(product.id, models.NewId):
                 super()._compute_display_name()
                 continue
-            name = product.name if product.source == "standard" else product.motor_product_computed_name
+            name = product.motor_product_computed_name if product.source == "motor" else product.name
             product.display_name = f"{product.default_code} - {name}"
 
     @api.depends(
@@ -548,35 +563,43 @@ class ProductTemplate(models.Model):
         if not templated_content:
             return ""
 
-        used_tags = re.findall(r"{(.*?)}", templated_content)
+        if not self.motor_product_template:
+            return templated_content
+
+        used_tags = re.findall(r"{(.*?)}", templated_content.lower())
         template_tags = self.motor_product_template.get_template_tags()
         values = {}
 
         for tag in used_tags:
-            tag = tag.lower()
             if tag not in template_tags:
                 continue
 
             tag_value = template_tags.get(tag, tag)
-            value = self._resolve_tag_value(tag_value) or ""
-            values[tag] = str(value)
+            resolved_value = self._resolve_tag_value(tag_value) or ""
+            values[tag] = str(resolved_value)
 
         return self._apply_tag_values(templated_content, values)
 
-    def _resolve_tag_value(self, tag_value: str) -> str | list:
+    def _resolve_tag_value(self, tag_value: str) -> str:
         if tag_value.startswith("tests."):
-            test_index = int(tag_value.split(".")[1])
-            test = self.motor.tests.filtered(lambda t: t.template.id == test_index)[0]
-            return (
-                test.selection_result.display_value or test.selection_result.value
-                if test.selection_result
-                else test.computed_result
-            )
+            parts = tag_value.split(".")
+            if len(parts) < 2 or not parts[1].isdigit():
+                return ""
+            test_index = int(parts[1])
+            test = self.motor.tests.filtered(lambda t: t.template.id == test_index)
+            if not test:
+                return ""
+            test = test[0]
+            if test.selection_result:
+                return test.selection_result.display_value or test.selection_result.value
+            return test.computed_result
 
         value = self.motor
-        for field in tag_value.split("."):
-            value = getattr(value, field, "")
-        return value if not isinstance(value, list) else ", ".join(str(v) for v in value)
+        for field_part in tag_value.split("."):
+            value = getattr(value, field_part, "")
+            if isinstance(value, (list, tuple)):
+                value = ", ".join(str(v) for v in value)
+        return value
 
     @staticmethod
     def _apply_tag_values(content: str, values: dict[str, str]) -> str:

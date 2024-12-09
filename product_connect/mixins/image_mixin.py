@@ -22,11 +22,11 @@ class ImageMixin(models.AbstractModel):
 
     @api.depends("image_1920")
     def _compute_attachment(self) -> None:
-        for image in self:
-            image.attachment = self.env["ir.attachment"].search(
+        for record in self:
+            record.attachment = self.env["ir.attachment"].search(
                 [
                     ("res_model", "=", self._name),
-                    ("res_id", "=", image.id),
+                    ("res_id", "=", record.id),
                     ("res_field", "=", "image_1920"),
                 ],
                 limit=1,
@@ -39,30 +39,32 @@ class ImageMixin(models.AbstractModel):
 
     @api.depends("attachment.store_fname")
     def _compute_image_dimensions(self) -> None:
-        for image in self:
+        for record in self:
             db_name = self.env.cr.dbname
             filestore_path = Path(config.filestore(db_name))
             if not image.attachment.store_fname:
                 _logger.warning(f"Image: {image} has no store_fname")
                 self._reset_image_details(image)
+            if not record.attachment.store_fname:
+                self._reset_image_details(record)
                 continue
-            image_path = filestore_path / Path(image.attachment.store_fname)
+            image_path = filestore_path / Path(record.attachment.store_fname)
 
             try:
                 with Image.open(image_path) as img:
                     width, height = img.size
-                    image.image_1920_width = width
-                    image.image_1920_height = height
-                    image.image_1920_resolution = f"{width}x{height}"
+                    record.image_1920_width = width
+                    record.image_1920_height = height
+                    record.image_1920_resolution = f"{width}x{height}"
             except FileNotFoundError:
-                _logger.warning(f"Image: {image} file not found\n {image_path}")
-                self._reset_image_details(image)
+                _logger.warning(f"Image: {record} file not found\n {image_path}")
+                self._reset_image_details(record)
             except UnidentifiedImageError as e:
-                if "svg" in image.attachment.mimetype:
-                    _logger.info(f"Image: {image.attachment} is an SVG")
-                    self._reset_image_details(image)
+                if "svg" in record.attachment.mimetype:
+                    _logger.info(f"Image: {record.attachment} is an SVG")
+                    self._reset_image_details(record)
                 else:
-                    _logger.warning(f"Image: {image.attachment} unidentified image {e}")
+                    _logger.warning(f"Image: {record.attachment} unidentified image {e}")
                     raise e
 
     @staticmethod

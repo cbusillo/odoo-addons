@@ -181,6 +181,7 @@ class Motor(models.Model):
 
     hide_compression_page = fields.Boolean(compute="_compute_hide_compression_page", store=True)
     products = fields.One2many("product.template", "motor")
+    products_not_enabled = fields.One2many("product.template", "motor", domain=[("is_ready_for_sale", "=", False)])
     products_with_reference_product = fields.Many2many(
         "product.template",
         "motor_product_with_reference_product_rel",
@@ -193,13 +194,14 @@ class Motor(models.Model):
     products_to_dismantle = fields.One2many(
         "product.template",
         "motor",
-        domain=[("is_listable", "=", True)],
+        domain=[("is_ready_for_sale", "=", False), ("is_listable", "=", True)],
     )
 
     products_to_clean = fields.One2many(
         "product.template",
         "motor",
         domain=[
+            ("is_ready_for_sale", "=", False),
             ("is_listable", "=", True),
             ("is_dismantled", "=", True),
             ("is_dismantled_qc", "=", True),
@@ -210,6 +212,7 @@ class Motor(models.Model):
         "product.template",
         "motor",
         domain=[
+            ("is_ready_for_sale", "=", False),
             ("is_listable", "=", True),
             ("is_dismantled", "=", True),
             ("is_dismantled_qc", "=", True),
@@ -222,6 +225,7 @@ class Motor(models.Model):
         "product.template",
         "motor",
         domain=[
+            ("is_ready_for_sale", "=", False),
             ("is_listable", "=", True),
             ("is_dismantled", "=", True),
             ("is_dismantled_qc", "=", True),
@@ -260,10 +264,10 @@ class Motor(models.Model):
 
         return result
 
-    @api.depends("products.reference_product", "products.reference_product.image_256")
+    @api.depends("products_not_enabled.reference_product", "products_not_enabled.reference_product.image_256")
     def _compute_products_with_reference(self) -> None:
         for motor in self:
-            reference_products = motor.products.filtered(
+            reference_products = motor.products_not_enabled.filtered(
                 lambda p: p.reference_product and p.reference_product.image_256
             )
 
@@ -453,6 +457,8 @@ class Motor(models.Model):
                     condition_id = self.env.ref("product_connect.product_condition_used").id
                     motor.products.create(
                         {
+                            "name": product_template.name,
+                            "source": "motor",
                             "motor": motor.id,
                             "motor_product_template": product_template.id,
                             "initial_quantity": product_template.initial_quantity or 1,
@@ -461,6 +467,7 @@ class Motor(models.Model):
                             "condition": condition_id,
                             "manufacturer": motor.manufacturer.id,
                             "website_description": product_template.website_description,
+                            "is_ready_for_sale": False,
                         }
                     )
 
@@ -556,14 +563,14 @@ class Motor(models.Model):
                 product.standard_price = (cost_proportion * self.cost) / product.initial_quantity
 
     def enable_ready_for_sale(self) -> None:
-        self.products.enable_ready_for_sale()
+        self.products_not_enabled.enable_ready_for_sale()
 
     def print_motor_product_labels(self) -> None:
         products = self.products.filtered(lambda p: p.is_listable and p.initial_quantity > 0)
         if not products:
             raise UserError(_("No products to print labels for."))
 
-        products.print_product_labels(print_quantity=True)
+        products.print_product_labels(use_available_qty=True)
 
     def print_motor_pull_list(self) -> None:
         products = self.products.filtered(lambda p: p.is_listable and p.initial_quantity > 0)

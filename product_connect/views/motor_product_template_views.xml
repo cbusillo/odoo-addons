@@ -18,7 +18,7 @@
         <field name="binding_type">action</field>
         <field name="state">code</field>
         <field name="code">
-            records.print_product_labels(print_quantity=True)
+            records.print_product_labels(use_available_qty=True)
         </field>
     </record>
 
@@ -29,7 +29,7 @@
         <field name="binding_type">action</field>
         <field name="state">code</field>
         <field name="code">
-            records.print_product_labels(print_quantity=True, printer_job_type="product_label_picture")
+            records.print_product_labels(use_available_qty=True, printer_job_type="product_label_picture")
         </field>
     </record>
     <record id="view_motor_product_template_tree" model="ir.ui.view">

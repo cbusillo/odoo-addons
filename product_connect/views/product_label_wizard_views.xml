@@ -1,0 +1,34 @@
+<odoo>
+    <record id="view_product_label_wizard_form" model="ir.ui.view">
+        <field name="name">product.label.wizard.form</field>
+        <field name="model">product.label.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Print Product Labels">
+                <group>
+                    <field name="default_code" placeholder="Scan or type SKU" widget="qr_scanner"/>
+                    <field name="name"/>
+                    <field name="quantity_available"/>
+                    <field name="new_quantity"/>
+                    <field name="use_available_qty" widget="boolean_toggle"/>
+                    <field name="quantity_to_print" invisible="use_available_qty"/>
+                </group>
+                <footer>
+                    <button string="Print" type="object" name="action_print_labels" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_product_label_wizard" model="ir.actions.act_window">
+        <field name="name">Print Product Labels</field>
+        <field name="res_model">product.label.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_print_product_labels"
+              name="Product Labels"
+              parent="stock.menu_stock_inventory_control"
+              action="action_product_label_wizard"/>
+</odoo>

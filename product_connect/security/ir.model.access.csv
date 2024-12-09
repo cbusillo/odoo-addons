@@ -6,6 +6,7 @@ access_printnode_interface,access.printnode_interface,model_printnode_interface,
 access_product_color,product.color,model_product_color,base.group_user,1,1,1,0
 access_product_color_tag,product.color.tag,model_product_color_tag,base.group_user,1,1,1,0
 access_product_condition,product.condition,model_product_condition,base.group_user,1,1,1,0
+access_product_label_wizard,product.label.wizard,model_product_label_wizard,base.group_user,1,1,1,1
 
 access_motor,access_motor,model_motor,base.group_user,1,1,1,0
 access_motor_stage_inventory_admin,access_motor_stage_inventory_admin,model_motor_stage,stock.group_stock_manager,1,1,1,1

@@ -19,7 +19,7 @@
         <field name="binding_type">action</field>
         <field name="state">code</field>
         <field name="code">
-            records.print_product_labels(print_quantity=True)
+            records.print_product_labels(use_available_qty=True)
         </field>
     </record>
 
@@ -30,7 +30,7 @@
         <field name="binding_type">action</field>
         <field name="state">code</field>
         <field name="code">
-            records.print_product_labels(print_quantity=True, printer_job_type="product_label_picture")
+            records.print_product_labels(use_available_qty=True, printer_job_type="product_label_picture")
         </field>
     </record>
 
@@ -62,7 +62,7 @@
                 <field name="length" string="L" optional="show" width="2"/>
                 <field name="width" string="W" optional="show" width="2"/>
                 <field name="height" string="H" optional="show" width="2"/>
-                <field name="list_price" optional="show" width="7" string="Price"/>
+                <field name="list_price" optional="show" width="7"/>
                 <field name="standard_price" optional="show" width="7"/>
                 <field name="has_recent_messages" column_invisible="1"/>
             </tree>
@@ -153,13 +153,6 @@
         </field>
     </record>
 
-    <record id="action_product_import_image_view" model="ir.actions.act_window">
-        <field name="name">Product Image</field>
-        <field name="res_model">product.image</field>
-        <field name="view_mode">tree,form</field>
-        <field name="type">ir.actions.act_window</field>
-    </record>
-
     <record id="action_product_import" model="ir.actions.act_window">
         <field name="name">Product Import</field>
         <field name="type">ir.actions.act_window</field>
@@ -170,6 +163,7 @@
         (0, 0, {'view_mode': 'form', 'view_id': ref('view_product_import_form')})]"/>
         <field name="search_view_id" ref="view_product_import_search"/>
         <field name="domain">[('source', '=', 'import'), ('is_ready_for_sale', '=', False)]</field>
+        <field name="context">{'default_source': 'import'}</field>
     </record>
 
     <!-- Product Import: Sequence -->
