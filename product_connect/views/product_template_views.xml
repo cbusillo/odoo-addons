@@ -19,7 +19,7 @@
         <field name="binding_type">action</field>
         <field name="state">code</field>
         <field name="code">
-            action = records.print_product_labels(print_quantity=True)
+            action = records.print_product_labels(use_available_qty=True)
         </field>
     </record>
 
@@ -30,7 +30,7 @@
         <field name="binding_type">action</field>
         <field name="state">code</field>
         <field name="code">
-            action = records.print_product_labels(print_quantity=True, printer_job_type="product_label_picture")
+            action = records.print_product_labels(use_available_qty=True, printer_job_type="product_label_picture")
         </field>
     </record>
 
@@ -62,6 +62,10 @@
         <field name="arch" type="xml">
             <xpath expr="//div[@name='options']" position="before">
                 <div class="mb-3">
+                    <label for="source" class="d-inline me-2">Source</label>
+                    <field name="source" readonly="1" class="d-inline text-primary"/>
+                </div>
+                <div class="mb-3" invisible="not motor">
                     <label for="motor" class="d-inline me-2">Motor</label>
                     <field name="motor" options="{'no_create': True}" class="d-inline text-primary"/>
                 </div>
@@ -77,16 +81,9 @@
                 <field name="shopify_product_admin_url" widget="CopyClipboardURL"/>
 
             </field>
-            <xpath expr="//group[@name='description']" position="attributes">
-                <attribute name="string">Descriptions</attribute>
-                <attribute name="colspan">2</attribute>
+            <xpath expr="//field[@name='create_repair']" position="after">
+                <field name="website_description"/>
             </xpath>
-            <field name="description_sale" position="before">
-                <label for="website_description" colspan="2"/>
-                <field name="website_description" nolabel="1" colspan="2"
-                       options="{'codeview': true, 'resizable': true, 'minHeight': '400px'}"/>
-                <label for="description_sale" colspan="2"/>
-            </field>
             <xpath expr="//group[@name='group_lots_and_weight']/div[@name='weight']" position="after">
                 <div class="o_row">
                     <span>Dimensions (in)</span>

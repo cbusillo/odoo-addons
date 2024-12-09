@@ -1,9 +1,0 @@
-{
-  "python.languageServer": "None",
-  "python.analysis.extraPaths": [
-    "/Users/cbusillo/VSCode/Odoo17/odoo",
-  ],
-  "python.analysis.exclude": [
-    "/Users/cbusillo/VSCode/Odoo17/odoo",
-  ],
-}

@@ -42,9 +42,6 @@ class ImageMixin(models.AbstractModel):
         for record in self:
             db_name = self.env.cr.dbname
             filestore_path = Path(config.filestore(db_name))
-            if not image.attachment.store_fname:
-                _logger.warning(f"Image: {image} has no store_fname")
-                self._reset_image_details(image)
             if not record.attachment.store_fname:
                 self._reset_image_details(record)
                 continue

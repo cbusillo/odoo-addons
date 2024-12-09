@@ -16,7 +16,7 @@
                         t-att-placeholder="props.placeholder"
                         t-ref="input"
                         t-att-model="props.value"
-                        t-att-style="'max-width:' + maxLength + 'em;'"
+                        t-att-style="{'max-width': '200px'}"
                         t-on-focusin="onInputFocus"
                 />
                 <t t-if="isTranslatable">
@@ -26,15 +26,17 @@
                     />
                 </t>
             </t>
-            <button type="button" class="btn mb-2 mb-md-0 mr-md-2" t-on-click.prevent="toggleScan">
+            <button type="button" class="btn btn-primary mb-2 mb-md-0 mr-md-2" style="white-space: nowrap;"
+                    t-on-click.prevent="toggleScan">
                 <t t-out="state.buttonLabel"/>
             </button>
             <t t-if="state.flashlightLabel">
-                <button type="button" class="btn mb-2 mb-md-0" t-on-click.prevent="toggleFlashlight">
+                <button type="button" class="btn btn-secondary mb-2 mb-md-0" style="white-space: nowrap;"
+                        t-on-click.prevent="toggleFlashlight">
                     <t t-out="state.flashlightLabel"/>
                 </button>
             </t>
         </div>
-        <video id="qrRender" class="w-100 mt-2" t-ref="qrReader"></video>
+        <video id="qrRender" class="w-50 mt-2" t-ref="qrReader"></video>
     </t>
 </templates>
