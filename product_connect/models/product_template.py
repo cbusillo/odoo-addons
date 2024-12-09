@@ -171,13 +171,13 @@ class ProductTemplate(models.Model):
 
         result = super().write(vals)
 
-        for product in result:
+        for product in self:
             if product.image_count < 1 and (product.is_pictured or product.is_pictured_qc):
                 product.is_pictured = False
                 product.is_pictured_qc = False
 
         if any(f in vals for f in ui_refresh_fields):
-            for product in result:
+            for product in self:
                 product.motor.notify_changes()
         return result
 
