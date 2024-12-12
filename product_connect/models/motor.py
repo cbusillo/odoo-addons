@@ -403,7 +403,7 @@ class Motor(models.Model):
             test_vals.append(
                 {
                     "motor": self.id,
-                    "motor_product_template": template.id,
+                    "template": template.id,
                 }
             )
         if test_vals:
@@ -416,7 +416,7 @@ class Motor(models.Model):
             part_vals.append(
                 {
                     "motor": self.id,
-                    "motor_product_template": template.id,
+                    "template": template.id,
                 }
             )
         if part_vals:
