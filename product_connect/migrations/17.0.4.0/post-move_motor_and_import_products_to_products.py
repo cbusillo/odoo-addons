@@ -56,11 +56,12 @@ def cleanup_old_data(cr: Cursor, env: Environment):
     )
 
 
+# noinspection SqlResolve
 def migrate(cr: Cursor, version: str):
     if not version:
         return
 
-    env = api.Environment(cr, SUPERUSER_ID, {"active_test": False})
+    env = api.Environment(cr, SUPERUSER_ID, {"active_test": False, "tracking_disable": True})
 
     _logger.info("Starting post-migration of products")
 
@@ -151,12 +152,16 @@ def migrate(cr: Cursor, version: str):
                 migrate_messages(env, "motor.product", old_id, new_product.id)
             else:
                 vals["is_ready_for_sale"] = True
-                existing.write(vals)
+                parent_class: type[ProductTemplate] = next(
+                    cls for cls in ProductTemplate.__class__.mro() if cls.__name__ == "Model"
+                )
+                parent_class.write(existing, vals)
                 migrate_messages(env, "motor.product", old_id, existing.id)
 
         _logger.info("Migrating import products")
         env.cr.execute(
             """
+
             SELECT
                 id, name, default_code, mpn, manufacturer, part_type, condition, length,
                 width, height, bin, qty_available, list_price, standard_price, website_description
