@@ -456,20 +456,22 @@ class Motor(models.Model):
                 else:
                     condition_id = self.env.ref("product_connect.product_condition_used").id
                     motor.products.create(
-                        {
-                            "name": product_template.name,
-                            "source": "motor",
-                            "motor": motor.id,
-                            "motor_product_template": product_template.id,
-                            "initial_quantity": product_template.initial_quantity or 1,
-                            "bin": product_template.bin,
-                            "weight": product_template.weight,
-                            "condition": condition_id,
-                            "manufacturer": motor.manufacturer.id,
-                            "website_description": product_template.website_description,
-                            "is_ready_for_sale": False,
-                            "part_type": product_template.part_type.id,
-                        }
+                        [
+                            {
+                                "name": product_template.name,
+                                "source": "motor",
+                                "motor": motor.id,
+                                "motor_product_template": product_template.id,
+                                "initial_quantity": product_template.initial_quantity or 1,
+                                "bin": product_template.bin,
+                                "weight": product_template.weight,
+                                "condition": condition_id,
+                                "manufacturer": motor.manufacturer.id,
+                                "website_description": product_template.website_description,
+                                "is_ready_for_sale": False,
+                                "part_type": product_template.part_type.id,
+                            }
+                        ]
                     )
 
             if current_product_ids:
@@ -496,21 +498,25 @@ class Motor(models.Model):
             for i in range(1, desired_cylinders + 1):
                 if i not in existing_cylinder_numbers:
                     self.cylinders.create(
-                        {
-                            "motor": motor.id,
-                            "cylinder_number": i,
-                            "compression_psi": 0,
-                        }
+                        [
+                            {
+                                "motor": motor.id,
+                                "cylinder_number": i,
+                                "compression_psi": 0,
+                            }
+                        ]
                     )
 
     def _create_default_images(self, motor: Self) -> None:
         image_names = constants.MOTOR_IMAGE_NAME_AND_ORDER
         for name in image_names:
             self.images.create(
-                {
-                    "motor": motor.id,
-                    "name": name,
-                }
+                [
+                    {
+                        "motor": motor.id,
+                        "name": name,
+                    }
+                ]
             )
 
     def download_zip_of_images(self) -> dict[str, str]:
@@ -532,12 +538,14 @@ class Motor(models.Model):
             zip_data = base64.b64encode(zip_file.read())
 
         attachment = self.env["ir.attachment"].create(
-            {
-                "name": zip_path.name,
-                "datas": zip_data,
-                "type": "binary",
-                "mimetype": "application/zip",
-            }
+            [
+                {
+                    "name": zip_path.name,
+                    "datas": zip_data,
+                    "type": "binary",
+                    "mimetype": "application/zip",
+                }
+            ]
         )
 
         download_url = f"/web/binary/download_single?attachment_id={attachment.id}"
