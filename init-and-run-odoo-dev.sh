@@ -10,8 +10,8 @@ TEMP_DB_BACKUP="/tmp/${PROD_DB}_dump.gz"
 
 # Configuration for Odoo development environment
 if [ -z "$2" ] || [ "$2" = "local" ]; then
-    ODOO_BIN="../../Odoo/odoo17-base/odoo-bin"
-    ODOO_CONFIG_FILE="../odoo17.local.cfg"
+    ODOO_BIN="../../Odoo/odoo-base/odoo-bin"
+    ODOO_CONFIG_FILE="../odoo18.local.cfg"
 elif [ "$2" = "testing" ]; then
     ODOO_BIN="../odoo/odoo-bin"
     ODOO_CONFIG_FILE="/etc/odoo.conf"
