@@ -304,7 +304,8 @@
                                         </button>
                                     </div>
                                     <field name="products_not_enabled" mode="list"
-                                           context="{'form_view_ref': 'product_connect.view_motor_product_form'}"/>
+                                           context="{'list_view_ref': 'product_connect.view_motor_product_list',
+                                           'form_view_ref': 'product_connect.view_motor_product_form'}"/>
                                 </page>
                                 <page string="Reference" limit="200">
                                     <field name="products_with_reference_product"
