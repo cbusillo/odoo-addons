@@ -1,4 +1,3 @@
-/** @odoo-module **/
 import { onWillUpdateProps, useRef, useState } from '@odoo/owl'
 import { registry } from '@web/core/registry'
 import { BinaryField, binaryField } from '@web/views/fields/binary/binary_field'
@@ -55,7 +54,7 @@ export class ImageUploadWidget extends BinaryField {
         const file = ev.target.files[0]
         const data = await resizeImage(file, 1920, 1920)
 
-        await this.props.record.update({image_1920: data})
+        await this.props.record.update({ image_1920: data })
         await this.props.record.save()
         this.state.image = data
         this.state.size = this.getPreviewImageSize()

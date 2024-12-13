@@ -1,4 +1,3 @@
-/** @odoo-module **/
 import { onWillStart, useState } from "@odoo/owl"
 import { useService } from "@web/core/utils/hooks"
 import { HtmlField, htmlField } from "@web_editor/js/backend/html_field"

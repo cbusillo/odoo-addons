@@ -1,4 +1,3 @@
-/** @odoo-module **/
 import { FormController } from '@web/views/form/form_controller'
 import { registry } from '@web/core/registry'
 import { onWillUnmount } from "@odoo/owl";
@@ -40,8 +39,8 @@ class MotorFormController extends FormController {
         this.busService.removeEventListener('notification', this.onBusNotification.bind(this))
     }
 
-    onBusNotification({detail: notifications}) {
-        for (const {type, payload} of notifications) {
+    onBusNotification({ detail: notifications }) {
+        for (const { type, payload } of notifications) {
             if (type === 'notification' && payload.type === 'motor_product_update') {
                 this.reloadProductFields().catch(console.error)
             }
@@ -56,7 +55,7 @@ class MotorFormController extends FormController {
             'products_to_picture',
             'products_to_stock',
         ]
-        await this.model.load({fieldNames: fieldsToReload})
+        await this.model.load({ fieldNames: fieldsToReload })
     }
 
     onRecordChanged(editedRecord, editedFields) {
