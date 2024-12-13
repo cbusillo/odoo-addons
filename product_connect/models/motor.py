@@ -468,6 +468,7 @@ class Motor(models.Model):
                             "manufacturer": motor.manufacturer.id,
                             "website_description": product_template.website_description,
                             "is_ready_for_sale": False,
+                            "part_type": product_template.part_type.id,
                         }
                     )
 

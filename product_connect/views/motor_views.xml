@@ -303,7 +303,8 @@
                                             <i class="fa fa-upload"/>&#160;Import All
                                         </button>
                                     </div>
-                                    <field name="products_not_enabled" mode="tree"/>
+                                    <field name="products_not_enabled" mode="tree"
+                                           context="{'form_view_ref': 'product_connect.view_motor_product_form'}"/>
                                 </page>
                                 <page string="Reference" limit="200">
                                     <field name="products_with_reference_product"

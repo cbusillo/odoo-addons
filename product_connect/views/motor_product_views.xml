@@ -202,6 +202,7 @@
     <record id="view_motor_product_form" model="ir.ui.view">
         <field name="name">motor.product.form</field>
         <field name="model">product.template</field>
+        <field name="priority">1</field>
         <field name="arch" type="xml">
             <form string="Motor Product">
                 <div class="oe_chatter">
