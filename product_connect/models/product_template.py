@@ -478,7 +478,7 @@ class ProductTemplate(models.Model):
             if product.source == "standard" or not product.mpn:
                 product.reference_product = False
                 continue
-            products = self.env["product.template"].search([("mpn", "!=", False)])
+            products = self.env["product.template"].search([("mpn", "!=", False), ("image_256", "!=", False)])
             product_mpns = product.get_list_of_mpns()
             matching_products = products.filtered(lambda p: any(mpn.lower() in p.mpn.lower() for mpn in product_mpns))
             latest_product = max(matching_products, key=lambda p: p.create_date, default=None)
