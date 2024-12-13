@@ -1,7 +1,7 @@
 <odoo>
     <!-- List View -->
-    <record id="view_motor_tree" model="ir.ui.view">
-        <field name="name">motor.tree</field>
+    <record id="view_motor_list" model="ir.ui.view">
+        <field name="name">motor.list</field>
         <field name="model">motor</field>
         <field name="arch" type="xml">
             <list string="Motors List">
@@ -312,11 +312,11 @@
                                 </page>
                                 <page string="Dismantle" limit="200">
                                     <field name="products_to_dismantle" mode="list"
-                                           context="{'list_view_ref': 'product_connect.view_motor_product_tree_dismantle'}"/>
+                                           context="{'list_view_ref': 'product_connect.view_motor_product_list_dismantle'}"/>
                                 </page>
                                 <page string="Clean" limit="200">
                                     <field name="products_to_clean" mode="list"
-                                           context="{'list_view_ref': 'product_connect.view_motor_product_tree_clean'}"/>
+                                           context="{'list_view_ref': 'product_connect.view_motor_product_list_clean'}"/>
                                 </page>
                                 <page id="extended_testing" string="Extended Testing">
                                     <field name="extended_tests" widget="motor_test_widget">
@@ -347,11 +347,11 @@
                                 </page>
                                 <page string="Picture" limit="200">
                                     <field name="products_to_picture" mode="list"
-                                           context="{'list_view_ref': 'product_connect.view_motor_product_tree_picture'}"/>
+                                           context="{'list_view_ref': 'product_connect.view_motor_product_list_picture'}"/>
                                 </page>
                                 <page string="Stock" limit="200">
                                     <field name="products_to_stock" mode="list"
-                                           context="{'list_view_ref': 'product_connect.view_motor_product_tree_stock'}"/>
+                                           context="{'list_view_ref': 'product_connect.view_motor_product_list_stock'}"/>
                                 </page>
                             </notebook>
                         </page>

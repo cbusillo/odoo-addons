@@ -1,7 +1,7 @@
 <odoo>
-    <!-- Printnode Interface: Tree View-->
-    <record id="view_printnode_interface_tree" model="ir.ui.view">
-        <field name="name">printnode.interface.tree</field>
+    <!-- Printnode Interface: list View-->
+    <record id="view_printnode_interface_list" model="ir.ui.view">
+        <field name="name">printnode.interface.list</field>
         <field name="model">printnode.interface</field>
         <field name="arch" type="xml">
             <list string="PrintNode Interface">

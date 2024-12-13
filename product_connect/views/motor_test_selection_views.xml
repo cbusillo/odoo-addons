@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="view_motor_test_selection_tree" model="ir.ui.view">
-        <field name="name">motor.test.selection.tree</field>
+    <record id="view_motor_test_selection_list" model="ir.ui.view">
+        <field name="name">motor.test.selection.list</field>
         <field name="model">motor.test.selection</field>
         <field name="arch" type="xml">
             <list string="Motor Test Selections" editable="bottom" open_form_view="1">

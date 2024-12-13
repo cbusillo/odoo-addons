@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- List View -->
-    <record id="view_motor_part_template_tree" model="ir.ui.view">
-        <field name="name">motor.part.template.tree</field>
+    <record id="view_motor_part_template_list" model="ir.ui.view">
+        <field name="name">motor.part.template.list</field>
         <field name="model">motor.part.template</field>
         <field name="arch" type="xml">
             <list string="Motor Parts">

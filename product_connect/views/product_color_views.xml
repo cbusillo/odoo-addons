@@ -1,6 +1,6 @@
 <odoo>
-    <record id="view_product_color_tree" model="ir.ui.view">
-        <field name="name">product.color.tree</field>
+    <record id="view_product_color_list" model="ir.ui.view">
+        <field name="name">product.color.list</field>
         <field name="model">product.color</field>
         <field name="arch" type="xml">
             <list string="Product Colors" editable="bottom" open_form_view="True">

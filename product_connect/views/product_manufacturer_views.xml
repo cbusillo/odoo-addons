@@ -1,7 +1,7 @@
 <odoo>
     <!-- List view -->
-    <record id="product_manufacturer_tree_view" model="ir.ui.view">
-        <field name="name">product.manufacturer.tree.view</field>
+    <record id="product_manufacturer_list_view" model="ir.ui.view">
+        <field name="name">product.manufacturer.list.view</field>
         <field name="model">product.manufacturer</field>
         <field name="arch" type="xml">
             <list string="Product Manufacturer" editable="bottom" open_form_view="1">

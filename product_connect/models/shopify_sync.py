@@ -303,7 +303,6 @@ class ShopifySync(models.AbstractModel):
         return max(filter(None, dates))
 
     def finalize_import_and_commit_changes(self, current_import_start_time: datetime) -> None:
-        # This function finalizes the import process Added commits to ensure that the import is not rolled back if export fails
         self.env.cr.commit()
         last_import_time = current_import_start_time.isoformat(timespec="seconds").replace("+00:00", "Z")
         self.env["ir.config_parameter"].sudo().set_param("shopify.last_import_time", last_import_time)
@@ -329,7 +328,8 @@ class ShopifySync(models.AbstractModel):
                 if status in ["created", "updated"]:
                     updated_count += 1
                 _logger.debug(
-                    "Imported %s products from Shopify so far. Last product ID: %s has status: %s and was updated at %s start time: %s",
+                    "Imported %s products from Shopify so far. "
+                    "Last product ID: %s has status: %s and was updated at %s start time: %s",
                     total_count,
                     self.extract_id_from_gid(shopify_product["id"]),
                     shopify_product.get("status"),
@@ -346,7 +346,10 @@ class ShopifySync(models.AbstractModel):
                 has_more_data = False
 
         self.finalize_import_and_commit_changes(current_import_start_time)
-        message = f"Shopify imported {updated_count} out of {total_count} items successfully at {self.now_in_localtime_formatted()}"
+        message = (
+            f"Shopify imported {updated_count} out of {total_count} items successfully at "
+            f"{self.now_in_localtime_formatted()}"
+        )
         self.notify_channel("Shopify sync", message, "shopify_sync")
 
     def parse_shopify_product_data(self, product) -> dict[str, Any]:
@@ -773,7 +776,8 @@ class ShopifySync(models.AbstractModel):
             )
             total_count += 1
             _logger.debug(
-                "Exported %s of %s products from Shopify so far. Last product ID: %s has status: %s and was updated at %s",
+                "Exported %s of %s products from Shopify so far. "
+                "Last product ID: %s has status: %s and was updated at %s",
                 total_count,
                 len(odoo_products),
                 shopify_product_data.get("id") or odoo_product.id,

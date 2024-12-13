@@ -35,11 +35,11 @@
     </record>
 
     <!-- Product Import: List View -->
-    <record id="view_product_import_tree" model="ir.ui.view">
-        <field name="name">product.import.tree</field>
+    <record id="view_product_import_list" model="ir.ui.view">
+        <field name="name">product.import.list</field>
         <field name="model">product.template</field>
         <field name="arch" type="xml">
-            <list class="product_import_tree_view" string="Product Import" editable="top" multi_edit="1"
+            <list class="product_import_list_view" string="Product Import" editable="top" multi_edit="1"
                   open_form_view="1"
                   decoration-warning="not name or not list_price or list_price == 0 or not standard_price or standard_price == 0"
                   decoration-danger="has_recent_messages">
@@ -159,7 +159,7 @@
         <field name="res_model">product.template</field>
         <field name="view_mode">list,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
-        (0, 0, {'view_mode': 'list', 'view_id': ref('view_product_import_tree')}),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('view_product_import_list')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('view_product_import_form')})]"/>
         <field name="search_view_id" ref="view_product_import_search"/>
         <field name="domain">[('source', '=', 'import'), ('is_ready_for_sale', '=', False)]</field>

@@ -360,11 +360,13 @@ class ProductTemplate(models.Model):
         for image in images_with_data:
             if image.image_1920_file_size_kb < min_image_size:
                 missing_fields.append(
-                    f"Image ({image.index}) too small ({image.image_1920_file_size_kb}kB < {min_image_size}kB minimum size)"
+                    f"Image ({image.index}) too small "
+                    f"({image.image_1920_file_size_kb}kB < {min_image_size}kB minimum size)"
                 )
             if image.image_1920_width < min_image_resolution - 1 and image.image_1920_height < min_image_resolution - 1:
                 missing_fields.append(
-                    f"Image ({image.index}) too small ({image.image_1920_width}x{image.image_1920_height} < {min_image_resolution}x{min_image_resolution} minimum size)"
+                    f"Image ({image.index}) too small ({image.image_1920_width}x{image.image_1920_height} < "
+                    f"{min_image_resolution}x{min_image_resolution} minimum size)"
                 )
 
         return missing_fields

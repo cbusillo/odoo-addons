@@ -86,8 +86,6 @@ class Motor(models.Model):
         index=True,
         copy=False,
         readonly=True,
-        help="Date on which the state of your task has last been modified.\n"
-        "Based on this information you can identify tasks that are stalling and get statistics on the time it usually takes to move tasks from one stage/state to another.",
     )
 
     tags = fields.Many2many("motor.tag", string="Tags")

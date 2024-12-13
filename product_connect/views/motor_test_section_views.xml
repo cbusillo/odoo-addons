@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <!-- Motor Test Section List View -->
-        <record id="motor_test_section_tree_view" model="ir.ui.view">
-            <field name="name">motor.test.section.tree</field>
+        <record id="motor_test_section_list_view" model="ir.ui.view">
+            <field name="name">motor.test.section.list</field>
             <field name="model">motor.test.section</field>
             <field name="arch" type="xml">
                 <list string="Motor Test Sections">

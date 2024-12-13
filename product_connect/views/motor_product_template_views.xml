@@ -32,8 +32,8 @@
             records.print_product_labels(use_available_qty=True, printer_job_type="product_label_picture")
         </field>
     </record>
-    <record id="view_motor_product_template_tree" model="ir.ui.view">
-        <field name="name">motor.product.template.tree</field>
+    <record id="view_motor_product_template_list" model="ir.ui.view">
+        <field name="name">motor.product.template.list</field>
         <field name="model">motor.product.template</field>
         <field name="arch" type="xml">
             <list string="Motor Products" editable="bottom" open_form_view="1">

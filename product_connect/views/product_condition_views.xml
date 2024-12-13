@@ -1,6 +1,6 @@
 <odoo>
-    <record id="product_condition_tree_view" model="ir.ui.view">
-        <field name="name">product.condition.tree.view</field>
+    <record id="product_condition_list_view" model="ir.ui.view">
+        <field name="name">product.condition.list.view</field>
         <field name="model">product.condition</field>
         <field name="arch" type="xml">
             <list string="Product Condition" editable="bottom">
