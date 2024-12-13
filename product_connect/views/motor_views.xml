@@ -63,7 +63,7 @@
                         <a class="oe_stat_button btn btn-outline-secondary"
                            role="button"
                            onclick="
-                               const chatterBox = document.querySelector('.oe_chatter');
+                               const chatterBox = document.querySelector('.o-mail-ChatterContainer');
                                const toggleButton = this;
                                if (chatterBox) {
                                    chatterBox.classList.toggle('show');
@@ -357,11 +357,7 @@
                         </page>
                     </notebook>
                 </sheet>
-                <div class="oe_chatter collapse">
-                    <field name="message_follower_ids" options="{'post_refresh': True}"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
-                </div>
+                <chatter class="collapse"/>
             </form>
         </field>
     </record>
