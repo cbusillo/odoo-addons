@@ -36,7 +36,7 @@
         <field name="name">motor.product.template.tree</field>
         <field name="model">motor.product.template</field>
         <field name="arch" type="xml">
-            <tree string="Motor Products" editable="bottom" open_form_view="1">
+            <list string="Motor Products" editable="bottom" open_form_view="1">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="part_type"/>
@@ -45,7 +45,7 @@
                 <field name="stroke" widget="many2many_tags"/>
                 <field name="excluded_by_parts" widget="many2many_tags"/>
                 <field name="sequence"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -83,11 +83,11 @@
                         <group string="Exclusions" colspan="2">
                             <field name="excluded_by_parts"/>
                             <field name="excluded_by_tests">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="conditional_test"/>
                                     <field name="conditional_operator"/>
                                     <field name="condition_value"/>
-                                </tree>
+                                </list>
                             </field>
                         </group>
                         <group string="HTML Description" colspan="2">
@@ -107,7 +107,7 @@
         <field name="name">Motor Products</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">motor.product.template</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="menu_product_motor_product" name="Motor Products" parent="menu_subheader_config_motor"

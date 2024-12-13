@@ -114,7 +114,7 @@ class Motor(models.Model):
             "name": "Motor Products",
             "type": "ir.actions.act_window",
             "res_model": "product.template",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("motor", "=", self.id)],
             "context": {"default_motor": self.id},
             "target": "new",
@@ -125,7 +125,7 @@ class Motor(models.Model):
             "name": "Motor Tests",
             "type": "ir.actions.act_window",
             "res_model": "motor.test",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("motor", "=", self.id)],
             "context": {"default_motor": self.id},
         }

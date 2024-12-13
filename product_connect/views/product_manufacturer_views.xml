@@ -1,15 +1,15 @@
 <odoo>
-    <!-- Tree view -->
+    <!-- List view -->
     <record id="product_manufacturer_tree_view" model="ir.ui.view">
         <field name="name">product.manufacturer.tree.view</field>
         <field name="model">product.manufacturer</field>
         <field name="arch" type="xml">
-            <tree string="Product Manufacturer" editable="bottom" open_form_view="1">
+            <list string="Product Manufacturer" editable="bottom" open_form_view="1">
                 <field name="name"/>
                 <field name="name_normalized"/>
                 <field name="is_motor_manufacturer"/>
                 <field name="image_1920"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -26,10 +26,10 @@
                         <field name="is_motor_manufacturer"/>
                         <field name="image_1920" widget="image"/>
                         <field name="products">
-                            <tree editable="bottom" create="0">
+                            <list editable="bottom" create="0">
                                 <field name="name" readonly="1"/>
                                 <field name="manufacturer"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                 </sheet>
@@ -41,7 +41,7 @@
     <record id="action_product_manufacturer" model="ir.actions.act_window">
         <field name="name">Product Manufacturers</field>
         <field name="res_model">product.manufacturer</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Menu item -->

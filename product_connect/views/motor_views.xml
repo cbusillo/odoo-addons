@@ -1,10 +1,10 @@
 <odoo>
-    <!-- Tree View -->
+    <!-- List View -->
     <record id="view_motor_tree" model="ir.ui.view">
         <field name="name">motor.tree</field>
         <field name="model">motor</field>
         <field name="arch" type="xml">
-            <tree string="Motors List">
+            <list string="Motors List">
                 <field name="has_notes" widget="boolean_toggle" string="Notes"/>
                 <field name="motor_number" string="Motor"/>
                 <field name="location" optional="show"/>
@@ -23,7 +23,7 @@
                 <field name="shaft_length" optional="hide"/>
                 <field name="cost" widget="monetary"/>
                 <field name="price" widget="monetary" optional="hide"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -148,23 +148,23 @@
                                 </button>
                             </header>
                             <field name="images" class="motor_image_adder">
-                                <tree editable="bottom" delete="False">
+                                <list editable="bottom" delete="False">
                                     <field name="name"/>
                                     <field name="image_256" widget="image" column_invisible="1"/>
                                     <field name="image_1920" widget="image_upload"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
 
                         <page string="Missing Parts">
                             <field name="parts">
-                                <tree editable="bottom" create="False" delete="False" open_form_view="0">
+                                <list editable="bottom" create="False" delete="False" open_form_view="0">
                                     <field name="is_missing" widget="boolean_toggle"
                                            class="large-toggle o_motor_part_missing_column"/>
                                     <field name="name" class="sc_full_width"/>
                                     <field name="template" column_invisible="1"/>
                                     <field name="hidden_tests" column_invisible="1"/>
-                                </tree>
+                                </list>
                             </field>
                             <group>
                                 <field name="notes"/>
@@ -172,7 +172,7 @@
                         </page>
                         <page id="basic_testing" string="Basic Testing">
                             <field name="basic_tests" widget="motor_test_widget">
-                                <tree>
+                                <list>
                                     <field name="id"/>
                                     <field name="name"/>
                                     <field name="result_type"/>
@@ -192,7 +192,7 @@
                                     <field name="configurations"/>
                                     <field name="conditions"/>
                                     <field name="conditional_tests"/>
-                                </tree>
+                                </list>
                             </field>
                             <group>
                                 <field name="notes"/>
@@ -204,11 +204,11 @@
                                         string="Mark All Untestable"/>
                             </header>
                             <field name="cylinders">
-                                <tree editable="bottom" delete="False" create="False">
+                                <list editable="bottom" delete="False" create="False">
                                     <field name="is_untestable" class="large-toggle" widget="boolean_toggle"/>
                                     <field name="cylinder_number" readonly="1"/>
                                     <field name="compression_psi" string="PSI"/>
-                                </tree>
+                                </list>
                             </field>
                             <field name="hide_compression_page" invisible="1"/>
                         </page>
@@ -242,25 +242,25 @@
 
                             <group string="Basic Testing">
                                 <field name="basic_tests" readonly="1" string="">
-                                    <tree decoration-danger="(not computed_result or computed_result == 0) and is_applicable"
+                                    <list decoration-danger="(not computed_result or computed_result == 0) and is_applicable"
                                           decoration-muted="not is_applicable">
                                         <field name="name"/>
                                         <field name="result_type" string="Test Type"/>
                                         <field name="computed_result" string="Test Result"/>
                                         <field name="file_result" widget="pdf_viewer"/>
                                         <field name="is_applicable" widget="boolean_toggle"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </group>
 
                             <group string="Compression Testing">
                                 <group>
                                     <field name="cylinders" readonly="1">
-                                        <tree decoration-danger="not compression_psi and not is_untestable">
+                                        <list decoration-danger="not compression_psi and not is_untestable">
                                             <field name="is_untestable"/>
                                             <field name="cylinder_number"/>
                                             <field name="compression_psi"/>
-                                        </tree>
+                                        </list>
                                     </field>
                                 </group>
 
@@ -268,14 +268,14 @@
 
                             <group string="Extended Testing">
                                 <field name="extended_tests" readonly="1" string="">
-                                    <tree decoration-danger="(not computed_result or computed_result == 0) and is_applicable"
+                                    <list decoration-danger="(not computed_result or computed_result == 0) and is_applicable"
                                           decoration-muted="not is_applicable">
                                         <field name="name"/>
                                         <field name="result_type" string="Test Type"/>
                                         <field name="computed_result" string="Test Result"/>
                                         <field name="file_result" widget="pdf_viewer"/>
                                         <field name="is_applicable" column_invisible="1"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </group>
                         </page>
@@ -303,24 +303,24 @@
                                             <i class="fa fa-upload"/>&#160;Import All
                                         </button>
                                     </div>
-                                    <field name="products_not_enabled" mode="tree"
+                                    <field name="products_not_enabled" mode="list"
                                            context="{'form_view_ref': 'product_connect.view_motor_product_form'}"/>
                                 </page>
                                 <page string="Reference" limit="200">
                                     <field name="products_with_reference_product"
-                                           context="{'tree_view_ref': 'product_connect.view_motor_product_kanban'}"/>
+                                           context="{'list_view_ref': 'product_connect.view_motor_product_kanban'}"/>
                                 </page>
                                 <page string="Dismantle" limit="200">
-                                    <field name="products_to_dismantle" mode="tree"
-                                           context="{'tree_view_ref': 'product_connect.view_motor_product_tree_dismantle'}"/>
+                                    <field name="products_to_dismantle" mode="list"
+                                           context="{'list_view_ref': 'product_connect.view_motor_product_tree_dismantle'}"/>
                                 </page>
                                 <page string="Clean" limit="200">
-                                    <field name="products_to_clean" mode="tree"
-                                           context="{'tree_view_ref': 'product_connect.view_motor_product_tree_clean'}"/>
+                                    <field name="products_to_clean" mode="list"
+                                           context="{'list_view_ref': 'product_connect.view_motor_product_tree_clean'}"/>
                                 </page>
                                 <page id="extended_testing" string="Extended Testing">
                                     <field name="extended_tests" widget="motor_test_widget">
-                                        <tree>
+                                        <list>
                                             <field name="id"/>
                                             <field name="name"/>
                                             <field name="result_type"/>
@@ -339,19 +339,19 @@
                                             <field name="configurations"/>
                                             <field name="conditions"/>
                                             <field name="conditional_tests"/>
-                                        </tree>
+                                        </list>
                                     </field>
                                     <group>
                                         <field name="notes"/>
                                     </group>
                                 </page>
                                 <page string="Picture" limit="200">
-                                    <field name="products_to_picture" mode="tree"
-                                           context="{'tree_view_ref': 'product_connect.view_motor_product_tree_picture'}"/>
+                                    <field name="products_to_picture" mode="list"
+                                           context="{'list_view_ref': 'product_connect.view_motor_product_tree_picture'}"/>
                                 </page>
                                 <page string="Stock" limit="200">
-                                    <field name="products_to_stock" mode="tree"
-                                           context="{'tree_view_ref': 'product_connect.view_motor_product_tree_stock'}"/>
+                                    <field name="products_to_stock" mode="list"
+                                           context="{'list_view_ref': 'product_connect.view_motor_product_tree_stock'}"/>
                                 </page>
                             </notebook>
                         </page>
@@ -453,14 +453,14 @@
         <field name="name">Motors</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">motor</field>
-        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_mode">list,kanban,form</field>
         <field name="search_view_id" ref="view_motor_search"/>
     </record>
 
     <record model="ir.actions.act_window" id="action_motor_stages">
         <field name="name">Motor Stages</field>
         <field name="res_model">motor</field>
-        <field name="view_mode">kanban,tree,pivot,graph,form</field>
+        <field name="view_mode">kanban,list,pivot,graph,form</field>
         <field name="view_id" ref="view_motor_kanban"/>
         <field name="context">{'group_by': 'stage'}</field>
     </record>
@@ -486,7 +486,7 @@
     <record id="action_motor_analysis" model="ir.actions.act_window">
         <field name="name">Motors Analysis</field>
         <field name="res_model">motor</field>
-        <field name="view_mode">pivot,graph,activity,cohort,kanban,tree,form</field>
+        <field name="view_mode">pivot,graph,activity,cohort,kanban,list,form</field>
         <field name="context">{
             'search_default_group_manufacturer': 1,
             'group_by': ['stage']

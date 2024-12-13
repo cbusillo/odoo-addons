@@ -15,6 +15,7 @@
         "stock",
         "mail",
         "project",
+        "repair",
     ],
     "description": "Module to scrape websites for model data.",
     "data": [

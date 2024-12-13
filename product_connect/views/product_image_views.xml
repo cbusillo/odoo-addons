@@ -3,7 +3,7 @@
         <field name="name">product.image.edit.tree</field>
         <field name="model">product.image</field>
         <field name="arch" type="xml">
-            <tree string="Product Images" editable="bottom">
+            <list string="Product Images" editable="bottom">
                 <field name="name"/>
                 <field name="image_1920" widget="image_upload"/>
                 <field name="create_date"/>
@@ -11,7 +11,7 @@
                 <field name="image_1920_resolution" string="Image Res"/>
                 <field name="image_1920_file_size_kb" widget="integer"/>
                 <button name="action_open_full_image" type="object" string="View Full Image" class="btn btn-primary"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -46,7 +46,7 @@
     <record id="action_product_image_edit" model="ir.actions.act_window">
         <field name="name">Product Images</field>
         <field name="res_model">product.image</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="view_id" ref="product_image_edit_tree"/>
         <field name="search_view_id" ref="view_product_image_edit_search"/>
     </record>
