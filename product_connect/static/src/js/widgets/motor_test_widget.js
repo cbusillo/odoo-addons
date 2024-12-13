@@ -106,10 +106,9 @@ export class MotorTestWidget extends Component {
     }
 
     sortMotorTests(motorTests) {
-        return sortBy(motorTests, (test) => [
-            test.data.section_sequence || 0,
-            test.data.sequence || 0,
-        ])
+        return sortBy(motorTests, (test) =>
+            (test.data.section_sequence || 0) * 1000 + (test.data.sequence || 0)
+        );
     }
 
     groupMotorTestsBySection(motorTests, missingParts) {

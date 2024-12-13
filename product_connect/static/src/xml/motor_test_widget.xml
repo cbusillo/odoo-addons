@@ -8,7 +8,7 @@
                        t-key="sectionEntry[0]">
                         <div class="col-md-6">
                             <div class="card mb-4">
-                                <div class="card-header bg-white text-white p-2">
+                                <div class="card-header bg-primary text-white p-2 rounded-top">
                                     <h3 class="card-title mb-0">
                                         <t t-esc="sectionEntry[0]"/>
                                     </h3>
