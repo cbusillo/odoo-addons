@@ -369,15 +369,16 @@
             <kanban class="o_project_kanban o_kanban_small_column o_kanban_project_tasks">
                 <progressbar field="stage" colors='{"0": "bg-secondary", "50": "bg-warning", "100": "bg-success"}'/>
                 <templates>
-                    <t t-name="kanban-box">
+                    <t t-name="card">
                         <div class="oe_kanban_global_click" style="overflow: hidden;">
                             <!-- Image display -->
                             <t t-if="record.image_icon.raw_value">
                                 <field name="image_icon" invisible="1"/>
                                 <div class="o_kanban_image"
                                      style="float: left; margin-right: 10px;">
-                                    <img t-att-src="kanban_image('motor', 'image_icon', record.id.raw_value)"
-                                         style="border-radius: 5px; max-width: none;" alt="Motor Image"/>
+                                    <img t-att-src="'/web/image/motor/' + record.id.raw_value + '/image_icon'"
+                                         style="border-radius: 5px; max-width: none;"
+                                         alt="Motor Image"/>
                                 </div>
 
                             </t>
