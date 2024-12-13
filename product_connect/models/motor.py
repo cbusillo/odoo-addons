@@ -10,7 +10,7 @@ from typing import Self
 
 import odoo
 import qrcode
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError, UserError
 
 from odoo.addons.product_connect.utils import constants
@@ -241,7 +241,7 @@ class Motor(models.Model):
         motors = super().create(vals_list)
         for motor in motors:
             if motor.id > 999999:
-                raise ValidationError(_("Motor number cannot exceed 999999."))
+                raise ValidationError(self.env._("Motor number cannot exceed 999999."))
             motor.motor_number = f"M-{str(motor.id).zfill(6)}"
             motor._create_default_images(motor)
             motor._compute_compression()
@@ -371,7 +371,7 @@ class Motor(models.Model):
     def _check_horsepower(self) -> None:
         for motor in self:
             if motor.horsepower < 0.0 or motor.horsepower > 600.0:
-                raise ValidationError(_("Horsepower must be between 0 and 600."))
+                raise ValidationError(self.env._("Horsepower must be between 0 and 600."))
 
     @api.constrains("location")
     def _check_unique_location(self) -> None:
@@ -381,7 +381,7 @@ class Motor(models.Model):
             existing_motor = self.search([("location", "=", motor.location), ("id", "!=", motor.id)], limit=1)
             if existing_motor:
                 raise ValidationError(
-                    _(f"Motor {existing_motor.motor_number} with location '{motor.location}' already exists.")
+                    self.env._(f"Motor {existing_motor.motor_number} with location '{motor.location}' already exists.")
                 )
 
     @staticmethod
@@ -575,14 +575,14 @@ class Motor(models.Model):
     def print_motor_product_labels(self) -> None:
         products = self.products.filtered(lambda p: p.is_listable and p.initial_quantity > 0)
         if not products:
-            raise UserError(_("No products to print labels for."))
+            raise UserError(self.env._("No products to print labels for."))
 
         products.print_product_labels(use_available_qty=True)
 
     def print_motor_pull_list(self) -> None:
         products = self.products.filtered(lambda p: p.is_listable and p.initial_quantity > 0)
         if not products:
-            raise UserError(_("No products to print pull list for."))
+            raise UserError(self.env._("No products to print pull list for."))
 
         report_name = "product_connect.report_motorproductpulllist"
         report_object = self.env["ir.actions.report"]._get_report_from_name(report_name)

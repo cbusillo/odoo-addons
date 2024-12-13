@@ -2,7 +2,7 @@ import re
 from datetime import timedelta
 from typing import Any
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError, UserError
 
 
@@ -225,7 +225,7 @@ class ProductTemplate(models.Model):
             if not product.default_code:
                 continue
             if not re.match(r"^\d{4,8}$", str(product.default_code)):
-                raise ValidationError(_("SKU must be 4-8 digits."))
+                raise ValidationError(self.env._("SKU must be 4-8 digits."))
 
     def get_next_sku(self) -> str:
         sequence = self.env.ref("product_connect.sequence_product_template_default_code")
