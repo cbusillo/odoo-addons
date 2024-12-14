@@ -1,0 +1,230 @@
+examples:
+  retrieveFileMetadata:
+    summary: Retrieve file metadata
+    value:
+      query: |
+        query($owner: String!, $name: String!, $expression: String!) {
+          repository(owner: $owner, name: $name) {
+            object(expression: $expression) {
+              ... on Blob {
+                oid
+                byteSize
+              }
+            }
+          }
+        }
+      variables:
+        owner: "cbusillo"
+        name: "odoo17-addons"
+        expression: "opw-testing:requirements.txt"
+
+  recentCommits:
+    summary: Retrieve recent commits
+    value:
+      query: |
+        query($owner: String!, $name: String!, $branch: String!) {
+          repository(owner: $owner, name: $name) {
+            ref(qualifiedName: $branch) {
+              target {
+                ... on Commit {
+                  history(first: 5) {
+                    edges {
+                      node {
+                        oid
+                        message
+                        committedDate
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      variables:
+        owner: "cbusillo"
+        name: "odoo17-addons"
+        branch: "opw-testing"
+
+  keywordSearchInFile:
+    summary: Search for a specific keyword in a file
+    value:
+      query: |
+        query($owner: String!, $name: String!, $expression: String!) {
+          repository(owner: $owner, name: $name) {
+            object(expression: $expression) {
+              ... on Blob {
+                text
+              }
+            }
+          }
+        }
+      variables:
+        owner: "cbusillo"
+        name: "odoo17-addons"
+        expression: "opw-testing:requirements.txt"
+
+  listBranches:
+    summary: List all branches in a repository
+    value:
+      query: |
+        query($owner: String!, $name: String!) {
+          repository(owner: $owner, name: $name) {
+            refs(refPrefix: "refs/heads/", first: 100) {
+              nodes {
+                name
+              }
+            }
+          }
+        }
+      variables:
+        owner: "cbusillo"
+        name: "odoo17-addons"
+
+  fileDiffBetweenCommits:
+    summary: Retrieve file diff between two commits
+    value:
+      query: |
+        query($owner: String!, $name: String!, $base: String!, $head: String!) {
+          repository(owner: $owner, name: $name) {
+            comparison(base: $base, head: $head) {
+              files {
+                path
+                additions
+                deletions
+                patch
+              }
+            }
+          }
+        }
+      variables:
+        owner: "cbusillo"
+        name: "odoo17-addons"
+        base: "abc123"
+        head: "def456"
+
+  contributorsList:
+    summary: Fetch all contributors to a repository
+    value:
+      query: |
+        query($owner: String!, $name: String!) {
+          repository(owner: $owner, name: $name) {
+            mentionableUsers(first: 100) {
+              nodes {
+                login
+                name
+              }
+            }
+          }
+        }
+      variables:
+        owner: "cbusillo"
+        name: "odoo17-addons"
+
+  defaultBranch:
+    summary: Fetch repository default branch
+    value:
+      query: |
+        query($owner: String!, $name: String!) {
+          repository(owner: $owner, name: $name) {
+            defaultBranchRef {
+              name
+            }
+          }
+        }
+      variables:
+        owner: "cbusillo"
+        name: "odoo17-addons"
+  getFolderExample:
+    summary: Get text contents of all files in a folder
+    value:
+      query: |
+        query($owner: String!, $name: String!, $expr: String!) {
+          repository(owner: $owner, name: $name) {
+            object(expression: $expr) {
+              ... on Tree {
+                entries {
+                  name
+                  object {
+                    ... on Blob {
+                      text
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      variables:
+        owner: "cbusillo"
+        name: "odoo17-addons"
+        expr: "opw-testing:product_connect/models"
+  getFolderStructureExample:
+    summary: Get Folder Structure Without File Contents
+    value:
+      query: |
+        query($owner: String!, $name: String!, $expr: String!) {
+          repository(owner: $owner, name: $name) {
+            object(expression: $expr) {
+              ... on Tree {
+                entries {
+                  name
+                  path
+                  type
+                }
+              }
+            }
+          }
+        }
+      variables:
+        owner: "cbusillo"
+        name: "odoo17-addons"
+        expr: "opw-testing:product_connect/models"
+
+  getSpecificFileExample:
+    summary: Get Specific File Content
+    value:
+      query: |
+        query($owner: String!, $name: String!, $expression: String!) {
+          repository(owner: $owner, name: $name) {
+            object(expression: $expression) {
+              ... on Blob {
+                text
+              }
+            }
+          }
+        }
+      variables:
+        owner: "cbusillo"
+        name: "odoo17-addons"
+        expression: "opw-testing:product_connect/models/product_template.py"
+
+  getSpecificFileBatchExample:
+    summary: Fetch Contents of Multiple Files
+    value:
+      query: |
+        query {
+          repository(owner: "cbusillo", name: "odoo17-addons") {
+            object(expression: "opw-testing:product_connect/models/__init__.py") {
+              ... on Blob {
+                text
+              }
+            }
+            motor: object(expression: "opw-testing:product_connect/models/motor.py") {
+              ... on Blob {
+                text
+              }
+            }
+            motorPart: object(expression: "opw-testing:product_connect/models/motor_part.py") {
+              ... on Blob {
+                text
+              }
+            }
+            motorProduct: object(expression: "opw-testing:product_connect/models/motor_product.py") {
+              ... on Blob {
+                text
+              }
+            }
+          }
+        }
+      notes: Consider splitting queries for large folders into smaller batches or using pagination.

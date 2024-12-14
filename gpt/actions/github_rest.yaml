@@ -1,0 +1,451 @@
+openapi: 3.0.3
+info:
+  title: GitHub Repository Extended API
+  version: 1.0.0
+  description: >
+    API for fetching repository data, searching code, checking rate limits, comparing branches, and getting files via GraphQL.
+servers:
+  - url: https://api.github.com
+    description: GitHub API server
+security:
+  - bearerAuth: [ ]
+paths:
+  /search/commits:
+    get:
+      operationId: searchCommits
+      summary: Search commits in a repository (REST)
+      description: >
+        Perform a commit search within a GitHub repository's default branch using the REST API.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: >
+            The search query keywords and filters.  
+            Format: `keyword repo:{owner}/{repo}`  
+            Example: `q=fixes repo:cbusillo/odoo17-addons`
+          schema:
+            type: string
+            example: fixes repo:cbusillo/odoo17-addons
+        - name: per_page
+          in: query
+          required: false
+          description: Number of results per page (max 100).
+          schema:
+            type: integer
+            default: 30
+            example: 10
+        - name: page
+          in: query
+          required: false
+          description: Page number of results to fetch.
+          schema:
+            type: integer
+            default: 1
+            example: 1
+      responses:
+        '200':
+          description: Commit search results returned successfully.
+          content:
+            application/vnd.github+json:
+              schema:
+                $ref: '#/components/schemas/CodeSearchResult'
+  /search/code:
+    get:
+      operationId: searchCode
+      summary: Search code in a repository (REST)
+      description: >
+        Perform a code search within a GitHub repository's default branch using the REST API.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: >
+            The search query keywords and filters.  
+            Format: `keyword repo:{owner}/{repo}`  
+            Example: `q=motor repo:cbusillo/odoo17-addons`
+          schema:
+            type: string
+            example: motor repo:cbusillo/odoo17-addons
+        - name: per_page
+          in: query
+          required: false
+          description: Number of results per page (max 100).
+          schema:
+            type: integer
+            default: 30
+            example: 10
+        - name: page
+          in: query
+          required: false
+          description: Page number of results to fetch.
+          schema:
+            type: integer
+            default: 1
+            example: 1
+      responses:
+        '200':
+          description: Code search results returned successfully.
+          content:
+            application/vnd.github+json:
+              schema:
+                $ref: '#/components/schemas/CodeSearchResult'
+  /rate_limit:
+    get:
+      operationId: getRateLimit
+      summary: Get Rate Limit Status
+      description: Check the current rate limit for the authenticated user.
+      responses:
+        '200':
+          description: Rate limit status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitStatus'
+  /repos/{owner}/{repo}/git/trees/{tree_sha}:
+    get:
+      operationId: fetchRepositoryTree
+      summary: Fetch the full repository tree
+      description: |
+        Retrieves the complete file and directory tree of a GitHub repository from a specific branch or commit.
+        - `tree_sha` can be a branch name.
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          description: GitHub username or organization name.
+          schema:
+            type: string
+            example: cbusillo
+        - name: repo
+          in: path
+          required: true
+          description: Repository name.
+          schema:
+            type: string
+            example: odoo17-addons
+        - name: tree_sha
+          in: path
+          required: true
+          description: The SHA of the tree or the branch name.
+          schema:
+            type: string
+            example: opw-testing
+        - name: recursive
+          in: query
+          required: false
+          description: Set to `1` to fetch the tree recursively.
+          schema:
+            type: string
+            enum: [ "1" ]
+            default: "1"
+      responses:
+        '200':
+          description: Tree fetched successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepositoryTreeResponse'
+  /repos/{owner}/{repo}/compare/{base}...{head}:
+    get:
+      operationId: compareBranches
+      summary: Compare two branches or commits
+      description: >
+        Compare two branches, tags, or commits in a repository.
+        Returns commits and files changed.
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          schema:
+            type: string
+            example: cbusillo
+        - name: repo
+          in: path
+          required: true
+          schema:
+            type: string
+            example: odoo17-addons
+        - name: base
+          in: path
+          required: true
+          schema:
+            type: string
+            example: opw-testing
+        - name: head
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          description: Page number of results to fetch.
+          schema:
+            type: integer
+            default: 1
+            example: 1
+        - name: per_page
+          in: query
+          required: false
+          description: Number of results per page (max 100).
+          schema:
+            type: integer
+            default: 30
+            example: 30
+      responses:
+        '200':
+          description: Comparison performed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompareResponse'
+  /graphql:
+    post:
+      operationId: graphqlQuery
+      summary: Execute a GitHub GraphQL Query
+      x-openai-isConsequential: false
+      description: >
+        Use this endpoint to execute a GraphQL query. 
+        Refer to examples in the knowledge file `gpt-graphql-examples.yaml 
+        for specific use cases like fetching folder structures or file contents.
+        To target a non-main branch, include `branch:path` in the expression.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  description: The GraphQL query string.
+              required:
+                - query
+                - variables
+      responses:
+        '200':
+          description: GraphQL query executed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A descriptive error message.
+        documentation_url:
+          type: string
+          description: A link to documentation or more details about the error.
+      required:
+        - message
+    RateLimitStatus:
+      type: object
+      properties:
+        resources:
+          type: object
+          properties:
+            core:
+              type: object
+              properties:
+                limit:
+                  type: integer
+                remaining:
+                  type: integer
+                reset:
+                  type: integer
+                used:
+                  type: integer
+              required: [ limit, remaining, reset, used ]
+            search:
+              type: object
+              properties:
+                limit:
+                  type: integer
+                remaining:
+                  type: integer
+                reset:
+                  type: integer
+                used:
+                  type: integer
+              required: [ limit, remaining, reset, used ]
+        rate:
+          type: object
+          properties:
+            limit:
+              type: integer
+            remaining:
+              type: integer
+            reset:
+              type: integer
+            used:
+              type: integer
+          required: [ limit, remaining, reset, used ]
+      required: [ resources, rate ]
+    RepositoryTreeResponse:
+      type: object
+      properties:
+        sha:
+          type: string
+          description: SHA of the fetched tree.
+        truncated:
+          type: boolean
+          description: Indicates if the tree was truncated.
+        tree:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+                description: Path of the file or directory.
+              type:
+                type: string
+              sha:
+                type: string
+                description: SHA of the object.
+              size:
+                type: integer
+                description: Size of the file in bytes (if applicable).
+              url:
+                type: string
+                description: API URL for the object.
+    CompareResponse:
+      type: object
+      properties:
+        url:
+          type: string
+        base_commit:
+          type: object
+        merge_base_commit:
+          type: object
+        commits:
+          type: array
+          items:
+            type: object
+        files:
+          type: array
+          items:
+            type: object
+            properties:
+              filename:
+                type: string
+              additions:
+                type: integer
+              deletions:
+                type: integer
+              changes:
+                type: integer
+              status:
+                type: string
+              patch:
+                type: string
+        ahead_by:
+          type: integer
+        behind_by:
+          type: integer
+        total_commits:
+          type: integer
+      required:
+        - base_commit
+        - merge_base_commit
+        - commits
+        - files
+        - ahead_by
+        - behind_by
+        - total_commits
+    CodeSearchResult:
+      type: object
+      properties:
+        total_count:
+          type: integer
+          description: The total number of code search results.
+        incomplete_results:
+          type: boolean
+          description: Indicates if the results are incomplete.
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The file name.
+              path:
+                type: string
+                description: The file path in the repository.
+              sha:
+                type: string
+                description: SHA identifier of the file content.
+              url:
+                type: string
+                description: API URL for the file content.
+              git_url:
+                type: string
+                description: Git URL for the file.
+              html_url:
+                type: string
+                description: Web URL to view the file in GitHub’s UI.
+              repository:
+                type: object
+                properties:
+                  full_name:
+                    type: string
+                    description: Full name of the repository.
+                  name:
+                    type: string
+                    description: Repository name.
+                  owner:
+                    type: object
+                    properties:
+                      login:
+                        type: string
+                        description: Owner's username.
+                    required: [ login ]
+                required: [ full_name, name, owner ]
+            required: [ name, path, sha, url, repository ]
+      required: [ total_count, incomplete_results, items ]
+  responses:
+    '401':
+      description: Unauthorized - Authentication failed or was not provided.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    '404':
+      description: Not Found - The specified resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    '403':
+      description: Forbidden - Possibly due to lack of permissions or hitting a rate limit.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    '422':
+      description: Validation Failed - The query might be missing or malformed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
