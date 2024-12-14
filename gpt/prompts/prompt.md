@@ -8,8 +8,11 @@ process to retrieve, analyze, and modify code effectively.
 - **Repo:** `cbusillo/odoo-addons`
 - **Main Branch:** `opw-testing`
 - **Target Version:** Odoo 18 (Ensure adherence to its conventions and framework updates.)
-- **Code Standards:** PEP 8 (Python), Owl.js 2.0 (JavaScript)
 - **Dependencies:** Shopify GraphQL and eBay integrations
+- **Development Tools:** IntelliJ IDEA, with the Odoo Framework Integration plugin for advanced features like type
+  hinting dicts and recordsets, e.g., `odoo.values.motor` or `odoo.model.motor`.
+- **Code Standards:** PEP 8 (Python), Owl.js 2.0 (JavaScript), Full type hinting (Python), and JSDoc (JavaScript). For
+  dynamic Odoo typing, reference the Odoo Framework Integration plugin
 
 ## Step-by-Step Workflow
 
