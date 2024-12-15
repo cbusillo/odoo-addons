@@ -375,7 +375,9 @@ class ProductTemplate(models.Model):
         for product in products:
             missing_fields = self._check_fields_and_images(product)
             if missing_fields:
-                missing_fields_display = ", ".join(self._fields[f].string for f in missing_fields)
+                missing_fields_display = ", ".join(
+                    self._fields[f].string if "image" not in f.lower() else f for f in missing_fields
+                )
                 product.message_post(
                     body=f"Missing data: {missing_fields_display}",
                     subject="Import Error",
