@@ -386,7 +386,7 @@ class ShopifySync(models.AbstractModel):
     ) -> dict[str, Any]:
         metafields_data = shopify_product_data["metafields"]
 
-        odoo_product_data = {
+        odoo_product_data: "odoo.values.product_product" = {
             "name": shopify_product_data["title"],
             "default_code": shopify_product_data["sku"],
             "website_description": shopify_product_data["description_html"],
@@ -401,7 +401,8 @@ class ShopifySync(models.AbstractModel):
             "mpn": shopify_product_data["barcode"],
             "bin": shopify_product_data["bin"],
             "weight": shopify_product_data["weight"],
-            "detailed_type": "product",
+            "type": "consu",
+            "is_storable": True,
             "manufacturer": (
                 self.find_or_add_manufacturer(shopify_product_data["vendor"]).id
                 if shopify_product_data["vendor"]
