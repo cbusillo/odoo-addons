@@ -47,7 +47,7 @@
                     <button string="Import" type="object" name="enable_ready_for_sale" icon="fa-upload"/>
                 </header>
                 <field name="default_code" width="60px"/>
-                <field name="images" widget="file_drop" optional="show"/>
+                <field name="images" widget="file_drop" optional="show" width="90"/>
                 <field name="image_count" column_invisible="1"/>
                 <field name="condition" optional="show"/>
                 <field name="manufacturer" options="{'no_create': True}"/>
