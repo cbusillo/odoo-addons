@@ -50,25 +50,25 @@
                     <button string="Import" type="object" name="enable_ready_for_sale" icon="fa-upload" title="Import"/>
                 </header>
                 <field name="motor_product_computed_name" column_invisible="1"/>
-                <field name="is_listable" widget="boolean_toggle" class="large-toggle" string="Listable"/>
+                <field name="is_listable" widget="boolean_toggle" class="large-toggle" string="Listable" width="55"/>
                 <field name="is_ready_to_list" column_invisible="1"/>
                 <button name="enable_ready_for_sale" type="object" icon="fa-upload"
-                        invisible="not is_ready_to_list" title="Upload"/>
+                        invisible="not is_ready_to_list" title="Upload" width="18"/>
                 <field name="is_qty_listing" widget="boolean" string="Qty" class="green_checkmark"
-                       invisible="not is_qty_listing" width="30px"/>
+                       invisible="not is_qty_listing" width="30"/>
                 <field name="default_code" width="80px"/>
-                <field name="images" widget="file_drop" optional="show"/>
+                <field name="images" widget="file_drop" optional="show" width="90"/>
                 <field name="image_count" column_invisible="1"/>
                 <field name="manufacturer" options="{'no_create': True}"/>
-                <field name="mpn" width="20px"/>
-                <field name="initial_quantity" widget="integer" string="Qty" width="50px"/>
-                <field name="bin" width="20px" optional="hide"/>
+                <field name="mpn"/>
+                <field name="initial_quantity" widget="integer" string="Qty" width="30px"/>
+                <field name="bin" width="40px" optional="hide"/>
                 <button name="reset_name" type="object" icon="fa-refresh" class="sc_refresh_button_row"
-                        title="Reset Name" invisible="motor_product_computed_name == name"/>
+                        title="Reset Name" invisible="motor_product_computed_name == name" width="18"/>
                 <field name="name" decoration-warning="motor_product_computed_name != name"/>
                 <field name="dismantle_notes" optional="show"/>
                 <field name="website_description" optional="show" widget="text" string="Description"
-                       class="sc_text_limited_lines" width="3"/>
+                       class="sc_text_limited_lines"/>
                 <field name="dismantle_results" optional="show" readonly="1" widget="selection"/>
                 <field name="part_type" optional="hide"/>
                 <field name="weight" optional="hide" width="70px" widget="integer"/>
