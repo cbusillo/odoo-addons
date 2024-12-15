@@ -146,10 +146,10 @@
         <field name="arch" type="xml">
             <list string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0">
                 <field name="default_code" width="80px"/>
-                <field name="initial_quantity" widget="integer" width="30px"/>
+                <field name="initial_quantity" widget="integer" width="50"/>
                 <field name="motor_product_template_name"/>
-                <field name="bin" width="30px" placeholder="A01A1"/>
-                <field name="weight" widget="integer" width="30px"/>
+                <field name="bin" width="60px" placeholder="A01A1"/>
+                <field name="weight" widget="integer" width="60"/>
             </list>
         </field>
     </record>
