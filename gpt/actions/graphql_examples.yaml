@@ -15,7 +15,7 @@ examples:
         }
       variables:
         owner: "cbusillo"
-        name: "odoo17-addons"
+        name: "odoo-addons"
         expression: "opw-testing:requirements.txt"
 
   recentCommits:
@@ -43,7 +43,7 @@ examples:
         }
       variables:
         owner: "cbusillo"
-        name: "odoo17-addons"
+        name: "odoo-addons"
         branch: "opw-testing"
 
   keywordSearchInFile:
@@ -61,7 +61,7 @@ examples:
         }
       variables:
         owner: "cbusillo"
-        name: "odoo17-addons"
+        name: "odoo-addons"
         expression: "opw-testing:requirements.txt"
 
   listBranches:
@@ -79,7 +79,7 @@ examples:
         }
       variables:
         owner: "cbusillo"
-        name: "odoo17-addons"
+        name: "odoo-addons"
 
   fileDiffBetweenCommits:
     summary: Retrieve file diff between two commits
@@ -99,7 +99,7 @@ examples:
         }
       variables:
         owner: "cbusillo"
-        name: "odoo17-addons"
+        name: "odoo-addons"
         base: "abc123"
         head: "def456"
 
@@ -119,7 +119,7 @@ examples:
         }
       variables:
         owner: "cbusillo"
-        name: "odoo17-addons"
+        name: "odoo-addons"
 
   defaultBranch:
     summary: Fetch repository default branch
@@ -134,7 +134,7 @@ examples:
         }
       variables:
         owner: "cbusillo"
-        name: "odoo17-addons"
+        name: "odoo-addons"
   getFolderExample:
     summary: Get text contents of all files in a folder
     value:
@@ -157,7 +157,7 @@ examples:
         }
       variables:
         owner: "cbusillo"
-        name: "odoo17-addons"
+        name: "odoo-addons"
         expr: "opw-testing:product_connect/models"
   getFolderStructureExample:
     summary: Get Folder Structure Without File Contents
@@ -178,7 +178,7 @@ examples:
         }
       variables:
         owner: "cbusillo"
-        name: "odoo17-addons"
+        name: "odoo-addons"
         expr: "opw-testing:product_connect/models"
 
   getSpecificFileExample:
@@ -196,7 +196,7 @@ examples:
         }
       variables:
         owner: "cbusillo"
-        name: "odoo17-addons"
+        name: "odoo-addons"
         expression: "opw-testing:product_connect/models/product_template.py"
 
   getSpecificFileBatchExample:
@@ -204,7 +204,7 @@ examples:
     value:
       query: |
         query {
-          repository(owner: "cbusillo", name: "odoo17-addons") {
+          repository(owner: "cbusillo", name: "odoo-addons") {
             object(expression: "opw-testing:product_connect/models/__init__.py") {
               ... on Blob {
                 text
