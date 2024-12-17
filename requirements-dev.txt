@@ -6,3 +6,4 @@ types-Pillow
 types-python-dateutil
 types-requests
 types-geoip2
+odoo-stubs @ git+https://github.com/odoo-ide/odoo-stubs@18.0
