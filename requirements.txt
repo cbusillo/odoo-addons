@@ -1,5 +1,5 @@
 printnodeapi
-shopifyapi==12.6.0
+shopifyapi
 pdfminer.six
 odoo_upgrade @ git+https://github.com/odoo/upgrade-util@master
 odoo
