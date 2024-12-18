@@ -1,39 +1,4 @@
 <odoo>
-    <!-- Product Import: Server Action: Print Bin Labels -->
-    <record id="server_action_product_import_print_bin_labels" model="ir.actions.server">
-        <field name="name">Print Bin Labels</field>
-        <field name="model_id" ref="model_product_template"/>
-        <field name="binding_model_id" ref="model_product_template"/>
-        <field name="binding_type">action</field>
-        <field name="state">code</field>
-        <field name="code">
-            records.print_bin_labels()
-        </field>
-    </record>
-
-    <!-- Product Import: Server Action: Print Product Labels -->
-    <record id="server_action_product_import_print_product_labels" model="ir.actions.server">
-        <field name="name">Print Product Labels</field>
-        <field name="model_id" ref="model_product_template"/>
-        <field name="binding_model_id" ref="model_product_template"/>
-        <field name="binding_type">action</field>
-        <field name="state">code</field>
-        <field name="code">
-            records.print_product_labels(use_available_qty=True)
-        </field>
-    </record>
-
-    <record id="server_action_product_import_print_product_labels_picture" model="ir.actions.server">
-        <field name="name">Print Product Labels (Picture)</field>
-        <field name="model_id" ref="model_product_template"/>
-        <field name="binding_model_id" ref="model_product_template"/>
-        <field name="binding_type">action</field>
-        <field name="state">code</field>
-        <field name="code">
-            records.print_product_labels(use_available_qty=True, printer_job_type="product_label_picture")
-        </field>
-    </record>
-
     <!-- Product Import: List View -->
     <record id="view_product_import_list" model="ir.ui.view">
         <field name="name">product.import.list</field>
