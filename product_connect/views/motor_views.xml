@@ -358,7 +358,7 @@
                         </page>
                     </notebook>
                 </sheet>
-                <chatter class="collapse"/>
+                <chatter/>
             </form>
         </field>
     </record>
