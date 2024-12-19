@@ -127,8 +127,7 @@
     </record>
 
     <!-- Product Import: Sequence -->
-    <menuitem id="menu_subheader_product_import" name="Product Import" parent="stock.menu_stock_inventory_control"/>
     <menuitem id="menu_product_import" name="Product Import" action="action_product_import"
-              parent="menu_subheader_product_import"/>
+              parent="stock.menu_stock_inventory_control" sequence="10"/>
 </odoo>
 

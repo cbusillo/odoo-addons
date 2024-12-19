@@ -367,7 +367,8 @@
         <field name="name">motor.kanban</field>
         <field name="model">motor</field>
         <field name="arch" type="xml">
-            <kanban class="o_project_kanban o_kanban_small_column o_kanban_project_tasks">
+            <kanban default_order="priority desc, sequence, date_deadline"
+                    class="o_project_kanban o_kanban_small_column o_kanban_project_tasks">
                 <progressbar field="stage" colors='{"0": "bg-secondary", "50": "bg-warning", "100": "bg-success"}'/>
                 <templates>
                     <t t-name="card">
@@ -460,7 +461,7 @@
         <field name="res_model">motor</field>
         <field name="view_mode">kanban,list,pivot,graph,form</field>
         <field name="view_id" ref="view_motor_kanban"/>
-        <field name="context">{'group_by': 'stage', 'order': 'create_date'}</field>
+        <field name="context">{'group_by': 'stage'}</field>
     </record>
 
     <record id="view_motor_cohort" model="ir.ui.view">
@@ -485,10 +486,7 @@
         <field name="name">Motors Analysis</field>
         <field name="res_model">motor</field>
         <field name="view_mode">pivot,graph,activity,cohort,kanban,list,form</field>
-        <field name="context">{
-            'search_default_group_manufacturer': 1,
-            'group_by': ['stage']
-        }</field>
+        <field name="context">{'group_by': ['stage']}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No motors found.
@@ -516,9 +514,9 @@
     <!-- Menu -->
     <menuitem id="menu_subheader_motor" name="Motors" parent="stock.menu_stock_inventory_control"/>
     <menuitem id="menu_subheader_config_motor" name="Motors" parent="stock.menu_stock_config_settings"/>
-    <menuitem id="menu_motor" name="Motor List" parent="menu_subheader_motor" action="action_motor_form"
-              sequence="10"/>
     <menuitem id="menu_motor_stages" name="Motor Stages" parent="menu_subheader_motor" action="action_motor_stages"
+              sequence="10"/>
+    <menuitem id="menu_motor" name="Motor List" parent="menu_subheader_motor" action="action_motor_form"
               sequence="20"/>
     <menuitem id="menu_motor_analysis" name="Motors Analysis" parent="menu_subheader_motor"
               action="action_motor_analysis" sequence="30"/>

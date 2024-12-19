@@ -280,6 +280,7 @@
         (0, 0, {'view_mode': 'form', 'view_id': ref('view_motor_product_form')})]"/>
         <field name="search_view_id" ref="view_motor_product_search"/>
         <field name="domain">[('source', '=', 'motor'), ('is_ready_for_sale', '=', False)]</field>
+        <field name="context">{'group_by': 'motor'}</field>
     </record>
 
     <record model="ir.actions.act_window" id="action_motor_product_dismantle_result_selection">

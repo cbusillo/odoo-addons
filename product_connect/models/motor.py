@@ -51,7 +51,7 @@ class Motor(models.Model):
     _inherit = ["label.mixin", "mail.thread", "mail.activity.mixin", "mail.tracking.duration.mixin"]
     _description = "Motor Information"
     _track_duration_field = "stage"
-    _order = "priority desc, sequence, date_deadline asc, id desc"
+    _order = "motor_number desc"
 
     stage = fields.Many2one(
         "motor.stage",
@@ -435,15 +435,15 @@ class Motor(models.Model):
                     continue
 
                 if any(
-                    part.template.id in product_template.excluded_by_parts.ids and part.is_missing
-                    for part in motor.parts
+                        part.template.id in product_template.excluded_by_parts.ids and part.is_missing
+                        for part in motor.parts
                 ):
                     continue
 
                 if any(
-                    test.template.id in product_template.excluded_by_tests.conditional_test.ids
-                    and product_template.excluded_by_tests.is_condition_met(test.computed_result)
-                    for test in motor.tests
+                        test.template.id in product_template.excluded_by_tests.conditional_test.ids
+                        and product_template.excluded_by_tests.is_condition_met(test.computed_result)
+                        for test in motor.tests
                 ):
                     continue
 
