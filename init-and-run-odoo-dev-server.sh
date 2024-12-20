@@ -31,8 +31,8 @@ cd /opt/odoo/odoo-addons
 service odoo stop
 echo "Current branch: $CURRENT_BRANCH"
 
-git checkout $CURRENT_BRANCH
-git pull origin $CURRENT_BRANCH
+sudo -u odoo git checkout $CURRENT_BRANCH
+sudo -u odoo git pull origin $CURRENT_BRANCH
 
 if [ "$FLAG" = "init" ]; then
     rm -f init-done.flag
