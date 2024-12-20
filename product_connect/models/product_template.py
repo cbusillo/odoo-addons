@@ -2,7 +2,7 @@ import re
 from datetime import timedelta
 from typing import Any
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError, UserError
 
 
@@ -225,7 +225,7 @@ class ProductTemplate(models.Model):
             if not product.default_code:
                 continue
             if not re.match(r"^\d{4,8}$", str(product.default_code)):
-                raise ValidationError(_("SKU must be 4-8 digits."))
+                raise ValidationError(self.env._("SKU must be 4-8 digits."))
 
     def get_next_sku(self) -> str:
         sequence = self.env.ref("product_connect.sequence_product_template_default_code")
@@ -360,11 +360,13 @@ class ProductTemplate(models.Model):
         for image in images_with_data:
             if image.image_1920_file_size_kb < min_image_size:
                 missing_fields.append(
-                    f"Image ({image.index}) too small ({image.image_1920_file_size_kb}kB < {min_image_size}kB minimum size)"
+                    f"Image ({image.index}) too small "
+                    f"({image.image_1920_file_size_kb}kB < {min_image_size}kB minimum size)"
                 )
             if image.image_1920_width < min_image_resolution - 1 and image.image_1920_height < min_image_resolution - 1:
                 missing_fields.append(
-                    f"Image ({image.index}) too small ({image.image_1920_width}x{image.image_1920_height} < {min_image_resolution}x{min_image_resolution} minimum size)"
+                    f"Image ({image.index}) too small ({image.image_1920_width}x{image.image_1920_height} < "
+                    f"{min_image_resolution}x{min_image_resolution} minimum size)"
                 )
 
         return missing_fields
@@ -373,7 +375,9 @@ class ProductTemplate(models.Model):
         for product in products:
             missing_fields = self._check_fields_and_images(product)
             if missing_fields:
-                missing_fields_display = ", ".join(self._fields[f].string for f in missing_fields)
+                missing_fields_display = ", ".join(
+                    self._fields[f].string if "image" not in f.lower() else f for f in missing_fields
+                )
                 product.message_post(
                     body=f"Missing data: {missing_fields_display}",
                     subject="Import Error",
@@ -461,7 +465,8 @@ class ProductTemplate(models.Model):
             name = product.replace_template_tags(product.name or "")
             name = name.replace("{mpn}", " ".join(product.get_list_of_mpns()))
             product.name = name
-            product.detailed_type = "product"
+            product.type = "consu"
+            product.is_storable = True
             product.is_published = True
             product.product_variant_id.shopify_next_export = True
 
@@ -476,7 +481,7 @@ class ProductTemplate(models.Model):
             if product.source == "standard" or not product.mpn:
                 product.reference_product = False
                 continue
-            products = self.env["product.template"].search([("mpn", "!=", False)])
+            products = self.env["product.template"].search([("mpn", "!=", False), ("image_256", "!=", False)])
             product_mpns = product.get_list_of_mpns()
             matching_products = products.filtered(lambda p: any(mpn.lower() in p.mpn.lower() for mpn in product_mpns))
             latest_product = max(matching_products, key=lambda p: p.create_date, default=None)

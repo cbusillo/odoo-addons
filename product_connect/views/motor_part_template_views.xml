@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Tree View -->
-    <record id="view_motor_part_template_tree" model="ir.ui.view">
-        <field name="name">motor.part.template.tree</field>
+    <!-- List View -->
+    <record id="view_motor_part_template_list" model="ir.ui.view">
+        <field name="name">motor.part.template.list</field>
         <field name="model">motor.part.template</field>
         <field name="arch" type="xml">
-            <tree string="Motor Parts">
+            <list string="Motor Parts">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="hidden_tests"/>
                 <field name="sequence"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -37,7 +37,7 @@
         <field name="name">Motor Parts</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">motor.part.template</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Menu -->

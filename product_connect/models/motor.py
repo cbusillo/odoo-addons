@@ -10,7 +10,7 @@ from typing import Self
 
 import odoo
 import qrcode
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError, UserError
 
 from odoo.addons.product_connect.utils import constants
@@ -51,7 +51,7 @@ class Motor(models.Model):
     _inherit = ["label.mixin", "mail.thread", "mail.activity.mixin", "mail.tracking.duration.mixin"]
     _description = "Motor Information"
     _track_duration_field = "stage"
-    _order = "priority desc, sequence, date_deadline asc, id desc"
+    _order = "motor_number desc"
 
     stage = fields.Many2one(
         "motor.stage",
@@ -86,8 +86,6 @@ class Motor(models.Model):
         index=True,
         copy=False,
         readonly=True,
-        help="Date on which the state of your task has last been modified.\n"
-        "Based on this information you can identify tasks that are stalling and get statistics on the time it usually takes to move tasks from one stage/state to another.",
     )
 
     tags = fields.Many2many("motor.tag", string="Tags")
@@ -114,7 +112,7 @@ class Motor(models.Model):
             "name": "Motor Products",
             "type": "ir.actions.act_window",
             "res_model": "product.template",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("motor", "=", self.id)],
             "context": {"default_motor": self.id},
             "target": "new",
@@ -125,7 +123,7 @@ class Motor(models.Model):
             "name": "Motor Tests",
             "type": "ir.actions.act_window",
             "res_model": "motor.test",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("motor", "=", self.id)],
             "context": {"default_motor": self.id},
         }
@@ -243,7 +241,7 @@ class Motor(models.Model):
         motors = super().create(vals_list)
         for motor in motors:
             if motor.id > 999999:
-                raise ValidationError(_("Motor number cannot exceed 999999."))
+                raise ValidationError(self.env._("Motor number cannot exceed 999999."))
             motor.motor_number = f"M-{str(motor.id).zfill(6)}"
             motor._create_default_images(motor)
             motor._compute_compression()
@@ -373,7 +371,7 @@ class Motor(models.Model):
     def _check_horsepower(self) -> None:
         for motor in self:
             if motor.horsepower < 0.0 or motor.horsepower > 600.0:
-                raise ValidationError(_("Horsepower must be between 0 and 600."))
+                raise ValidationError(self.env._("Horsepower must be between 0 and 600."))
 
     @api.constrains("location")
     def _check_unique_location(self) -> None:
@@ -383,7 +381,7 @@ class Motor(models.Model):
             existing_motor = self.search([("location", "=", motor.location), ("id", "!=", motor.id)], limit=1)
             if existing_motor:
                 raise ValidationError(
-                    _(f"Motor {existing_motor.motor_number} with location '{motor.location}' already exists.")
+                    self.env._(f"Motor {existing_motor.motor_number} with location '{motor.location}' already exists.")
                 )
 
     @staticmethod
@@ -437,15 +435,15 @@ class Motor(models.Model):
                     continue
 
                 if any(
-                    part.template.id in product_template.excluded_by_parts.ids and part.is_missing
-                    for part in motor.parts
+                        part.template.id in product_template.excluded_by_parts.ids and part.is_missing
+                        for part in motor.parts
                 ):
                     continue
 
                 if any(
-                    test.template.id in product_template.excluded_by_tests.conditional_test.ids
-                    and product_template.excluded_by_tests.is_condition_met(test.computed_result)
-                    for test in motor.tests
+                        test.template.id in product_template.excluded_by_tests.conditional_test.ids
+                        and product_template.excluded_by_tests.is_condition_met(test.computed_result)
+                        for test in motor.tests
                 ):
                     continue
 
@@ -456,20 +454,22 @@ class Motor(models.Model):
                 else:
                     condition_id = self.env.ref("product_connect.product_condition_used").id
                     motor.products.create(
-                        {
-                            "name": product_template.name,
-                            "source": "motor",
-                            "motor": motor.id,
-                            "motor_product_template": product_template.id,
-                            "initial_quantity": product_template.initial_quantity or 1,
-                            "bin": product_template.bin,
-                            "weight": product_template.weight,
-                            "condition": condition_id,
-                            "manufacturer": motor.manufacturer.id,
-                            "website_description": product_template.website_description,
-                            "is_ready_for_sale": False,
-                            "part_type": product_template.part_type.id,
-                        }
+                        [
+                            {
+                                "name": product_template.name,
+                                "source": "motor",
+                                "motor": motor.id,
+                                "motor_product_template": product_template.id,
+                                "initial_quantity": product_template.initial_quantity or 1,
+                                "bin": product_template.bin,
+                                "weight": product_template.weight,
+                                "condition": condition_id,
+                                "manufacturer": motor.manufacturer.id,
+                                "website_description": product_template.website_description,
+                                "is_ready_for_sale": False,
+                                "part_type": product_template.part_type.id,
+                            }
+                        ]
                     )
 
             if current_product_ids:
@@ -496,21 +496,25 @@ class Motor(models.Model):
             for i in range(1, desired_cylinders + 1):
                 if i not in existing_cylinder_numbers:
                     self.cylinders.create(
-                        {
-                            "motor": motor.id,
-                            "cylinder_number": i,
-                            "compression_psi": 0,
-                        }
+                        [
+                            {
+                                "motor": motor.id,
+                                "cylinder_number": i,
+                                "compression_psi": 0,
+                            }
+                        ]
                     )
 
     def _create_default_images(self, motor: Self) -> None:
         image_names = constants.MOTOR_IMAGE_NAME_AND_ORDER
         for name in image_names:
             self.images.create(
-                {
-                    "motor": motor.id,
-                    "name": name,
-                }
+                [
+                    {
+                        "motor": motor.id,
+                        "name": name,
+                    }
+                ]
             )
 
     def download_zip_of_images(self) -> dict[str, str]:
@@ -532,12 +536,14 @@ class Motor(models.Model):
             zip_data = base64.b64encode(zip_file.read())
 
         attachment = self.env["ir.attachment"].create(
-            {
-                "name": zip_path.name,
-                "datas": zip_data,
-                "type": "binary",
-                "mimetype": "application/zip",
-            }
+            [
+                {
+                    "name": zip_path.name,
+                    "datas": zip_data,
+                    "type": "binary",
+                    "mimetype": "application/zip",
+                }
+            ]
         )
 
         download_url = f"/web/binary/download_single?attachment_id={attachment.id}"
@@ -569,14 +575,14 @@ class Motor(models.Model):
     def print_motor_product_labels(self) -> None:
         products = self.products.filtered(lambda p: p.is_listable and p.initial_quantity > 0)
         if not products:
-            raise UserError(_("No products to print labels for."))
+            raise UserError(self.env._("No products to print labels for."))
 
         products.print_product_labels(use_available_qty=True)
 
     def print_motor_pull_list(self) -> None:
         products = self.products.filtered(lambda p: p.is_listable and p.initial_quantity > 0)
         if not products:
-            raise UserError(_("No products to print pull list for."))
+            raise UserError(self.env._("No products to print pull list for."))
 
         report_name = "product_connect.report_motorproductpulllist"
         report_object = self.env["ir.actions.report"]._get_report_from_name(report_name)

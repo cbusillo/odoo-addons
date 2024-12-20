@@ -1,4 +1,3 @@
-/** @odoo-module **/
 import { onMounted, onWillUnmount, useRef, useState } from '@odoo/owl';
 import { ConfirmationDialog } from '@web/core/confirmation_dialog/confirmation_dialog';
 import { CharField, charField } from '@web/views/fields/char/char_field';

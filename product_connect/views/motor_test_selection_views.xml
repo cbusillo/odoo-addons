@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="view_motor_test_selection_tree" model="ir.ui.view">
-        <field name="name">motor.test.selection.tree</field>
+    <record id="view_motor_test_selection_list" model="ir.ui.view">
+        <field name="name">motor.test.selection.list</field>
         <field name="model">motor.test.selection</field>
         <field name="arch" type="xml">
-            <tree string="Motor Test Selections" editable="bottom" open_form_view="1">
+            <list string="Motor Test Selections" editable="bottom" open_form_view="1">
                 <field name="name"/>
                 <field name="value"/>
                 <field name="display_value"/>
                 <field name="templates"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -34,7 +34,7 @@
         <field name="name">Motor Test Selections</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">motor.test.selection</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="menu_motor_test_selection" name="Motor Test Selections" parent="menu_subheader_config_motor"

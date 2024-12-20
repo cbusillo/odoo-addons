@@ -67,7 +67,7 @@ def migrate(cr: Cursor, version: str):
 
     default_vals: "odoo.values.product_template" = {
         "is_ready_for_sale": False,
-        "type": "product",
+        "type": "consu",
     }
 
     try:

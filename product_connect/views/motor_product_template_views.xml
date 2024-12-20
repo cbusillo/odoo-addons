@@ -1,42 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="server_action_motor_product_print_bin_labels" model="ir.actions.server">
-        <field name="name">Print Bin Labels</field>
-        <field name="model_id" ref="model_product_template"/>
-        <field name="binding_model_id" ref="model_product_template"/>
-        <field name="binding_type">action</field>
-        <field name="state">code</field>
-        <field name="code">
-            records.print_bin_labels()
-        </field>
-    </record>
-
-    <record id="server_action_motor_product_print_product_labels" model="ir.actions.server">
-        <field name="name">Print Product Labels</field>
-        <field name="model_id" ref="model_product_template"/>
-        <field name="binding_model_id" ref="model_product_template"/>
-        <field name="binding_type">action</field>
-        <field name="state">code</field>
-        <field name="code">
-            records.print_product_labels(use_available_qty=True)
-        </field>
-    </record>
-
-    <record id="server_action_motor_product_print_product_labels_picture" model="ir.actions.server">
-        <field name="name">Print Product Labels (Picture)</field>
-        <field name="model_id" ref="model_product_template"/>
-        <field name="binding_model_id" ref="model_product_template"/>
-        <field name="binding_type">action</field>
-        <field name="state">code</field>
-        <field name="code">
-            records.print_product_labels(use_available_qty=True, printer_job_type="product_label_picture")
-        </field>
-    </record>
-    <record id="view_motor_product_template_tree" model="ir.ui.view">
-        <field name="name">motor.product.template.tree</field>
+    <record id="view_motor_product_template_list" model="ir.ui.view">
+        <field name="name">motor.product.template.list</field>
         <field name="model">motor.product.template</field>
         <field name="arch" type="xml">
-            <tree string="Motor Products" editable="bottom" open_form_view="1">
+            <list string="Motor Products" editable="bottom" open_form_view="1">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="part_type"/>
@@ -45,7 +13,7 @@
                 <field name="stroke" widget="many2many_tags"/>
                 <field name="excluded_by_parts" widget="many2many_tags"/>
                 <field name="sequence"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -83,11 +51,11 @@
                         <group string="Exclusions" colspan="2">
                             <field name="excluded_by_parts"/>
                             <field name="excluded_by_tests">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="conditional_test"/>
                                     <field name="conditional_operator"/>
                                     <field name="condition_value"/>
-                                </tree>
+                                </list>
                             </field>
                         </group>
                         <group string="HTML Description" colspan="2">
@@ -107,7 +75,7 @@
         <field name="name">Motor Products</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">motor.product.template</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="menu_product_motor_product" name="Motor Products" parent="menu_subheader_config_motor"

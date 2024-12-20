@@ -1,6 +1,6 @@
 import logging
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from printnodeapi import Gateway
 from printnodeapi.model import PrintJob, Printer
 
@@ -34,7 +34,7 @@ class PrintNodeInterface(models.Model):
     def get_gateway(self) -> Gateway:
         api_key = self.env["ir.config_parameter"].sudo().get_param("printnode.api_key")
         if not api_key:
-            message = _("No PrintNode API key found")
+            message = self.env._("No PrintNode API key found")
             self.notify_channel_on_error("PrintNode Error", message)
         return Gateway(apikey=api_key)
 
@@ -42,7 +42,7 @@ class PrintNodeInterface(models.Model):
         gateway = self.get_gateway()
         printers = gateway.printers()
         if not printers:
-            message = _("No printers found on PrintNode")
+            message = self.env._("No printers found on PrintNode")
             self.notify_channel_on_error("PrintNode Error", message)
         return printers
 
@@ -52,11 +52,11 @@ class PrintNodeInterface(models.Model):
 
     @api.model
     def print_label(
-            self,
-            label_data: str | bytes,
-            odoo_job_type: str,
-            copies: int = 1,
-            job_name: str = "Odoo Label",
+        self,
+        label_data: str | bytes,
+        odoo_job_type: str,
+        copies: int = 1,
+        job_name: str = "Odoo Label",
     ) -> list[PrintJob] | None:
         gateway = self.get_gateway()
         interface_record = self.env["printnode.interface"].search(

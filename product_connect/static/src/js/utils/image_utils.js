@@ -1,5 +1,3 @@
-/** @odoo-module **/
-
 export async function resizeImage(file, maxWidth, maxHeight) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()

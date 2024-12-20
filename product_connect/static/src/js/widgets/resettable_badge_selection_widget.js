@@ -1,4 +1,3 @@
-/** @odoo-module **/
 import { registry } from '@web/core/registry'
 import { BadgeSelectionField, badgeSelectionField } from '@web/views/fields/badge_selection/badge_selection_field'
 

@@ -1,7 +1,7 @@
 import base64
 from typing import Any
 
-from odoo import _, fields, models
+from odoo import fields, models
 from odoo.exceptions import UserError
 
 
@@ -65,7 +65,7 @@ class ProductLabelLayout(models.TransientModel):
         self.ensure_one()
         xml_id, data = self._prepare_report_data()
         if not xml_id:
-            raise UserError(_("Unable to find report template for %s format", self.print_format))
+            raise UserError(self.env._("Unable to find report template for %s format", self.print_format))
         report = self.env.ref(xml_id)
         report_pdf_content, content_type = report._render_qweb_pdf(xml_id, data=data)
         report_pdf = base64.b64encode(report_pdf_content).decode()

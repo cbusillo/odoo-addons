@@ -1,4 +1,3 @@
-/** @odoo-module **/
 import { DateTimeField } from '@web/views/fields/datetime/datetime_field';
 import { registry } from '@web/core/registry';
 

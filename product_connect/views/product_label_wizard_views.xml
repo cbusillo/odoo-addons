@@ -30,5 +30,5 @@
     <menuitem id="menu_print_product_labels"
               name="Product Labels"
               parent="stock.menu_stock_inventory_control"
-              action="action_product_label_wizard"/>
+              action="action_product_label_wizard" sequence="9"/>
 </odoo>

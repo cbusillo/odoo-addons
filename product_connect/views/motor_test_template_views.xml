@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Tree View -->
-    <record id="view_motor_test_template_tree" model="ir.ui.view">
-        <field name="name">motor.test.template.tree</field>
+    <!-- List View -->
+    <record id="view_motor_test_template_list" model="ir.ui.view">
+        <field name="name">motor.test.template.list</field>
         <field name="model">motor.test.template</field>
         <field name="arch" type="xml">
-            <tree string="Motor Test Templates">
+            <list string="Motor Test Templates">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="tag"/>
                 <field name="result_type"/>
                 <field name="stage"/>
                 <field name="section"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -47,27 +47,27 @@
 
                     <label for="conditions" string="Tests based on this test"/>
                     <field name="conditions">
-                        <tree editable="bottom">
+                        <list editable="bottom">
                             <field name="conditional_test" string="Test Name"/>
                             <field name="action_type"/>
                             <field name="conditional_operator"/>
                             <field name="condition_value"/>
-                        </tree>
+                        </list>
                     </field>
                     <label for="conditional_tests" string="Tests that affect this test"/>
                     <field name="conditional_tests">
-                        <tree editable="bottom">
+                        <list editable="bottom">
                             <field name="template" string="Test Name"/>
                             <field name="action_type"/>
                             <field name="condition_value"/>
-                        </tree>
+                        </list>
                     </field>
                     <label for="missing_parts" string="Missing Parts that affect this test"/>
                     <field name="missing_parts" readonly="1">
-                        <tree>
+                        <list>
                             <field name="name"/>
                             <field name="hidden_tests"/>
-                        </tree>
+                        </list>
                     </field>
                 </sheet>
             </form>
@@ -80,7 +80,7 @@
         <field name="name">Motor Test Templates</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">motor.test.template</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 

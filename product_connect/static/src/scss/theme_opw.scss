@@ -1,47 +1,60 @@
+// Brand Colors
 $o-brand-odoo: #E65938;
 $o-brand-primary: #1071B6;
 
+// Large toggle styling
 .large-toggle .o_boolean_toggle {
   transform: scale(1.5);
   transform-origin: left center;
-  width: 100%;
   display: inline-flex;
   align-items: center;
+  width: auto; /* Adjusts dynamically */
 }
 
-.o_spacer_column {
+// Utility Classes for Full Width
+.full-width {
   width: 100%;
+  max-width: none; /* Removes restrictions for full browser width */
 }
 
+.full-browser-width {
+  width: 100vw; /* Stretches to the full viewport width */
+  max-width: none;
+}
+
+// Specific Element Overrides
 .sc_refresh_button_row {
-  width: 10px;
-}
-
-.sc_full_width {
-  width: 100%;
+  width: 1rem; /* Use relative units instead of fixed 10px */
 }
 
 .o_list_open_form_view {
-  width: 40px !important;
+  width: 40px;
 }
 
+// Compact Button Badge
 .o_selection_badge.btn-reset {
   padding: 0.1rem 0.25rem;
   font-size: 0.5rem;
 }
 
-.o_form_view .o_form_sheet_bg, .o_form_view .o_form_sheet {
-  width: 100%; /* Ensures no additional padding or margin within form view */
-  max-width: none; /* Removes any max-width restrictions */
+// Form View Adjustments
+.o_form_view .o_form_sheet_bg,
+.o_form_view .o_form_renderer {
+  @extend .full-width;
+}
+
+// List View Adjustments
+.o_list_view {
+  @extend .full-browser-width;
 }
 
 .o_list_view .text-nowrap {
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  max-width: 200px; /* Adjust this value as needed */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+// Green Checkmark
 .o_list_view .o_data_cell .green_checkmark {
   display: inline-block;
   font-family: "FontAwesome", serif;
@@ -59,22 +72,22 @@ $o-brand-primary: #1071B6;
   content: "\f00c"; /* FontAwesome checkmark */
 }
 
-/* Default collapsed view: single line with ellipsis */
+// Text Limiting for Rows
 .sc_text_limited_lines {
   display: -webkit-box;
-  -webkit-line-clamp: 1; /* Display as a single line */
+  -webkit-line-clamp: 1; /* Default: single line */
   -webkit-box-orient: vertical;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  max-height: 1.5em;
   transition: max-height 0.2s ease-in-out;
-  max-height: 1.5em; /* Height for a single line */
 }
 
-/* Expanded view with a max height of 5 lines when the row is active */
+// Expanded Row Behavior
 .o_list_view .o_data_row:focus-within .sc_text_limited_lines {
-  -webkit-line-clamp: unset; /* Disable line clamping */
+  -webkit-line-clamp: unset; /* Removes clamping */
   white-space: normal;
   overflow-y: auto;
-  max-height: 15em; /* Approximately five lines based on font size */
+  max-height: 15em; /* Expands for more content */
 }

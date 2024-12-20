@@ -34,9 +34,9 @@
         </field>
     </record>
 
-    <!-- Product Template: Tree View -->
-    <record id="view_product_template_tree_inherit" model="ir.ui.view">
-        <field name="name">product.template.tree.inherit</field>
+    <!-- Product Template: List View -->
+    <record id="view_product_template_list_inherit" model="ir.ui.view">
+        <field name="name">product.template.list.inherit</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_tree_view"/>
         <field name="arch" type="xml">
@@ -102,10 +102,10 @@
             <xpath expr="//notebook" position="inside">
                 <page string="Test Details">
                     <field name="motor_tests" string="">
-                        <tree>
+                        <list>
                             <field name="name"/>
                             <field name="computed_result"/>
-                        </tree>
+                        </list>
                     </field>
                 </page>
             </xpath>
@@ -139,11 +139,11 @@
         </field>
     </record>
 
-    <record id="product_template_tree_edit" model="ir.ui.view">
-        <field name="name">product.template.tree.edit</field>
+    <record id="product_template_list_edit" model="ir.ui.view">
+        <field name="name">product.template.list.edit</field>
         <field name="model">product.template</field>
         <field name="arch" type="xml">
-            <tree editable="bottom" multi_edit="1">
+            <list editable="bottom" multi_edit="1">
                 <field name="name"/>
                 <field name="default_code"/>
                 <field name="bin"/>
@@ -152,16 +152,16 @@
                 <field name="part_type"/>
                 <field name="mpn"/>
                 <field name="shopify_product_id"/>
-            </tree>
+            </list>
         </field>
     </record>
 
-    <record id="view_product_template_dimensions_tree" model="ir.ui.view">
-        <field name="name">product.template.dimensions.tree</field>
+    <record id="view_product_template_dimensions_list" model="ir.ui.view">
+        <field name="name">product.template.dimensions.list</field>
         <field name="model">product.template</field>
         <field name="priority" eval="20"/>
         <field name="arch" type="xml">
-            <tree string="Product" editable="bottom" multi_edit="1" delete="False" create="False" open_form_view="1"
+            <list string="Product" editable="bottom" multi_edit="1" delete="False" create="False" open_form_view="1"
                   decoration-warning="not (length and height and width and weight and bin)">
                 <field name="name" readonly="1"/>
                 <field name="default_code" readonly="1"/>
@@ -172,7 +172,7 @@
                 <field name="height"/>
                 <field name="weight"/>
                 <field name="bin"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -205,40 +205,40 @@
     <record id="action_product_template_dimensions_form" model="ir.actions.act_window">
         <field name="name">Product Dimensions</field>
         <field name="res_model">product.template</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="view_ids"
-               eval="[(5, 0, 0), (ref('view_product_template_dimensions_tree'), 'tree'), (ref('view_product_template_tree_inherit'), 'form')]"/>
+               eval="[(5, 0, 0), (ref('view_product_template_dimensions_list'), 'list'), (ref('view_product_template_list_inherit'), 'form')]"/>
         <field name="search_view_id" ref="view_product_template_dimensions_search"/>
     </record>
 
-    <record model="ir.actions.act_window.view" id="product_template_dimensions_tree_view">
-        <field name="sequence" eval="10"/>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="view_product_template_dimensions_tree"/>
+    <record model="ir.actions.act_window.view" id="product_template_dimensions_list_view">
+        <field name="sequence">10</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_product_template_dimensions_list"/>
         <field name="act_window_id" ref="action_product_template_dimensions_form"/>
     </record>
 
 
-    <record id="action_product_template_tree_edit" model="ir.actions.act_window">
+    <record id="action_product_template_list_edit" model="ir.actions.act_window">
         <field name="name">Product Edit</field>
         <field name="res_model">product.template</field>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="product_template_tree_edit"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="product_template_list_edit"/>
     </record>
 
 
     <record id="stock.product_template_action_product" model="ir.actions.act_window">
-        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_mode">list,kanban,form</field>
         <field name="domain">[('is_ready_for_sale', '=', True)]</field>
         <field name="view_ids" eval="[(5, 0, 0),
-        (0, 0, {'view_mode': 'tree', 'view_id': ref('product.product_template_tree_view')}),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('product.product_template_tree_view')}),
         (0, 0, {'view_mode': 'kanban', 'view_id': ref('product.product_template_kanban_view')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('product.product_template_only_form_view')})]"/>
     </record>
 
 
     <!-- Menu item -->
-    <menuitem id="menu_product_template_edit" name="Product Edit" action="action_product_template_tree_edit"
+    <menuitem id="menu_product_template_edit" name="Product Edit" action="action_product_template_list_edit"
               parent="stock.menu_stock_inventory_control" sequence="2"/>
     <menuitem id="menu_product_template_dimensions_form" name="Product Dimensions"
               parent="stock.menu_stock_inventory_control" sequence="4"

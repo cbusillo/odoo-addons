@@ -1,4 +1,3 @@
-/** @odoo-module **/
 import { Component, onMounted, onWillUpdateProps, useState } from '@odoo/owl'
 import { useService } from '@web/core/utils/hooks'
 import { registry } from '@web/core/registry'
@@ -106,10 +105,9 @@ export class MotorTestWidget extends Component {
     }
 
     sortMotorTests(motorTests) {
-        return sortBy(motorTests, (test) => [
-            test.data.section_sequence || 0,
-            test.data.sequence || 0,
-        ])
+        return sortBy(motorTests, (test) =>
+            (test.data.section_sequence || 0) * 1000 + (test.data.sequence || 0)
+        );
     }
 
     groupMotorTestsBySection(motorTests, missingParts) {
