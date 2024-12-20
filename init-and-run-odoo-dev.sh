@@ -1,19 +1,21 @@
 #!/bin/bash
 set -e
 
+PYTHON="python3.13"
+
 # Configuration for syncing from production
 PROD_SERVER="opw-prod"
 PROD_DB="opw"
 PROD_DB_USER="odoo"
-PROD_FILESTORE_PATH="/opt/odoo/.local/share/Odoo/filestore"
+PROD_FILESTORE_PATH="/opt/odoo/local_data/filestore"
 TEMP_DB_BACKUP="/tmp/${PROD_DB}_dump.gz"
 
 # Configuration for Odoo development environment
 if [ -z "$2" ] || [ "$2" = "local" ]; then
-    ODOO_BIN="../../Odoo/odoo17-base/odoo-bin"
-    ODOO_CONFIG_FILE="../odoo17.local.cfg"
+    ODOO_BIN="../../Odoo/odoo-base/odoo-bin"
+    ODOO_CONFIG_FILE="../odoo.local.conf"
 elif [ "$2" = "testing" ]; then
-    ODOO_BIN="../odoo/odoo-bin"
+    ODOO_BIN="../odoo-base/odoo-bin"
     ODOO_CONFIG_FILE="/etc/odoo.conf"
 else
     echo "Invalid environment. Please specify 'local' or 'test'."
@@ -21,7 +23,7 @@ else
 fi
 INIT_FILE="init-done.flag"
 
-DB_CREDENTIALS=$(python3 get_odoo_config_values.py "$ODOO_CONFIG_FILE")
+DB_CREDENTIALS=$("$PYTHON" get_odoo_config_values.py "$ODOO_CONFIG_FILE")
 
 ODOO_DB_SERVER=$(echo "$DB_CREDENTIALS" | jq -r '.db_host')
 #DB_PORT=$(echo "$DB_CREDENTIALS" | jq -r '.db_port')

@@ -27,7 +27,7 @@ ssh opw-dev "bash -s" -- "$CURRENT_BRANCH" "$FLAG" << 'EOF'
 FLAG=$2
 CURRENT_BRANCH=$1
 
-cd /opt/odoo/odoo17-addons
+cd /opt/odoo/odoo-addons
 service odoo stop
 echo "Current branch: $CURRENT_BRANCH"
 
