@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-PYTHON="python3.13"
-
 # Configuration for syncing from production
 PROD_SERVER="opw-prod"
 PROD_DB="opw"
@@ -23,7 +21,7 @@ else
 fi
 INIT_FILE="init-done.flag"
 
-DB_CREDENTIALS=$("$PYTHON" get_odoo_config_values.py "$ODOO_CONFIG_FILE")
+DB_CREDENTIALS=$(python3 get_odoo_config_values.py "$ODOO_CONFIG_FILE")
 
 ODOO_DB_SERVER=$(echo "$DB_CREDENTIALS" | jq -r '.db_host')
 #DB_PORT=$(echo "$DB_CREDENTIALS" | jq -r '.db_port')
