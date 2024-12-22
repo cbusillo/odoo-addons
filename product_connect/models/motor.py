@@ -52,6 +52,9 @@ class Motor(models.Model):
     _description = "Motor Information"
     _track_duration_field = "stage"
     _order = "motor_number desc"
+    _sql_constraints = [
+        ("motor_number_uniq", "unique (motor_number)", "Motor number already exists!"),
+    ]
 
     stage = fields.Many2one(
         "motor.stage",

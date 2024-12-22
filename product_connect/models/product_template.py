@@ -90,14 +90,14 @@ class ProductTemplate(models.Model):
     # noinspection PyShadowingNames
     @api.model
     def read_group(
-        self,
-        domain: list,
-        fields: list,
-        groupby: list,
-        offset: int = 0,
-        limit: int | None = None,
-        orderby: str = "",
-        lazy: bool = True,
+            self,
+            domain: list,
+            fields: list,
+            groupby: list,
+            offset: int = 0,
+            limit: int | None = None,
+            orderby: str = "",
+            lazy: bool = True,
     ) -> list[dict[str, Any]]:
         groups = super().read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
         fields_to_sum_with_qty = {"list_price", "standard_price"}
@@ -232,7 +232,8 @@ class ProductTemplate(models.Model):
         padding = sequence.padding
         max_sku = "9" * padding
         while (new_sku := self.env["ir.sequence"].next_by_code("product.template.default_code")) <= max_sku:
-            if not self.env["product.template"].sudo().search([("default_code", "=", new_sku)], limit=1):
+            if not self.env["product.template"].with_context(active_test=False).sudo().search(
+                    [("default_code", "=", new_sku)], limit=1):
                 return new_sku
         raise ValidationError("SKU limit reached.")
 
@@ -407,7 +408,7 @@ class ProductTemplate(models.Model):
         )
 
     def print_product_labels(
-        self, use_available_qty: bool = False, quantity_to_print: int = 1, printer_job_type: str = "product_label"
+            self, use_available_qty: bool = False, quantity_to_print: int = 1, printer_job_type: str = "product_label"
     ) -> None:
         labels = []
         for product in self:
