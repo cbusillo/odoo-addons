@@ -1,6 +1,7 @@
 from odoo.sql_db import Cursor
 
 
+# noinspection SqlResolve
 def migrate(cr: Cursor, version) -> None:
     if not version:
         return

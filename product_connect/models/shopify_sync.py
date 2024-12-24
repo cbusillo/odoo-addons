@@ -62,7 +62,7 @@ def apply_rate_limit_patch_to_shopify_execute() -> None:
 
     def handle_and_retry_on_error(error: HTTPError, attempt: int) -> None:
         if isinstance(error, ThrottledError):
-            retry_after = min(2 ** attempt, MAX_RETRY_DELAY)
+            retry_after = min(2**attempt, MAX_RETRY_DELAY)
         elif isinstance(error, HTTPError):
             retry_after = max(
                 float(error.headers.get("Retry-After", 4)),
@@ -161,13 +161,13 @@ class ShopifySync(models.AbstractModel):
         return int(gid.split("/")[-1])
 
     def fetch_shopify_product_edges(
-            self,
-            cursor: str | None,
-            last_import_time_str: str,
-            graphql_client: shopify.GraphQL,
-            graphql_document: str,
-            custom_query: str = "",
-            operation_name: str = "GetProducts",
+        self,
+        cursor: str | None,
+        last_import_time_str: str,
+        graphql_client: shopify.GraphQL,
+        graphql_document: str,
+        custom_query: str = "",
+        operation_name: str = "GetProducts",
     ) -> list[dict[str, Any]]:
         result = self.execute_graphql_query(
             cursor,
@@ -181,13 +181,13 @@ class ShopifySync(models.AbstractModel):
         return shopify_response_data.get("data", {}).get("products", {}).get("edges", [])
 
     def execute_graphql_query(
-            self,
-            cursor: str | None,
-            time_filter: str,
-            graphql_client: shopify.GraphQL,
-            graphql_document: str,
-            operation_name,
-            custom_query=None,
+        self,
+        cursor: str | None,
+        time_filter: str,
+        graphql_client: shopify.GraphQL,
+        graphql_document: str,
+        operation_name,
+        custom_query=None,
     ) -> str:
         if not time_filter:
             time_filter = self.DEFAULT_DATETIME.isoformat(timespec="seconds")
@@ -381,7 +381,7 @@ class ShopifySync(models.AbstractModel):
         }
 
     def map_shopify_to_odoo_product_data(
-            self, shopify_product_data, odoo_product: "odoo.model.product_product"
+        self, shopify_product_data, odoo_product: "odoo.model.product_product"
     ) -> dict[str, Any]:
         metafields_data = shopify_product_data["metafields"]
 
@@ -427,7 +427,7 @@ class ShopifySync(models.AbstractModel):
                     odoo_product_data["part_type"] = part_type.id
 
         if shopify_condition and (
-                odoo_condition := self.env["product.condition"].search([("code", "=", shopify_condition)], limit=1)
+            odoo_condition := self.env["product.condition"].search([("code", "=", shopify_condition)], limit=1)
         ):
             odoo_product_data["condition"] = odoo_condition.id
         elif odoo_product:
@@ -536,7 +536,7 @@ class ShopifySync(models.AbstractModel):
                     error,
                 )
                 retries += 1
-                time.sleep(MIN_RETRY_DELAY * (2 ** retries))
+                time.sleep(MIN_RETRY_DELAY * (2**retries))
 
         _logger.error("Failed to fetch image from Shopify after %s attempts.", MAX_RETRIES)
 
@@ -556,8 +556,8 @@ class ShopifySync(models.AbstractModel):
         """Construct image data for each Odoo product."""
         media_list = []
         for odoo_image in sorted(
-                odoo_product.product_tmpl_id.product_template_image_ids,
-                key=lambda image: image.name,
+            odoo_product.product_tmpl_id.product_template_image_ids,
+            key=lambda image: image.name,
         ):
             image_data = {
                 "mediaContentType": "IMAGE",
@@ -624,10 +624,10 @@ class ShopifySync(models.AbstractModel):
 
         odoo_products = odoo_products.filtered(
             lambda p: p.shopify_next_export is True
-                      or (
-                              p.write_date > (p.shopify_last_exported or datetime.min)
-                              or p.product_tmpl_id.write_date > (p.shopify_last_exported or datetime.min)
-                      )
+            or (
+                p.write_date > (p.shopify_last_exported or datetime.min)
+                or p.product_tmpl_id.write_date > (p.shopify_last_exported or datetime.min)
+            )
         )
 
         graphql_client, graphql_document, shopify_location_gid, base_url = self.setup_sync_environment()
