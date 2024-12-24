@@ -171,7 +171,7 @@ class ProductTemplate(models.Model):
 
         if "tech_result" in vals:
             tech_result = self.env["motor.dismantle.result"].browse(vals["tech_result"]).name
-            message_text = f"Product '{self.motor_product_template_name}' technical result: {tech_result}"
+            message_text = f"Product '{self.motor_product_template_name}' tech result: {tech_result}"
             self.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
 
         result = super().write(vals)
