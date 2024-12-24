@@ -66,7 +66,7 @@
                                const chatterBox = document.querySelector('.o-mail-ChatterContainer');
                                const toggleButton = this;
                                if (chatterBox) {
-                                   chatterBox.classList.toggle('show');
+                                   chatterBox.classList.toggle('collapse');
                                    toggleButton.classList.toggle('btn-primary');
                                    toggleButton.classList.toggle('btn-outline-secondary');
                                }">
