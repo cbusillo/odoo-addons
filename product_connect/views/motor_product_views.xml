@@ -69,7 +69,7 @@
                 <field name="dismantle_notes" optional="show"/>
                 <field name="website_description" optional="show" widget="text" string="Description"
                        class="sc_text_limited_lines"/>
-                <field name="dismantle_results" optional="show" readonly="1" widget="selection"/>
+                <field name="tech_result" optional="show" readonly="1" widget="selection"/>
                 <field name="part_type" optional="hide"/>
                 <field name="weight" optional="hide" width="70px" widget="integer"/>
                 <field name="length" string="L" optional="hide" width="2"/>
@@ -91,7 +91,7 @@
                        options="{'search_engines': 'google_images', 'first_mpn': True}"/>
                 <field name="template_name_with_dismantle_notes" widget="section_and_note_text"
                        decoration-warning="'\n' in template_name_with_dismantle_notes"/>
-                <field name="dismantle_results" widget="selection"/>
+                <field name="tech_result" widget="selection"/>
                 <field name="is_dismantled" widget="boolean_toggle" string="Done" class="large-toggle"/>
                 <field name="is_dismantled_qc" widget="boolean_toggle" string="QC" class="large-toggle"
                        readonly="not is_dismantled"/>
@@ -109,6 +109,7 @@
                 <field name="is_cleaned" widget="boolean_toggle" string="Done" class="large-toggle"/>
                 <field name="is_cleaned_qc" widget="boolean_toggle" string="QC" class="large-toggle"
                        readonly="not is_cleaned"/>
+                <field name="tech_result" widget="selection"/>
             </list>
         </field>
     </record>
@@ -136,6 +137,7 @@
                 <field name="is_pictured" widget="boolean_toggle" string="Done" class="large-toggle"/>
                 <field name="is_pictured_qc" widget="boolean_toggle" string="QC" class="large-toggle"
                        readonly="image_count&lt;1 or not is_pictured"/>
+                <field name="tech_result" widget="selection"/>
             </list>
         </field>
     </record>
@@ -150,6 +152,7 @@
                 <field name="motor_product_template_name"/>
                 <field name="bin" width="60px" placeholder="A01A1"/>
                 <field name="weight" widget="integer" width="60"/>
+                <field name="tech_result" widget="selection"/>
             </list>
         </field>
     </record>

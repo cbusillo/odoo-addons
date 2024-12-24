@@ -63,7 +63,7 @@ class ProductTemplate(models.Model):
 
     dismantle_notes = fields.Text()
     template_name_with_dismantle_notes = fields.Char(compute="_compute_template_name_with_dismantle_notes", store=False)
-    dismantle_results = fields.Many2one(comodel_name="motor.dismantle.result", ondelete="restrict")
+    tech_result = fields.Many2one(comodel_name="motor.dismantle.result", ondelete="restrict", tracking=True)
 
     is_listable = fields.Boolean(default=False, index=True)
 
@@ -167,6 +167,11 @@ class ProductTemplate(models.Model):
 
         if "is_dismantled" in vals and vals["is_dismantled"]:
             message_text = f"Product '{self.motor_product_template_name}' dismantled"
+            self.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
+
+        if "tech_result" in vals:
+            tech_result = self.env["motor.dismantle.result"].browse(vals["tech_result"]).name
+            message_text = f"Product '{self.motor_product_template_name}' technical result: {tech_result}"
             self.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
 
         result = super().write(vals)
