@@ -209,6 +209,7 @@
         <field name="view_ids"
                eval="[(5, 0, 0), (ref('view_product_template_dimensions_list'), 'list'), (ref('view_product_template_list_inherit'), 'form')]"/>
         <field name="search_view_id" ref="view_product_template_dimensions_search"/>
+        <field name="domain">[('type', '=', 'consu')]</field>
     </record>
 
     <record model="ir.actions.act_window.view" id="product_template_dimensions_list_view">
