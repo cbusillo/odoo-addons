@@ -45,10 +45,11 @@
             <list string="Motor Products" editable="bottom" open_form_view="1" create="0" limit="200" multi_edit="1"
                   decoration-warning="not name or not list_price or list_price == 0 or not standard_price or standard_price == 0"
                   decoration-danger="has_recent_messages"
-                  default_order="sequence, is_listable desc, part_type_name, id">
+                  default_order="is_listable desc, sequence, part_type_name, id">
                 <header>
                     <button string="Import" type="object" name="enable_ready_for_sale" icon="fa-upload" title="Import"/>
                 </header>
+                <field name="sequence" column_invisible="1"/>
                 <field name="motor_product_computed_name" column_invisible="1"/>
                 <field name="is_listable" widget="boolean_toggle" class="large-toggle" string="Listable" width="55"/>
                 <field name="is_ready_to_list" column_invisible="1"/>
@@ -85,7 +86,9 @@
         <field name="name">motor.product.list</field>
         <field name="model">product.template</field>
         <field name="arch" type="xml">
-            <list string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0">
+            <list string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0"
+                  default_order="is_dismantled, is_dismantled_qc, sequence">
+                <field name="sequence" column_invisible="1"/>
                 <field name="initial_quantity" widget="integer"/>
                 <field name="first_mpn" widget="search_mpn_online"
                        options="{'search_engines': 'google_images', 'first_mpn': True}"/>
@@ -102,7 +105,9 @@
         <field name="name">motor.product.list</field>
         <field name="model">product.template</field>
         <field name="arch" type="xml">
-            <list string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0">
+            <list string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0"
+                  default_order="is_cleaned, is_cleaned_qc, sequence">
+                <field name="sequence" column_invisible="1"/>
                 <field name="initial_quantity" widget="integer"/>
                 <field name="first_mpn"/>
                 <field name="motor_product_template_name"/>
@@ -117,7 +122,9 @@
         <field name="name">motor.product.list</field>
         <field name="model">product.template</field>
         <field name="arch" type="xml">
-            <list string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0">
+            <list string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0"
+                  default_order="is_picture_taken, is_pictured, is_pictured_qc, sequence">
+                <field name="sequence" column_invisible="1"/>
                 <field name="is_qty_listing" widget="boolean" string="Qty Listing" class="green_checkmark"
                        invisible="not is_qty_listing"/>
                 <field name="default_code" width="80px"/>
@@ -146,7 +153,9 @@
         <field name="name">motor.product.list</field>
         <field name="model">product.template</field>
         <field name="arch" type="xml">
-            <list string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0">
+            <list string="Motor Products" editable="bottom" open_form_view="1" create="0" delete="0"
+                  default_order="bin, weight, sequence">
+                <field name="sequence" column_invisible="1"/>
                 <field name="default_code" width="80px"/>
                 <field name="initial_quantity" widget="integer" width="50"/>
                 <field name="motor_product_template_name"/>

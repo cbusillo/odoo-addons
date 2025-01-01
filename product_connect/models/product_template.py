@@ -127,6 +127,7 @@ class ProductTemplate(models.Model):
         for product in products:
             if product.source == "motor":
                 product.name = product.motor_product_computed_name
+                product.sequence = product.motor_product_template.sequence
             elif product.source == "import":
                 product.is_ready_for_sale = False
                 product.is_ready_to_list = True
