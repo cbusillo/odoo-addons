@@ -28,16 +28,6 @@
         </field>
     </record>
 
-    <record id="view_motor_dismantle_result_list" model="ir.ui.view">
-        <field name="name">motor.dismantle.result.list</field>
-        <field name="model">motor.dismantle.result</field>
-        <field name="arch" type="xml">
-            <list string="Motor Product Dismantle Results" editable="bottom">
-                <field name="name"/>
-            </list>
-        </field>
-    </record>
-
     <record id="view_motor_product_list" model="ir.ui.view">
         <field name="name">motor.product.list</field>
         <field name="model">product.template</field>
