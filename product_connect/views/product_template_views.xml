@@ -181,10 +181,11 @@
         <field name="model">product.template</field>
         <field name="arch" type="xml">
             <search string="Product">
+                <field name="default_code" string="SKU" filter_domain="[('default_code','=', self)]"/>
                 <field name="default_code" string="Product"
                        filter_domain="['|', '|', '|', '|', '|', '|', ('name', 'ilike', self) , ('default_code', 'ilike', self), ('bin', 'ilike', self), ('weight', 'ilike', self), ('length', 'ilike', self), ('width', 'ilike', self), ('height', 'ilike', self)]"/>
                 <field name="name"/>
-                <field name="default_code" string="SKU"/>
+
                 <field name="bin"/>
 
                 <filter name="filter_zero_dimensions" string="Zero Dimensions"
