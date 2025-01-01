@@ -479,8 +479,6 @@ class ProductTemplate(models.Model):
             name = product.replace_template_tags(product.name or "")
             name = name.replace("{mpn}", " ".join(product.get_list_of_mpns()))
             product.name = name
-            product.type = "consu"
-            product.is_storable = True
             product.is_published = True
             product.product_variant_id.shopify_next_export = True
 

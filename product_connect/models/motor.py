@@ -438,15 +438,15 @@ class Motor(models.Model):
                     continue
 
                 if any(
-                        part.template.id in product_template.excluded_by_parts.ids and part.is_missing
-                        for part in motor.parts
+                    part.template.id in product_template.excluded_by_parts.ids and part.is_missing
+                    for part in motor.parts
                 ):
                     continue
 
                 if any(
-                        test.template.id in product_template.excluded_by_tests.conditional_test.ids
-                        and product_template.excluded_by_tests.is_condition_met(test.computed_result)
-                        for test in motor.tests
+                    test.template.id in product_template.excluded_by_tests.conditional_test.ids
+                    and product_template.excluded_by_tests.is_condition_met(test.computed_result)
+                    for test in motor.tests
                 ):
                     continue
 
@@ -471,6 +471,8 @@ class Motor(models.Model):
                                 "website_description": product_template.website_description,
                                 "is_ready_for_sale": False,
                                 "part_type": product_template.part_type.id,
+                                "type": "consu",
+                                "is_storable": True,
                             }
                         ]
                     )
