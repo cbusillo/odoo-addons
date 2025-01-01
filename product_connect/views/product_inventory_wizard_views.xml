@@ -1,0 +1,46 @@
+<odoo>
+    <record id="view_product_inventory_wizard_form" model="ir.ui.view">
+        <field name="name">product.inventory.wizard.form</field>
+        <field name="model">product.inventory.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Inventory Wizard">
+                <group>
+                    <field name="scan_box" placeholder="Scan or type SKU"/>
+                    <field name="bin"/>
+                </group>
+                <group>
+                    <field name="products" nolabel="1">
+                        <list editable="bottom" create="0">
+                            <field name="selected" class="large-toggle" widget="boolean_toggle"/>
+                            <field name="name"/>
+                            <field name="bin" decoration-danger="bin != parent.bin"/>
+                            <field name="qty_available" string="On Hand"/>
+                            <field name="quantity_scanned" string="Scanned"/>
+
+                        </list>
+                    </field>
+                </group>
+                <group>
+                    <field name="use_available_qty" widget="boolean_toggle"/>
+                    <field name="quantity_to_print" invisible="use_available_qty"/>
+                </group>
+                <footer>
+                    <button string="Print" type="object" name="action_print_labels" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_product_label_wizard" model="ir.actions.act_window">
+        <field name="name">Inventory Wizard</field>
+        <field name="res_model">product.inventory.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_print_product_inventory_wizard"
+              name="Product Inventory"
+              parent="stock.menu_stock_inventory_control"
+              action="action_product_label_wizard" sequence="9"/>
+</odoo>

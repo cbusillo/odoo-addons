@@ -1,1 +1,1 @@
-from . import product_label_layout, product_label_wizard
+from . import product_label_layout, product_inventory_wizard

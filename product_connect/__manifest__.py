@@ -40,7 +40,7 @@
         "views/product_color_views.xml",
         "views/product_condition_views.xml",
         "views/product_import_views.xml",
-        "views/product_label_wizard_views.xml",
+        "views/product_inventory_wizard_views.xml",
         "views/product_product_views.xml",
         "views/product_template_views.xml",
         "views/product_image_views.xml",
