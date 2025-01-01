@@ -186,8 +186,7 @@ class ProductTemplate(models.Model):
                 product.is_pictured = False
                 product.is_pictured_qc = False
 
-        if any(f in vals for f in ui_refresh_fields):
-            for product in self:
+            if product.motor and any(f in vals for f in ui_refresh_fields):
                 product.motor.notify_changes()
         return result
 
