@@ -134,8 +134,6 @@ class ProductTemplate(models.Model):
         return products
 
     def write(self, vals: "odoo.values.product_template") -> bool:
-        if not self.motor:
-            return super().write(vals)
 
         qc_reset_fields = {"is_dismantled", "is_cleaned", "is_pictured"}
         ui_refresh_fields = {
@@ -150,29 +148,35 @@ class ProductTemplate(models.Model):
             "weight",
         }
 
-        for field in qc_reset_fields:
-            if field in vals and not vals[field]:
-                vals[f"{field}_qc"] = False
+        for product in self:
 
-        if "is_pictured" in vals and vals["is_pictured"] and not self.images:
-            vals["is_pictured"] = False
-            self.env["bus.bus"]._sendone(
-                self.env.user.partner_id,
-                "simple_notification",
-                {"title": "Missing Pictures", "message": "Please upload pictures before proceeding.", "sticky": False},
-            )
+            for field in qc_reset_fields:
+                if field in vals and not vals[field]:
+                    vals[f"{field}_qc"] = False
 
-        if "is_pictured" in vals and vals["is_pictured"]:
-            vals["is_picture_taken"] = True
+            if "is_pictured" in vals and vals["is_pictured"] and not product.images:
+                vals["is_pictured"] = False
+                self.env["bus.bus"]._sendone(
+                    self.env.user.partner_id,
+                    "simple_notification",
+                    {
+                        "title": "Missing Pictures",
+                        "message": "Please upload pictures before proceeding.",
+                        "sticky": False,
+                    },
+                )
 
-        if "is_dismantled" in vals and vals["is_dismantled"]:
-            message_text = f"Product '{self.motor_product_template_name}' dismantled"
-            self.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
+            if "is_pictured" in vals and vals["is_pictured"]:
+                vals["is_picture_taken"] = True
 
-        if "tech_result" in vals:
-            tech_result = self.env["motor.dismantle.result"].browse(vals["tech_result"]).name
-            message_text = f"Product '{self.motor_product_template_name}' tech result: {tech_result}"
-            self.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
+            if "is_dismantled" in vals and vals["is_dismantled"]:
+                message_text = f"Product '{product.motor_product_template_name}' dismantled"
+                product.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
+
+            if "tech_result" in vals:
+                tech_result = self.env["motor.dismantle.result"].browse(vals["tech_result"]).name
+                message_text = f"Product '{product.motor_product_template_name}' tech result: {tech_result}"
+                product.motor.message_post(body=message_text, message_type="comment", subtype_xmlid="mail.mt_note")
 
         result = super().write(vals)
 
