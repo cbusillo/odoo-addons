@@ -477,7 +477,7 @@ class ProductTemplate(models.Model):
             product.website_description = website_description
 
             name = product.replace_template_tags(product.name or "")
-            name = name.replace("{mpn}", " ".join(product.get_list_of_mpns()))
+            name = name.replace("{mpn}", product.first_mpn)
             product.name = name
             product.is_published = True
             product.product_variant_id.shopify_next_export = True

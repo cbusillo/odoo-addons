@@ -70,6 +70,9 @@
                     <field name="motor" options="{'no_create': True}" class="d-inline text-primary"/>
                 </div>
             </xpath>
+            <xpath expr="//field[@name='default_code']" position="attributes">
+                <attribute name="string">SKU</attribute>
+            </xpath>
             <field name="default_code" position="after">
                 <field name="condition"/>
                 <field name="manufacturer"/>

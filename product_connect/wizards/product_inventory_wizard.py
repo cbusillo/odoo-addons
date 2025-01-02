@@ -80,7 +80,7 @@ class ProductInventoryWizard(models.TransientModel):
         if not product_searched:
             return False
 
-        product_in_wizard = self.products.filtered(lambda p: p.product == product_searched and p.qty_available > 0)
+        product_in_wizard = self.products.filtered(lambda p: p.product == product_searched)
         if product_in_wizard:
             product_in_wizard.quantity_scanned += 1
             if product_in_wizard.quantity_scanned == product_in_wizard.product.qty_available:
@@ -108,7 +108,9 @@ class ProductInventoryWizard(models.TransientModel):
 
     def _load_bin_products(self) -> None:
         self.products = [(5, 0, 0)]
-        products_with_bin = self.env["product.template"].search([("bin", "=", self.bin)])
+        products_with_bin_and_quantity = self.env["product.template"].search(
+            [("bin", "=", self.bin), ("qty_available", ">", 0)]
+        )
         self.products = self.env["product.inventory.wizard.line"].create(
             [
                 {
@@ -117,7 +119,7 @@ class ProductInventoryWizard(models.TransientModel):
                     "quantity_scanned": 0,
                     "is_selected": False,
                 }
-                for product in products_with_bin
+                for product in products_with_bin_and_quantity
             ]
         )
 
