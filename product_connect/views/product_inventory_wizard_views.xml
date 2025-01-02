@@ -51,7 +51,7 @@
                             <field name="bin" decoration-danger="bin != parent.bin"/>
                             <field name="qty_available" string="On Hand" widget="float" options="{'digits': [3,0]}"/>
                             <field name="quantity_scanned" string="Scanned"
-                                   decoration-danger="quantity_scanned != qty_available or quantity_scanned == 0"/>
+                                   decoration-danger="quantity_scanned != qty_available"/>
                         </list>
                     </field>
                 </sheet>
