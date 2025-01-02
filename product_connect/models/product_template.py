@@ -545,7 +545,6 @@ class ProductTemplate(models.Model):
                 product.motor.stroke.name,
                 "Outboard",
                 product.motor_product_template.name,
-                product.first_mpn if product.motor_product_template.include_model_in_name else None,
                 "OEM" if product.motor_product_template.include_oem_in_name else None,
             ]
             product.motor_product_computed_name = " ".join(part for part in name_parts if part)
