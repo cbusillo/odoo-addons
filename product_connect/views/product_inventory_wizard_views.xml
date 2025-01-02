@@ -6,16 +6,26 @@
             <form string="Inventory Wizard">
                 <group>
                     <field name="scan_box" placeholder="Scan or type SKU"/>
-                    <field name="bin"/>
+                    <field name="bin" readonly="1" force_save="1"/>
                 </group>
                 <group>
+                    <group invisible="not products">
+                        <button string="Print Product Labels" type="object" name="action_print_product_labels"
+                                class="btn-primary"/>
+                        <button string="Print Bin Label" type="object" name="action_print_bin_label"
+                                class="btn-primary"/>
+                        <button string="Save" type="object" name="action_apply_bin" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </group>
                     <field name="products" nolabel="1">
-                        <list editable="bottom" create="0">
+                        <list editable="bottom" create="0" default_order="selected asc">
                             <field name="selected" class="large-toggle" widget="boolean_toggle"/>
+                            <field name="default_code"/>
                             <field name="name"/>
                             <field name="bin" decoration-danger="bin != parent.bin"/>
-                            <field name="qty_available" string="On Hand"/>
-                            <field name="quantity_scanned" string="Scanned"/>
+                            <field name="qty_available" string="On Hand" widget="float" digits="0"/>
+                            <field name="quantity_scanned" string="Scanned"
+                                   decoration-danger="quantity_scanned != qty_available or quantity_scanned == 0"/>
 
                         </list>
                     </field>
@@ -24,8 +34,24 @@
                     <field name="use_available_qty" widget="boolean_toggle"/>
                     <field name="quantity_to_print" invisible="use_available_qty"/>
                 </group>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="view_product_inventory_wizard_form_confirm" model="ir.ui.view">
+        <field name="name">product.inventory.wizard.form.confirm</field>
+        <field name="model">product.inventory.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirm Bin Update">
+                <p>Are you sure you want to update the bin location for the selected products?</p>
+                <group>
+                    <group>
+                        <field name="bin" readonly="1"/>
+                    </group>
+                </group>
                 <footer>
-                    <button string="Print" type="object" name="action_print_labels" class="btn-primary"/>
+                    <button string="Confirm" type="object" name="action_confirm_bin_update" class="btn-primary"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
@@ -36,7 +62,6 @@
         <field name="name">Inventory Wizard</field>
         <field name="res_model">product.inventory.wizard</field>
         <field name="view_mode">form</field>
-        <field name="target">new</field>
     </record>
 
     <menuitem id="menu_print_product_inventory_wizard"
