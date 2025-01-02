@@ -9,7 +9,7 @@
                   decoration-warning="not name or not list_price or list_price == 0 or not standard_price or standard_price == 0"
                   decoration-danger="has_recent_messages">
                 <header>
-                    <button string="Import" type="object" name="enable_ready_for_sale" icon="fa-upload"/>
+                    <button string="Enable" type="object" name="enable_ready_for_sale" icon="fa-upload"/>
                 </header>
                 <field name="default_code" width="60px"/>
                 <field name="images" widget="file_drop" optional="show" width="90"/>
@@ -104,10 +104,6 @@
                 <field name="name"/>
                 <field name="default_code"/>
                 <field name="bin"/>
-                <filter name="filter_source_motor" string="Motor Products" domain="[('source', '=', 'motor')]"/>
-                <filter name="filter_source_import" string="Import Products" domain="[('source', '=', 'import')]"/>
-                <filter name="filter_source_standard" string="Standard Products"
-                        domain="[('source', '=', 'standard')]"/>
             </search>
 
         </field>
