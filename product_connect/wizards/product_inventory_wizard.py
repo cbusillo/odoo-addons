@@ -128,7 +128,9 @@ class ProductInventoryWizard(models.TransientModel):
         if not self.scan_box:
             return
 
-        if self.scan_box[0].isdigit():
+        if self.scan_box[0].isalpha():
+            self._handle_bin_scan()
+        else:
             if not self._handle_product_scan():
                 return {
                     "warning": {
@@ -136,8 +138,6 @@ class ProductInventoryWizard(models.TransientModel):
                         "message": f"SKU {self.scan_box} not found in Odoo.",
                     }
                 }
-        else:
-            self._handle_bin_scan()
 
         self.scan_box = ""
 
