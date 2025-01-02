@@ -1,4 +1,5 @@
 import logging
+import traceback
 
 from odoo import api, models, fields
 
@@ -43,7 +44,7 @@ class NotificationManagerMixin(models.AbstractModel):
         channel_name: str,
         record: models.Model | None = None,
         env: api.Environment | None = None,
-        logs: list[str] | None = None,
+        error_traceback: str | None = None,
     ) -> None:
         env = env or self.env
         notification_history = env["notification.history"]
@@ -54,9 +55,10 @@ class NotificationManagerMixin(models.AbstractModel):
         channel = env["discuss.channel"].search([("name", "=", channel_name)], limit=1)
         if not channel:
             channel = env["discuss.channel"].create({"name": channel_name})
-        if logs:
-            body += "\n\nRecent logs:\n"
-            body += "\n".join(logs)
+
+        if error_traceback:
+            body += "\n\nError traceback:\n"
+            body += error_traceback
 
         _logger.debug(
             "Sending message to channel %s with message %s for record %s",
@@ -78,13 +80,17 @@ class NotificationManagerMixin(models.AbstractModel):
         subject: str,
         body: str,
         record: models.Model | None = None,
-        logs: list[str] | None = None,
+        error: Exception | None = None,
     ) -> None:
+        error_traceback = None
+        if error:
+            error_traceback = "".join(traceback.format_exception(type(error), error, error.__traceback__))
+
         new_cr = self.env.registry.cursor()
         try:
             new_env = api.Environment(new_cr, self.env.uid, self.env.context)
-            self.notify_channel(subject, body, "errors", record, new_env, logs)
-            self.send_email_notification_to_admin(subject, body)
+            self.notify_channel(subject, body, "errors", record, new_env, error_traceback)
+            self.send_email_notification_to_admin(subject, body + "\n\n" + error_traceback)
             new_cr.commit()
         finally:
             new_cr.close()
