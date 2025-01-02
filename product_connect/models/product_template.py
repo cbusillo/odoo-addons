@@ -23,6 +23,7 @@ class ProductTemplate(models.Model):
     )
 
     is_ready_for_sale = fields.Boolean(tracking=True, index=True, default=True)
+    name_with_tags_length = fields.Integer(compute="_compute_name_with_tags_length")
 
     motor = fields.Many2one("motor", ondelete="restrict", readonly=True, index=True)
     motor_tests = fields.One2many("motor.test", related="motor.tests")
@@ -189,6 +190,12 @@ class ProductTemplate(models.Model):
             if product.motor and any(f in vals for f in ui_refresh_fields):
                 product.motor.notify_changes()
         return result
+
+    def _compute_name_with_tags_length(self) -> None:
+        for product in self:
+            name = product.replace_template_tags(product.name or "")
+            name = name.replace("{mpn}", product.first_mpn)
+            product.name_with_tags_length = len(name)
 
     @api.depends("product_template_image_ids")
     def _compute_image_1920(self) -> None:
