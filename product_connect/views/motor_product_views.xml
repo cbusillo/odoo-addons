@@ -51,7 +51,7 @@
                 <field name="images" widget="file_drop" optional="show" width="90"/>
                 <field name="image_count" column_invisible="1"/>
                 <field name="manufacturer" options="{'no_create': True}"/>
-                <field name="mpn"/>
+                <field name="mpn" optional="show"/>
                 <field name="initial_quantity" widget="integer" string="Qty" width="30px"/>
                 <field name="bin" width="40px" optional="hide"/>
                 <button name="reset_name" type="object" icon="fa-refresh" class="sc_refresh_button_row"
