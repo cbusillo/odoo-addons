@@ -1,3 +1,5 @@
+from typing import Literal
+
 from odoo import models, fields, api
 
 
@@ -13,7 +15,7 @@ class ProductInventoryWizardLine(models.TransientModel):
     qty_available = fields.Float(related="product.qty_available", readonly=True)
     quantity_scanned = fields.Integer()
 
-    selected = fields.Boolean()
+    is_selected = fields.Boolean(string="X")
 
 
 class ProductInventoryWizard(models.TransientModel):
@@ -23,37 +25,90 @@ class ProductInventoryWizard(models.TransientModel):
     scan_box = fields.Char(string="Scan", help="Scan or type the SKU/Bin here.")
     products = fields.One2many("product.inventory.wizard.line", "wizard")
     bin = fields.Char()
+    use_available_quantity = fields.Boolean(default=True)
 
-    use_available_qty = fields.Boolean(default=True)
-    quantity_to_print = fields.Integer(default=1)
+    product_labels_to_print = fields.Integer(default=1)
+    bin_needs_update = fields.Boolean(compute="_compute_bin_needs_update")
+    total_product_labels_to_print = fields.Integer(compute="_compute_total_product_labels_to_print")
+    count_of_products_not_selected = fields.Integer(compute="_compute_products_not_selected")
+    count_of_products_not_selected_with_quantity = fields.Integer(
+        compute="_compute_products_not_selected_with_quantity"
+    )
 
-    def _handle_product_scan(self) -> None:
+    @api.depends("products", "products.is_selected")
+    def _compute_products_not_selected(self) -> None:
+        for wizard in self:
+            wizard.count_of_products_not_selected = len(wizard.products.filtered(lambda p: not p.is_selected))
+
+    @api.depends("products", "products.is_selected", "products.qty_available")
+    def _compute_products_not_selected_with_quantity(self) -> None:
+        for wizard in self:
+            wizard.count_of_products_not_selected_with_quantity = len(
+                wizard.products.filtered(lambda p: not p.is_selected and p.qty_available)
+            )
+
+    def notify_user(
+        self, message: "str", title: str or None, message_type: Literal["info", "success", "warning", "danger"] | None
+    ):
+        self.env["bus.bus"]._sendone(
+            self.env.user.partner_id,
+            "simple_notification",
+            {"title": title or "Notification", "message": message, "sticky": False, "type": message_type or "info"},
+        )
+
+    @api.depends(
+        "products",
+        "products.qty_available",
+        "use_available_quantity",
+        "product_labels_to_print",
+        "products.is_selected",
+    )
+    def _compute_total_product_labels_to_print(self) -> None:
+        for wizard in self:
+            wizard.total_product_labels_to_print = sum(
+                p.qty_available if wizard.use_available_quantity else wizard.product_labels_to_print
+                for p in wizard.products.filtered("is_selected")
+            )
+
+    @api.depends("products", "products.bin", "bin", "products.is_selected")
+    def _compute_bin_needs_update(self) -> None:
+        for wizard in self:
+            wizard.bin_needs_update = any(p.bin != wizard.bin for p in wizard.products)
+
+    def _handle_product_scan(self) -> bool:
         product_searched = self.env["product.template"].search([("default_code", "=", self.scan_box)], limit=1)
-        scanned_product = self.products.filtered(lambda p: p.product == product_searched)
-        if scanned_product:
-            scanned_product.quantity_scanned += 1
-            if scanned_product.quantity_scanned == scanned_product.product.qty_available:
-                scanned_product.selected = True
+        if not product_searched:
+            return False
+
+        product_in_wizard = self.products.filtered(lambda p: p.product == product_searched)
+        if product_in_wizard:
+            product_in_wizard.quantity_scanned += 1
+            product_in_wizard.last_scanned_datetime = fields.Datetime.now()
+            if product_in_wizard.quantity_scanned == product_in_wizard.product.qty_available:
+                product_in_wizard.is_selected = True
+            else:
+                product_in_wizard.is_selected = False
 
         else:
-
             self.products += self.env["product.inventory.wizard.line"].create(
                 {
                     "wizard": self.id,
                     "product": product_searched.id,
                     "quantity_scanned": 1,
-                    "selected": False,
+                    "is_selected": True,
                 }
             )
 
-            self.products = self.products.sorted(key=lambda p: p.selected)
+        return True
 
     def _handle_bin_scan(self) -> None:
-        scanned_bin = self.scan_box.strip().upper()
+        if self.bin and self.products:
+            self.action_apply_bin_changes()
+        self.bin = self.scan_box.strip().upper()
+        self._load_bin_products()
 
+    def _load_bin_products(self) -> None:
         self.products = [(5, 0, 0)]
-        self.bin = scanned_bin
-
         products_with_bin = self.env["product.template"].search([("bin", "=", self.bin)])
         self.products = self.env["product.inventory.wizard.line"].create(
             [
@@ -61,79 +116,48 @@ class ProductInventoryWizard(models.TransientModel):
                     "wizard": self.id,
                     "product": product.id,
                     "quantity_scanned": 0,
-                    "selected": False,
+                    "is_selected": False,
                 }
                 for product in products_with_bin
             ]
         )
 
     @api.onchange("scan_box")
-    def _onchange_scan_box(self) -> None:
+    def _onchange_scan_box(self) -> None or "odoo.values.ir_actions_act_window":
         if not self.scan_box:
             return
 
         if self.scan_box[0].isdigit():
-            self._handle_product_scan()
+            if not self._handle_product_scan():
+                return {
+                    "warning": {
+                        "title": "Item not found",
+                        "message": f"SKU {self.scan_box} not found in Odoo.",
+                    }
+                }
         else:
             self._handle_bin_scan()
 
         self.scan_box = ""
 
-    def action_apply_bin(self) -> "odoo.values.ir_actions_client" or "odoo.values.ir_actions_act_window":
+    def action_apply_bin_changes(self) -> None:
         if not self.bin:
-            return {
-                "type": "ir.actions.client",
-                "tag": "display_notification",
-                "params": {
-                    "title": "No bin to apply",
-                    "message": "No bin selected to apply.",
-                    "type": "warning",
-                },
-            }
+            self.notify_user("No bin selected to apply.", "No bin to apply", "warning")
+            return
 
-        return {
-            "type": "ir.actions.act_window",
-            "name": "Confirm Bin Update",
-            "res_model": "product.inventory.wizard",
-            "view_mode": "form",
-            "view_id": self.env.ref("product_connect.view_product_inventory_wizard_form_confirm").id,
-            "target": "new",
-            "res_id": self.id,
-        }
-
-    def action_confirm_bin_update(self) -> tuple["odoo.values.ir_actions_client", "odoo.values.ir_actions_act_window"]:
         products_to_update = self.products.filtered(lambda p: p.bin != self.bin)
-        products_to_update.mapped("product").write({"bin": self.bin})
-
-        if self.env.context.get("scan_next_bin"):
-            self._handle_bin_scan()
-
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "title": "Success",
-                "message": f"Updated bin location for {len(products_to_update)} products",
-                "type": "success",
-            },
-        }, {
-            "type": "ir.actions.act_window_close",
-        }
-
-    def action_search(self) -> "odoo.values.ir_actions_act_window":
-        self.action_apply_bin()
-        return {
-            "type": "ir.actions.act_window",
-            "res_model": self._name,
-            "view_mode": "form",
-            "target": "main",
-            "context": self._context,
-        }
+        if products_to_update:
+            products_to_update.mapped("product").write({"bin": self.bin})
+            self.notify_user(
+                f"Updated bin location to {self.bin} for {len(products_to_update)} products", "Success", "success"
+            )
+            return
+        self.notify_user("No products needed bin update.", "No changes", "info")
 
     def action_print_product_labels(
         self,
     ) -> "odoo.values.ir_actions_client" or "odoo.values.ir_actions_act_window":
-        product_ids_selected = self.products.filtered(lambda p: p.selected).mapped("product.id")
+        product_ids_selected = self.products.filtered(lambda p: p.is_selected).mapped("product.id")
         products_to_print = self.env["product.template"].search([("id", "in", product_ids_selected)])
         if not products_to_print:
             return {
@@ -146,7 +170,7 @@ class ProductInventoryWizard(models.TransientModel):
                 },
             }
         for product in products_to_print:
-            quantity_to_print = product.qty_available if self.use_available_qty else self.quantity_to_print
+            quantity_to_print = product.qty_available if self.use_available_quantity else self.product_labels_to_print
             if quantity_to_print:
                 product.print_product_labels(quantity_to_print=quantity_to_print)
         return {
@@ -154,7 +178,7 @@ class ProductInventoryWizard(models.TransientModel):
             "tag": "display_notification",
             "params": {
                 "title": "Success",
-                "message": f"Printed labels for {len(products_to_print)} products",
+                "message": f"Sent label(s) for {len(products_to_print)} product(s) to printer.",
                 "type": "success",
             },
         }
@@ -179,7 +203,7 @@ class ProductInventoryWizard(models.TransientModel):
             "tag": "display_notification",
             "params": {
                 "title": "Success",
-                "message": f"Printed bin label for {self.bin}",
+                "message": f"Sent bin label for {self.bin} to printer.",
                 "type": "success",
             },
         }

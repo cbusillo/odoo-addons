@@ -1,59 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <record id="view_product_inventory_wizard_form" model="ir.ui.view">
         <field name="name">product.inventory.wizard.form</field>
         <field name="model">product.inventory.wizard</field>
         <field name="arch" type="xml">
             <form string="Inventory Wizard">
-                <group>
-                    <field name="scan_box" placeholder="Scan or type SKU"/>
-                    <field name="bin" readonly="1" force_save="1"/>
-                </group>
-                <group>
-                    <group invisible="not products">
-                        <button string="Print Product Labels" type="object" name="action_print_product_labels"
-                                class="btn-primary"/>
-                        <button string="Print Bin Label" type="object" name="action_print_bin_label"
-                                class="btn-primary"/>
-                        <button string="Save" type="object" name="action_apply_bin" class="btn-primary"/>
-                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                <header invisible="not products">
+                    <button string="Save Bins"
+                            type="object"
+                            name="action_apply_bin_changes"
+                            class="btn btn-primary"
+                            invisible="not bin_needs_update"/>
+                    <button string="Save Bins"
+                            type="object"
+                            name="action_apply_bin_changes"
+                            class="btn btn-secondary"
+                            invisible="bin_needs_update"/>
+                    <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                    <button string="Print Bin Label"
+                            type="object"
+                            name="action_print_bin_label"
+                            class="btn btn-primary"/>
+                    <button string="Print Product Labels"
+                            type="object"
+                            name="action_print_product_labels"
+                            class="btn btn-primary"
+                            invisible="total_product_labels_to_print == 0"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="scan_box" placeholder="Scan or type SKU"/>
+                            <field name="bin" readonly="1" force_save="1"/>
+                            <field name="bin_needs_update" invisible="1"/>
+                            <field name="count_of_products_not_selected"/>
+                            <field name="count_of_products_not_selected_with_quantity"/>
+                        </group>
+                        <group>
+                            <field name="use_available_quantity" widget="boolean_toggle"/>
+                            <field name="product_labels_to_print" invisible="use_available_quantity"/>
+                            <field name="total_product_labels_to_print"/>
+                        </group>
                     </group>
+
                     <field name="products" nolabel="1">
-                        <list editable="bottom" create="0" default_order="selected asc">
-                            <field name="selected" class="large-toggle" widget="boolean_toggle"/>
+                        <list create="0" editable="bottom">
+                            <field name="is_selected" widget="boolean_toggle" width="40px"/>
                             <field name="default_code"/>
                             <field name="name"/>
                             <field name="bin" decoration-danger="bin != parent.bin"/>
-                            <field name="qty_available" string="On Hand" widget="float" digits="0"/>
+                            <field name="qty_available" string="On Hand" widget="float" options="{'digits': [3,0]}"/>
                             <field name="quantity_scanned" string="Scanned"
                                    decoration-danger="quantity_scanned != qty_available or quantity_scanned == 0"/>
-
                         </list>
                     </field>
-                </group>
-                <group>
-                    <field name="use_available_qty" widget="boolean_toggle"/>
-                    <field name="quantity_to_print" invisible="use_available_qty"/>
-                </group>
-
-            </form>
-        </field>
-    </record>
-
-    <record id="view_product_inventory_wizard_form_confirm" model="ir.ui.view">
-        <field name="name">product.inventory.wizard.form.confirm</field>
-        <field name="model">product.inventory.wizard</field>
-        <field name="arch" type="xml">
-            <form string="Confirm Bin Update">
-                <p>Are you sure you want to update the bin location for the selected products?</p>
-                <group>
-                    <group>
-                        <field name="bin" readonly="1"/>
-                    </group>
-                </group>
-                <footer>
-                    <button string="Confirm" type="object" name="action_confirm_bin_update" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
-                </footer>
+                </sheet>
             </form>
         </field>
     </record>
