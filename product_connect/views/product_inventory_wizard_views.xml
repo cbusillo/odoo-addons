@@ -59,7 +59,7 @@
         </field>
     </record>
 
-    <record id="action_product_label_wizard" model="ir.actions.act_window">
+    <record id="action_product_inventory_wizard" model="ir.actions.act_window">
         <field name="name">Inventory Wizard</field>
         <field name="res_model">product.inventory.wizard</field>
         <field name="view_mode">form</field>
@@ -68,5 +68,5 @@
     <menuitem id="menu_print_product_inventory_wizard"
               name="Product Inventory"
               parent="stock.menu_stock_inventory_control"
-              action="action_product_label_wizard" sequence="9"/>
+              action="action_product_inventory_wizard" sequence="9"/>
 </odoo>
