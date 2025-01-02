@@ -80,10 +80,9 @@ class ProductInventoryWizard(models.TransientModel):
         if not product_searched:
             return False
 
-        product_in_wizard = self.products.filtered(lambda p: p.product == product_searched)
+        product_in_wizard = self.products.filtered(lambda p: p.product == product_searched and p.qty_available > 0)
         if product_in_wizard:
             product_in_wizard.quantity_scanned += 1
-            product_in_wizard.last_scanned_datetime = fields.Datetime.now()
             if product_in_wizard.quantity_scanned == product_in_wizard.product.qty_available:
                 product_in_wizard.is_selected = True
             else:
