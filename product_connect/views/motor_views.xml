@@ -60,7 +60,7 @@
                                 groups="stock.group_stock_manager">
                             <field string="Download Images" name="image_count" widget="statinfo"/>
                         </button>
-                        <a class="oe_stat_button btn btn-outline-secondary"
+                        <a class="oe_stat_button btn btn-primary"
                            role="button"
                            onclick="
                                const chatterBox = document.querySelector('.o-mail-ChatterContainer');
