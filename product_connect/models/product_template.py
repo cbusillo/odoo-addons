@@ -583,8 +583,8 @@ class ProductTemplate(models.Model):
 
     def reset_name(self) -> None:
         for product in self:
-            product.name = ""
             product._compute_motor_product_computed_name()
+            product.name = product.motor_product_computed_name
 
     def replace_template_tags(self, templated_content: str) -> str:
         if not templated_content:
