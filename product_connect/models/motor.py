@@ -423,6 +423,18 @@ class Motor(models.Model):
         if part_vals:
             self.env["motor.part"].create(part_vals)
 
+    @staticmethod
+    def _should_exclude_product(
+        motor: "odoo.model.motor", product_template: "odoo.model.motor_product_template"
+    ) -> bool:
+        for test in motor.tests:
+            relevant_conditions = product_template.excluded_by_tests.filtered(
+                lambda c: c.conditional_test == test.template
+            )
+            if any(cond.is_condition_met(test.computed_result) for cond in relevant_conditions):
+                return True
+        return False
+
     def create_motor_products(self) -> None:
         product_templates = self.env["motor.product.template"].search([])
 
@@ -443,11 +455,7 @@ class Motor(models.Model):
                 ):
                     continue
 
-                if any(
-                    test.template.id in product_template.excluded_by_tests.conditional_test.ids
-                    and product_template.excluded_by_tests.is_condition_met(test.computed_result)
-                    for test in motor.tests
-                ):
+                if self._should_exclude_product(motor, product_template):
                     continue
 
                 existing_product = motor.products.filtered(lambda p: p.motor_product_template == product_template)
