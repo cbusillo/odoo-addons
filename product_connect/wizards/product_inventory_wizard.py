@@ -1,11 +1,15 @@
+import logging
 from typing import Literal
 
 from odoo import models, fields, api
+
+_logger = logging.getLogger(__name__)
 
 
 class ProductInventoryWizardLine(models.TransientModel):
     _name = "product.inventory.wizard.line"
     _description = "Product Inventory Wizard Line"
+    _order = "is_selected asc, id desc"
 
     wizard = fields.Many2one("product.inventory.wizard", ondelete="cascade")
     product = fields.Many2one("product.template")
@@ -31,8 +35,16 @@ class ProductInventoryWizard(models.TransientModel):
     bin_needs_update = fields.Boolean(compute="_compute_bin_needs_update")
     total_product_labels_to_print = fields.Integer(compute="_compute_total_product_labels_to_print")
     count_of_products_not_selected = fields.Integer(compute="_compute_products_not_selected")
-    count_of_products_not_selected_with_quantity = fields.Integer(
-        compute="_compute_products_not_selected_with_quantity"
+
+    hide_last_scanned_product = fields.Boolean()
+    last_scanned_product = fields.Many2one("product.inventory.wizard.line", readonly=True)
+    last_scanned_product_qty = fields.Float(related="last_scanned_product.qty_available", readonly=True)
+    last_scanned_product_bin = fields.Char(related="last_scanned_product.bin", readonly=True)
+    last_scanned_product_name = fields.Char(related="last_scanned_product.name", readonly=True)
+    last_scanned_product_default_code = fields.Char(related="last_scanned_product.default_code", readonly=True)
+    last_scanned_product_image = fields.Binary(related="last_scanned_product.product.image_512", readonly=True)
+    last_scanned_product_scanned_quantity = fields.Integer(
+        related="last_scanned_product.quantity_scanned", readonly=True
     )
 
     @api.depends("products", "products.is_selected")
@@ -40,21 +52,10 @@ class ProductInventoryWizard(models.TransientModel):
         for wizard in self:
             wizard.count_of_products_not_selected = len(wizard.products.filtered(lambda p: not p.is_selected))
 
-    @api.depends("products", "products.is_selected", "products.qty_available")
-    def _compute_products_not_selected_with_quantity(self) -> None:
+    @api.depends("products", "products.bin", "bin", "products.is_selected")
+    def _compute_bin_needs_update(self) -> None:
         for wizard in self:
-            wizard.count_of_products_not_selected_with_quantity = len(
-                wizard.products.filtered(lambda p: not p.is_selected and p.qty_available)
-            )
-
-    def notify_user(
-        self, message: "str", title: str or None, message_type: Literal["info", "success", "warning", "danger"] | None
-    ):
-        self.env["bus.bus"]._sendone(
-            self.env.user.partner_id,
-            "simple_notification",
-            {"title": title or "Notification", "message": message, "sticky": False, "type": message_type or "info"},
-        )
+            wizard.bin_needs_update = any(p.bin != wizard.bin for p in wizard.products)
 
     @api.depends(
         "products",
@@ -70,10 +71,14 @@ class ProductInventoryWizard(models.TransientModel):
                 for p in wizard.products.filtered("is_selected")
             )
 
-    @api.depends("products", "products.bin", "bin", "products.is_selected")
-    def _compute_bin_needs_update(self) -> None:
-        for wizard in self:
-            wizard.bin_needs_update = any(p.bin != wizard.bin for p in wizard.products)
+    def notify_user(
+        self, message: "str", title: str or None, message_type: Literal["info", "success", "warning", "danger"] | None
+    ):
+        self.env["bus.bus"]._sendone(
+            self.env.user.partner_id,
+            "simple_notification",
+            {"title": title or "Notification", "message": message, "sticky": False, "type": message_type or "info"},
+        )
 
     def _handle_product_scan(self) -> bool:
         product_searched = self.env["product.template"].search([("default_code", "=", self.scan_box)], limit=1)
@@ -89,7 +94,7 @@ class ProductInventoryWizard(models.TransientModel):
                 product_in_wizard.is_selected = False
 
         else:
-            self.products += self.env["product.inventory.wizard.line"].create(
+            product_in_wizard = self.env["product.inventory.wizard.line"].create(
                 {
                     "wizard": self.id,
                     "product": product_searched.id,
@@ -97,7 +102,9 @@ class ProductInventoryWizard(models.TransientModel):
                     "is_selected": True,
                 }
             )
+            self.products += product_in_wizard
 
+        self.last_scanned_product = product_in_wizard
         return True
 
     def _handle_bin_scan(self) -> None:

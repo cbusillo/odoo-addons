@@ -33,19 +33,45 @@
                             <field name="scan_box" placeholder="Scan or type SKU"/>
                             <field name="bin" readonly="1" force_save="1"/>
                             <field name="bin_needs_update" invisible="1"/>
-                            <field name="count_of_products_not_selected"/>
-                            <field name="count_of_products_not_selected_with_quantity"/>
+                            <field name="count_of_products_not_selected" string="Missing Products"/>
+                            <field name="hide_last_scanned_product" widget="boolean_toggle" class="large-toggle"
+                                   string="Hide Last Scanned?"/>
                         </group>
                         <group>
-                            <field name="use_available_quantity" widget="boolean_toggle"/>
+                            <field name="use_available_quantity" widget="boolean_toggle" class="large-toggle"/>
                             <field name="product_labels_to_print" invisible="use_available_quantity"/>
                             <field name="total_product_labels_to_print"/>
+
                         </group>
                     </group>
 
+                    <group colspan="2" string="Last Scanned Product"
+                           invisible="not last_scanned_product or hide_last_scanned_product">
+                        <group>
+                            <field name="last_scanned_product_image" widget="image" readonly="1" nolabel="1"
+                                   class="bg-transparent"/>
+                        </group>
+
+                        <group>
+                            <field name="last_scanned_product_name" readonly="1"/>
+                            <field name="last_scanned_product_default_code" readonly="1"/>
+                            <field name="last_scanned_product_bin" readonly="1"
+                                   decoration-danger="last_scanned_product_bin != bin"/>
+                            <label for="last_scanned_product_qty"/>
+                            <div style="display: inline-flex; align-items: center;">
+                                <field name="last_scanned_product_qty" widget="float" options="{'digits': [3,0]}"
+                                       readonly="1" nolabel="1" style="margin-right: 8px;"/>
+                                <span title="Warning" class="fa fa-exclamation-triangle text-warning"
+                                      invisible="last_scanned_product_qty &lt; 2"
+                                      style="display: inline-block; position: relative;top: -3px"/>
+                            </div>
+                            <field name="last_scanned_product_scanned_quantity" string="Quantity Scanned" readonly="1"/>
+                            <field name="last_scanned_product" readonly="1"/>
+                        </group>
+                    </group>
                     <field name="products" nolabel="1">
-                        <list create="0" editable="bottom">
-                            <field name="is_selected" widget="boolean_toggle" width="40px"/>
+                        <list create="0" editable="bottom" default_order="is_selected asc">
+                            <field name="is_selected" widget="boolean_toggle" width="50px" class="large-toggle"/>
                             <field name="default_code"/>
                             <field name="name"/>
                             <field name="bin" decoration-danger="bin != parent.bin"/>
