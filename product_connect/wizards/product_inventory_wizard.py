@@ -38,6 +38,7 @@ class ProductInventoryWizard(models.TransientModel):
 
     hide_last_scanned_product = fields.Boolean()
     last_scanned_product = fields.Many2one("product.inventory.wizard.line", readonly=True)
+    last_scanned_product_template = fields.Many2one(related="last_scanned_product.product", readonly=True)
     last_scanned_product_qty = fields.Float(related="last_scanned_product.qty_available", readonly=True)
     last_scanned_product_bin = fields.Char(related="last_scanned_product.bin", readonly=True)
     last_scanned_product_name = fields.Char(related="last_scanned_product.name", readonly=True)
