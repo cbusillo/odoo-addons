@@ -24,19 +24,6 @@ MAX_RETRY_DELAY = 60
 _logger = logging.getLogger(__name__)
 
 
-class MemoryHandler(logging.Handler):
-    def __init__(self) -> None:
-        super().__init__()
-        self.logs: list[str] = []
-
-    def emit(self, record: logging.LogRecord) -> None:
-        self.logs.append(self.format(record))
-
-
-memory_handler = MemoryHandler()
-logging.getLogger().addHandler(memory_handler)
-
-
 def apply_rate_limit_patch_to_shopify_execute() -> None:
     class ThrottledError(Exception):
         pass
@@ -139,7 +126,7 @@ class ShopifySync(models.AbstractModel):
             self.notify_channel_on_error(
                 "Shopify sync failed",
                 str(error),
-                logs=memory_handler.logs,
+                error=error,
             )
             raise error
 
@@ -267,7 +254,7 @@ class ShopifySync(models.AbstractModel):
                 "Import from Shopify failed",
                 str(error),
                 record=odoo_product_product,
-                logs=memory_handler.logs,
+                error=error,
             )
             raise error
         if status == "no_sku":
@@ -740,7 +727,7 @@ class ShopifySync(models.AbstractModel):
                     "Export from Shopify failed",
                     f"{str(error)}",
                     record=odoo_product,
-                    logs=memory_handler.logs,
+                    error=error,
                 )
                 raise error
 
