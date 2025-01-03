@@ -15,7 +15,7 @@ class ProductInventoryWizardLine(models.TransientModel):
     product = fields.Many2one("product.template")
     default_code = fields.Char(related="product.default_code", readonly=True)
     name = fields.Char(related="product.name", readonly=True)
-    bin = fields.Char(related="product.bin", readonly=True)
+    original_bin = fields.Char(related="product.bin", string="Original Bin", readonly=True)
     qty_available = fields.Float(related="product.qty_available", readonly=True)
     quantity_scanned = fields.Integer()
 
@@ -28,8 +28,8 @@ class ProductInventoryWizard(models.TransientModel):
 
     scan_box = fields.Char(string="Scan", help="Scan or type the SKU/Bin here.")
     products = fields.One2many("product.inventory.wizard.line", "wizard")
-    bin = fields.Char()
-    use_available_quantity = fields.Boolean(default=True)
+    current_bin = fields.Char()
+    use_available_quantity_for_labels = fields.Boolean(default=True, string="Use On Hand Quantity for Labels")
 
     product_labels_to_print = fields.Integer(default=1)
     bin_needs_update = fields.Boolean(compute="_compute_bin_needs_update")
@@ -39,8 +39,8 @@ class ProductInventoryWizard(models.TransientModel):
     hide_last_scanned_product = fields.Boolean()
     last_scanned_product = fields.Many2one("product.inventory.wizard.line", readonly=True)
     last_scanned_product_template = fields.Many2one(related="last_scanned_product.product", readonly=True)
-    last_scanned_product_qty = fields.Float(related="last_scanned_product.qty_available", readonly=True)
-    last_scanned_product_bin = fields.Char(related="last_scanned_product.bin", readonly=True)
+    last_scanned_product_qty_available = fields.Float(related="last_scanned_product.qty_available", readonly=True)
+    last_scanned_product_bin = fields.Char(related="last_scanned_product.original_bin", readonly=True)
     last_scanned_product_name = fields.Char(related="last_scanned_product.name", readonly=True)
     last_scanned_product_default_code = fields.Char(related="last_scanned_product.default_code", readonly=True)
     last_scanned_product_image = fields.Binary(related="last_scanned_product.product.image_512", readonly=True)
@@ -53,22 +53,22 @@ class ProductInventoryWizard(models.TransientModel):
         for wizard in self:
             wizard.count_of_products_not_selected = len(wizard.products.filtered(lambda p: not p.is_selected))
 
-    @api.depends("products", "products.bin", "bin", "products.is_selected")
+    @api.depends("products", "products.original_bin", "current_bin", "products.is_selected")
     def _compute_bin_needs_update(self) -> None:
         for wizard in self:
-            wizard.bin_needs_update = any(p.bin != wizard.bin for p in wizard.products)
+            wizard.bin_needs_update = any(p.original_bin != wizard.current_bin for p in wizard.products)
 
     @api.depends(
         "products",
         "products.qty_available",
-        "use_available_quantity",
+        "use_available_quantity_for_labels",
         "product_labels_to_print",
         "products.is_selected",
     )
     def _compute_total_product_labels_to_print(self) -> None:
         for wizard in self:
             wizard.total_product_labels_to_print = sum(
-                p.qty_available if wizard.use_available_quantity else wizard.product_labels_to_print
+                p.qty_available if wizard.use_available_quantity_for_labels else wizard.product_labels_to_print
                 for p in wizard.products.filtered("is_selected")
             )
 
@@ -109,15 +109,15 @@ class ProductInventoryWizard(models.TransientModel):
         return True
 
     def _handle_bin_scan(self) -> None:
-        if self.bin and self.products:
+        if self.current_bin and self.products:
             self.action_apply_bin_changes()
-        self.bin = self.scan_box.strip().upper()
+        self.current_bin = self.scan_box.strip().upper()
         self._load_bin_products()
 
     def _load_bin_products(self) -> None:
         self.products = [(5, 0, 0)]
         products_with_bin_and_quantity = self.env["product.template"].search(
-            [("bin", "=", self.bin), ("qty_available", ">", 0)]
+            [("bin", "=", self.current_bin), ("qty_available", ">", 0)]
         )
         self.products = self.env["product.inventory.wizard.line"].create(
             [
@@ -150,15 +150,17 @@ class ProductInventoryWizard(models.TransientModel):
         self.scan_box = ""
 
     def action_apply_bin_changes(self) -> None:
-        if not self.bin:
+        if not self.current_bin:
             self.notify_user("No bin selected to apply.", "No bin to apply", "warning")
             return
 
-        products_to_update = self.products.filtered(lambda p: p.bin != self.bin)
+        products_to_update = self.products.filtered(lambda p: p.original_bin != self.current_bin)
         if products_to_update:
-            products_to_update.mapped("product").write({"bin": self.bin})
+            products_to_update.mapped("product").write({"bin": self.current_bin})
             self.notify_user(
-                f"Updated bin location to {self.bin} for {len(products_to_update)} products", "Success", "success"
+                f"Updated bin location to {self.current_bin} for {len(products_to_update)} products",
+                "Success",
+                "success",
             )
             return
         self.notify_user("No products needed bin update.", "No changes", "info")
@@ -179,7 +181,9 @@ class ProductInventoryWizard(models.TransientModel):
                 },
             }
         for product in products_to_print:
-            quantity_to_print = product.qty_available if self.use_available_quantity else self.product_labels_to_print
+            quantity_to_print = (
+                product.qty_available if self.use_available_quantity_for_labels else self.product_labels_to_print
+            )
             if quantity_to_print:
                 product.print_product_labels(quantity_to_print=quantity_to_print)
         return {
@@ -193,7 +197,7 @@ class ProductInventoryWizard(models.TransientModel):
         }
 
     def action_print_bin_label(self) -> "odoo.values.ir_actions_client":
-        if not self.bin:
+        if not self.current_bin:
             return {
                 "type": "ir.actions.client",
                 "tag": "display_notification",
@@ -203,8 +207,8 @@ class ProductInventoryWizard(models.TransientModel):
                     "type": "warning",
                 },
             }
-        label_data = ["", "Bin: ", self.bin]
-        label = self.products.product.generate_label_base64(label_data, barcode=self.bin)
+        label_data = ["", "Bin: ", self.current_bin]
+        label = self.products.product.generate_label_base64(label_data, barcode=self.current_bin)
         self.products.product._print_labels([label], odoo_job_type="product_label", job_name="Bin Label")
 
         return {
@@ -212,7 +216,7 @@ class ProductInventoryWizard(models.TransientModel):
             "tag": "display_notification",
             "params": {
                 "title": "Success",
-                "message": f"Sent bin label for {self.bin} to printer.",
+                "message": f"Sent bin label for {self.current_bin} to printer.",
                 "type": "success",
             },
         }
