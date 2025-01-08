@@ -481,6 +481,7 @@ class Motor(models.Model):
                                 "part_type": product_template.part_type.id,
                                 "type": "consu",
                                 "is_storable": True,
+                                "sequence": product_template.sequence,
                             }
                         ]
                     )
