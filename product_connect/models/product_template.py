@@ -132,6 +132,7 @@ class ProductTemplate(models.Model):
             elif product.source == "import":
                 product.is_ready_for_sale = False
                 product.is_ready_to_list = True
+                product.is_storable = True
 
         return products
 
