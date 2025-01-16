@@ -29,7 +29,7 @@ class ProductTemplate(models.Model):
     motor_tests = fields.One2many("motor.test", related="motor.tests")
     default_code = fields.Char("SKU", index=True, copy=False, readonly=True)
     standard_price = fields.Float(string="Cost", tracking=True)
-    list_price = fields.Float(string="Price", tracking=True)
+    list_price = fields.Float(string="Price", tracking=True, default=0)
     create_date = fields.Datetime(index=True)
 
     images = fields.One2many("product.image", "product_tmpl_id")
