@@ -10,7 +10,7 @@
                 <field name="part_type"/>
                 <field name="manufacturers" widget="many2many_tags"/>
                 <field name="configurations" widget="many2many_tags"/>
-                <field name="stroke" widget="many2many_tags"/>
+                <field name="strokes" widget="many2many_tags"/>
                 <field name="excluded_by_parts" widget="many2many_tags"/>
                 <field name="sequence"/>
             </list>

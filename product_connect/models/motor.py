@@ -442,7 +442,7 @@ class Motor(models.Model):
             current_product_ids = set(motor.products.ids)
 
             for product_template in product_templates:
-                if product_template.stroke and motor.stroke not in product_template.stroke:
+                if product_template.strokes and motor.stroke not in product_template.strokes:
                     continue
                 if product_template.configurations and motor.configuration not in product_template.configurations:
                     continue
