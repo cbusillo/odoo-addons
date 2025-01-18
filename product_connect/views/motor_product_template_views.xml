@@ -64,9 +64,6 @@
                             <field name="website_description" widget="html_template"
                                    options="{'codeview': true, 'resizable': true, 'minHeight': '400px'}"/>
                         </group>
-                        <group string="Miscellaneous">
-                            <field name="sequence"/>
-                        </group>
                     </group>
                 </sheet>
             </form>
