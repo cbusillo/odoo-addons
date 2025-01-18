@@ -31,8 +31,6 @@
                         <field name="default_value"/>
                         <field name="stage" widget="selection_badge"/>
                         <field name="section" widget="selection_badge"/>
-                        <field name="sequence"/>
-
                     </group>
                     <group>
                         <group colspan="2">
