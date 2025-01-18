@@ -188,6 +188,7 @@
                                     <field name="text_result"/>
                                     <field name="file_result"/>
                                     <field name="default_value"/>
+                                    <field name="strokes"/>
                                     <field name="manufacturers"/>
                                     <field name="configurations"/>
                                     <field name="conditions"/>

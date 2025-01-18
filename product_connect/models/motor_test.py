@@ -37,6 +37,7 @@ class MotorTestTemplate(models.Model):
     )
     selection_options = fields.Many2many("motor.test.selection")
     default_value = fields.Char()
+    strokes = fields.Many2many("motor.stroke")
     manufacturers = fields.Many2many("product.manufacturer", domain="[('is_motor_manufacturer', '=', True)]")
     configurations = fields.Many2many("motor.configuration")
     conditions = fields.One2many(
@@ -129,6 +130,7 @@ class MotorTest(models.Model):
     default_value = fields.Char(related="template.default_value")
     is_applicable = fields.Boolean(compute="_compute_is_applicable", store=True)
 
+    strokes = fields.Many2many(related="template.strokes")
     manufacturers = fields.Many2many(related="template.manufacturers")
     configurations = fields.Many2many(related="template.configurations")
     conditions = fields.One2many(

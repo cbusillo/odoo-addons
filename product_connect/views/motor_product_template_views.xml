@@ -32,7 +32,6 @@
                             <field name="weight"/>
                         </group>
                         <group string="Additional Options">
-                            <field name="stroke" widget="many2many_tags"/>
                             <field name="is_quantity_listing" widget="boolean_toggle"/>
                             <field name="include_year_in_name" widget="boolean_toggle"/>
                             <field name="include_hp_in_name" widget="boolean_toggle"/>
@@ -40,6 +39,9 @@
                             <field name="include_oem_in_name" widget="boolean_toggle"/>
                         </group>
                         <group string="Manufacturer and Configuration" colspan="2">
+                            <group colspan="2">
+                                <field name="strokes" widget="many2many_tags"/>
+                            </group>
                             <group>
                                 <field name="manufacturers" widget="many2many_checkboxes"/>
                             </group>

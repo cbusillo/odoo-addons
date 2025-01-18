@@ -35,6 +35,10 @@
 
                     </group>
                     <group>
+                        <group colspan="2">
+                            <field name="strokes" widget="many2many_checkboxes"
+                                   string="Strokes this test applies to"/>
+                        </group>
                         <group>
                             <field name="manufacturers" widget="many2many_checkboxes"
                                    string="Manufacturers this test applies to"/>
