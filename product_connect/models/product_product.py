@@ -5,6 +5,8 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
     _description = "Product"
 
+    repairs = fields.One2many("repair.order", "product_id")
+
     shopify_product_id = fields.Char(copy=False)
     shopify_variant_id = fields.Char(copy=False)
     shopify_condition_id = fields.Char(copy=False)

@@ -77,6 +77,19 @@ class ProductTemplate(models.Model):
     is_pictured_qc = fields.Boolean(default=False)
     is_ready_to_list = fields.Boolean(compute="_compute_ready_to_list", store=True)
 
+    repairs = fields.One2many(related="product_variant_ids.repairs")
+    open_repair_count = fields.Integer(compute="_compute_open_repair_count", store=True, index=True)
+    repair_state = fields.Selection(
+        [
+            ("none", "None"),
+            ("may_need_repair", "May Need Repair"),
+            ("in_repair", "In Repair"),
+            ("repaired", "Repaired"),
+        ],
+        compute="_compute_repair_state",
+        store=True,
+    )
+
     shopify_product_id = fields.Char(
         related="product_variant_ids.shopify_product_id",
         string="Shopify Product ID",
@@ -196,6 +209,46 @@ class ProductTemplate(models.Model):
             name = product.replace_template_tags(product.name or "")
             name = name.replace("{mpn}", product.first_mpn)
             product.name_with_tags_length = len(name)
+
+    def _compute_repairs(self) -> None:
+        for product in self:
+            variants = product.product_variant_ids
+            product.repairs = self.env["repair.order"].search([("product_id", "in", variants.ids)])
+
+    @api.depends("repair_state")
+    def _compute_open_repair_count(self) -> None:
+        for product in self:
+            product.open_repair_count = self.env["repair.order"].search_count(
+                [("product_id", "in", product.product_variant_ids.ids), ("state", "!=", "done")]
+            )
+
+    @api.depends(
+        "motor_product_template.repair_by_tech_results",
+        "motor_product_template.repair_by_tests",
+        "tech_result",
+        "motor.tests.computed_result",
+        "repairs.state",
+    )
+    def _compute_repair_state(self) -> None:
+        for product in self:
+            if not product.motor_product_template:
+                product.repair_state = "none"
+                continue
+
+            if product.repairs.filtered(lambda r: r.state != "done"):
+                product.repair_state = "in_repair"
+                continue
+            if product.repairs.filtered(lambda r: r.state == "done"):
+                product.repair_state = "repaired"
+                continue
+
+            may_need_repair = any(
+                [
+                    product.tech_result in product.motor_product_template.repair_by_tech_results,
+                    product.motor._should_repair_product(product.motor, product.motor_product_template),
+                ]
+            )
+            product.repair_state = "may_need_repair" if may_need_repair else "none"
 
     @api.depends("product_template_image_ids")
     def _compute_image_1920(self) -> None:
@@ -633,3 +686,48 @@ class ProductTemplate(models.Model):
         for tag, value in values.items():
             content = content.replace(f"{{{tag}}}", value).replace("  ", " ")
         return content
+
+    def create_repair_order(self) -> "odoo.values.ir_actions_act_window":
+        self.ensure_one()
+        self.is_listable = True
+        company_partner_id = self.env.company.partner_id.id
+        note = f"Tech Result '{self.tech_result.name}'<br/>" if self.tech_result else ""
+        for test in self.motor.tests:
+            relevant_conditions = self.motor_product_template.repair_by_tests.filtered(
+                lambda c: c.conditional_test == test.template
+            )
+            for condition in relevant_conditions:
+                if condition.is_condition_met(test.computed_result):
+                    note += f"Test '{test.name}' failed: {test.computed_result}</br>"
+                    break
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Create Repair Order",
+            "res_model": "repair.order",
+            "view_mode": "form",
+            "context": {
+                "default_partner_id": company_partner_id,
+                "default_product_id": self.product_variant_id.id,
+                "default_product_uom": self.uom_id.id,
+                "default_location_id": self.property_stock_production.id,
+                "repair_state_compute_timestamp": fields.Datetime.now(),
+                "default_internal_notes": note,
+            },
+            "target": "new",
+        }
+
+    def action_open_repairs(self) -> "odoo.values.ir_actions_act_window":
+        self.ensure_one()
+        if not self.repairs:
+            raise UserError("No repairs found.")
+
+        domain = [("product_id", "in", self.product_variant_ids.ids)]
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Repairs",
+            "res_model": "repair.order",
+            "view_mode": "list,form",
+            "domain": domain,
+            "target": "current",
+        }

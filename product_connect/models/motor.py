@@ -202,6 +202,7 @@ class Motor(models.Model):
         "product.template",
         "motor",
         domain=[
+            ("repair_state", "!=", "in_repair"),
             ("is_ready_for_sale", "=", False),
             ("is_listable", "=", True),
             ("is_dismantled", "=", True),
@@ -213,6 +214,7 @@ class Motor(models.Model):
         "product.template",
         "motor",
         domain=[
+            ("repair_state", "!=", "in_repair"),
             ("is_ready_for_sale", "=", False),
             ("is_listable", "=", True),
             ("is_dismantled", "=", True),
@@ -226,6 +228,7 @@ class Motor(models.Model):
         "product.template",
         "motor",
         domain=[
+            ("repair_state", "!=", "in_repair"),
             ("is_ready_for_sale", "=", False),
             ("is_listable", "=", True),
             ("is_dismantled", "=", True),
@@ -424,16 +427,27 @@ class Motor(models.Model):
             self.env["motor.part"].create(part_vals)
 
     @staticmethod
-    def _should_exclude_product(
-        motor: "odoo.model.motor", product_template: "odoo.model.motor_product_template"
+    def _check_product_conditions(
+        motor: "odoo.model.motor",
+        conditions: "odoo.model.motor_product_template_condition",
     ) -> bool:
         for test in motor.tests:
-            relevant_conditions = product_template.excluded_by_tests.filtered(
-                lambda c: c.conditional_test == test.template
-            )
+            relevant_conditions = conditions.filtered(lambda c: c.conditional_test == test.template)
             if any(cond.is_condition_met(test.computed_result) for cond in relevant_conditions):
                 return True
         return False
+
+    @staticmethod
+    def _should_exclude_product(
+        motor: "odoo.model.motor", product_template: "odoo.model.motor_product_template"
+    ) -> bool:
+        return motor._check_product_conditions(motor, product_template.excluded_by_tests)
+
+    @staticmethod
+    def _should_repair_product(
+        motor: "odoo.model.motor", product_template: "odoo.model.motor_product_template"
+    ) -> bool:
+        return motor._check_product_conditions(motor, product_template.repair_by_tests)
 
     def create_motor_products(self) -> None:
         product_templates = self.env["motor.product.template"].search([])
