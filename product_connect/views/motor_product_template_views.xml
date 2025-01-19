@@ -60,6 +60,10 @@
                                 </list>
                             </field>
                         </group>
+                        <group string="Repairs" colspan="2">
+                            <field name="repair_by_tech_results" widget="many2many_checkboxes"/>
+                            <field name="repair_by_tests"/>
+                        </group>
                         <group string="HTML Description" colspan="2">
                             <field name="website_description" widget="html_template"
                                    options="{'codeview': true, 'resizable': true, 'minHeight': '400px'}"/>

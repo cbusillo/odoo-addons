@@ -3,9 +3,12 @@ from odoo import api, fields, models
 
 class MotorDismantleResult(models.Model):
     _name = "motor.dismantle.result"
+    _order = "sequence"
     _description = "Motor Dismantle Result"
 
+    sequence = fields.Integer(default=10, index=True)
     name = fields.Char(required=True)
+    mark_for_repair = fields.Boolean(default=True)
 
 
 class MotorProductTemplateCondition(models.Model):
@@ -29,6 +32,11 @@ class MotorProductTemplate(models.Model):
     manufacturers = fields.Many2many("product.manufacturer", domain=[("is_motor_manufacturer", "=", True)])
     excluded_by_parts = fields.Many2many("motor.part.template")
     excluded_by_tests = fields.One2many("motor.product.template.condition", "template")
+    repair_by_tests = fields.One2many("motor.product.template.condition", "template")
+    repair_by_tech_results = fields.Many2many(
+        "motor.dismantle.result",
+        default=lambda self: self.env["motor.dismantle.result"].search([("mark_for_repair", "=", True)]).ids,
+    )
     is_quantity_listing = fields.Boolean(default=False)
     include_year_in_name = fields.Boolean(default=True)
     include_hp_in_name = fields.Boolean(default=True, string="Include HP in Name")

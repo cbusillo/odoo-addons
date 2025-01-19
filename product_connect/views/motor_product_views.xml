@@ -1,4 +1,6 @@
 <odoo>
+
+
     <record id="view_motor_product_search" model="ir.ui.view">
         <field name="name">motor.product.search</field>
         <field name="model">product.template</field>
@@ -286,11 +288,23 @@
         <field name="context">{'group_by': 'motor'}</field>
     </record>
 
+    <record id="view_motor_dismantle_result_list" model="ir.ui.view">
+        <field name="name">motor.dismantle.result.list</field>
+        <field name="model">motor.dismantle.result</field>
+        <field name="arch" type="xml">
+            <list string="Motor Dismantle Results" editable="bottom" open_form_view="1">
+                <field name="sequence" widget="handle"/>
+                <field name="mark_for_repair"/>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
     <record model="ir.actions.act_window" id="action_motor_product_dismantle_result_selection">
         <field name="name">Motor Product Dismantle Results</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">motor.dismantle.result</field>
-        <field name="view_mode">list</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="menu_motor_product" name="Motor Products" parent="menu_subheader_motor"
