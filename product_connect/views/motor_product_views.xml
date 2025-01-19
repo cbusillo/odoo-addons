@@ -62,7 +62,7 @@
                 <field name="name_with_tags_length" string="Len" width="30"/>
                 <field name="name" decoration-warning="motor_product_computed_name != name"/>
                 <field name="dismantle_notes" optional="show"/>
-                <field name="website_description" optional="show" widget="text" string="Description"
+                <field name="website_description" optional="hide" widget="text" string="Description"
                        class="sc_text_limited_lines"/>
                 <field name="tech_result" optional="show" readonly="1" widget="selection"/>
                 <field name="part_type" optional="hide"/>
