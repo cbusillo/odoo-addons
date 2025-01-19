@@ -485,13 +485,13 @@ class ProductTemplate(models.Model):
     ) -> None:
         labels = []
         for product in self:
-            mpn = product.mpn.strip() if product.mpn else ""
-            if "," in mpn:
-                mpn = mpn.split(",")[0].strip()
+            name = product.name.replace("{mpn}", "")
+            name = re.sub(r"\s+", " ", name.strip())
+            name = product.replace_template_tags(name or "")
             label_data = [
                 f"SKU: {product.default_code}",
                 "MPN: ",
-                f"(SM){mpn}",
+                f"(SM){product.first_mpn or ''}",
                 f"{product.motor.motor_number or '       '}",
                 product.condition.name if product.condition else "",
             ]
@@ -499,7 +499,7 @@ class ProductTemplate(models.Model):
             quantity = getattr(product, quantity_field_name, 1) if use_available_qty else quantity_to_print
             label = self.generate_label_base64(
                 label_data,
-                bottom_text=self.wrap_text(product.name, 50),
+                bottom_text=self.wrap_text(name, 50),
                 barcode=product.default_code,
                 quantity=quantity,
             )
