@@ -40,7 +40,7 @@
                         </group>
                         <group string="Manufacturer and Configuration" colspan="2">
                             <group colspan="2">
-                                <field name="strokes" widget="many2many_tags"/>
+                                <field name="strokes" widget="many2many_checkboxes"/>
                             </group>
                             <group>
                                 <field name="manufacturers" widget="many2many_checkboxes"/>
