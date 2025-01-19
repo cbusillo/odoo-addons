@@ -10,6 +10,7 @@ from . import (
     product_manufacturer,
     product_product,
     product_template,
+    repair_order,
     res_users,
     shopify_sync,
 )
