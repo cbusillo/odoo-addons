@@ -62,7 +62,14 @@
                         </group>
                         <group string="Repairs" colspan="2">
                             <field name="repair_by_tech_results" widget="many2many_checkboxes"/>
-                            <field name="repair_by_tests"/>
+                            <field name="repair_by_tests">
+                                <list editable="bottom">
+                                    <field name="conditional_test"/>
+                                    <field name="conditional_operator"/>
+                                    <field name="condition_value"/>
+                                </list>
+                            </field>
+
                         </group>
                         <group string="HTML Description" colspan="2">
                             <field name="website_description" widget="html_template"

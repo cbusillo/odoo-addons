@@ -16,7 +16,8 @@ class MotorProductTemplateCondition(models.Model):
     _description = "Motor Product Template Condition"
     _inherit = ["motor.test.condition.mixin"]
 
-    template = fields.Many2one("motor.product.template", ondelete="cascade")
+    excluded_template = fields.Many2one("motor.product.template", ondelete="cascade")
+    repair_template = fields.Many2one("motor.product.template", ondelete="cascade")
     excluded_by_tests = fields.One2many("product.template", "motor_product_template", string="Excluded by Tests")
 
 
@@ -31,8 +32,8 @@ class MotorProductTemplate(models.Model):
     configurations = fields.Many2many("motor.configuration")
     manufacturers = fields.Many2many("product.manufacturer", domain=[("is_motor_manufacturer", "=", True)])
     excluded_by_parts = fields.Many2many("motor.part.template")
-    excluded_by_tests = fields.One2many("motor.product.template.condition", "template")
-    repair_by_tests = fields.One2many("motor.product.template.condition", "template")
+    excluded_by_tests = fields.One2many("motor.product.template.condition", "excluded_template")
+    repair_by_tests = fields.One2many("motor.product.template.condition", "repair_template")
     repair_by_tech_results = fields.Many2many(
         "motor.dismantle.result",
         default=lambda self: self.env["motor.dismantle.result"].search([("mark_for_repair", "=", True)]).ids,

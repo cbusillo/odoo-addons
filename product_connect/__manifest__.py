@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Product Connect Module",
-    "version": "18.0.5.0",
+    "version": "18.0.5.1",
     "category": "Industries",
     "author": "Chris Busillo",
     "company": "Shiny Computers",
