@@ -134,8 +134,10 @@ class ProductTemplate(models.Model):
         for vals in vals_list:
             if "default_code" not in vals:
                 vals["default_code"] = self.get_next_sku()
-            if "source" not in vals:
-                vals["source"] = self._context.get("default_source")
+
+            source = self._context.get("default_source")
+            if source:
+                vals["source"] = source
 
         products = super().create(vals_list)
         for product in products:
