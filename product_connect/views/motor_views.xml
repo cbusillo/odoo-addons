@@ -444,6 +444,9 @@
                 <field name="model"/>
                 <field name="serial_number"/>
                 <field name="year"/>
+                <filter name="filter_has_repaired"
+                        string="Has Repaired Products"
+                        domain="[('products.repair_state', '=', 'repaired')]"/>
             </search>
         </field>
     </record>
