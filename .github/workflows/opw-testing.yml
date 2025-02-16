@@ -48,7 +48,7 @@ jobs:
           count=0
           max_attempts=30
           while true; do
-            status_code=$(curl --write-out "%{http_code}\n" --silent --output /dev/null ${{ vars.TESTING_SERVER }}:8069 || echo "Curl failed")
+            status_code=$(curl --write-out "%{http_code}\n" --silent --output /dev/null ${{ vars.TESTING_SERVER }}:8069/web/login || echo "Curl failed")
             if [ "$status_code" = "200" ]; then
               break
             else
