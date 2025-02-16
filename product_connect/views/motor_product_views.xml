@@ -79,7 +79,7 @@
                        invisible="repair_state == 'none'"/>
                 <button name="create_repair_order" type="object"
                         string="" icon="fa-wrench" class="btn-primary"/>
-                <button name="action_open_repairs" type="object" string=""
+                <button name="action_open_repairs" type="object" string="" title="Open Repairs"
                         icon="fa-list-ul" class="oe_highlight" invisible="open_repair_count == 0"/>
             </list>
         </field>
