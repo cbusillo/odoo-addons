@@ -7,10 +7,11 @@ odoo_upgrade @ git+https://github.com/odoo/upgrade-util@master
 simple_zpl2 @ git+https://github.com/cbusillo/simple_zpl2@master
 
 pillow>=11.0.0
-odoo>=18.0
-simple_zpl2>=0.3.0
+#odoo>=18.0
+#odoo_upgrade
+#simple_zpl2>=0.3.0
 qrcode>=7.4.2
 requests>=2.31.0
 python-dateutil>=2.8.2
-PrintNodeApi>=0.2.0
+#PrintNodeApi>=0.2.0
 rich>=13.9.4
