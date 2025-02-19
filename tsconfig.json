@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "qr-scanner": [
+        "./product_connect/static/src/types/qr-scanner.d.ts"
+      ]
+    },
+    "target": "es2020",
+    "module": "es2020",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "./product_connect/static/src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*",
+    "../../Odoo/**/*"
+  ]
+}

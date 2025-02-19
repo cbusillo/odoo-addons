@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@web/*": [
+        "../../Odoo/odoo-enterprise/odoo/addons/web/static/src/*"
+      ],
+      "@odoo/owl": [
+        "../../Odoo/odoo-enterprise/odoo/addons/web/static/lib/owl/owl.js"
+      ]
+    }
+  },
+  "include": [
+    "./product_connect/static/src/**/*"
+  ],
+  "exclude": [
+    "../../Odoo/**/*"
+  ]
+}
