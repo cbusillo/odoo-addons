@@ -158,7 +158,13 @@ class Motor(models.Model):
     year = fields.Selection(_get_years, string="Model Year")
     color = fields.Many2one("product.color", domain="[('applicable_tags.name', '=', 'Motors')]")
     cost = fields.Float()
-    price = fields.Float(compute="_compute_price_of_motor", store=True)
+    price = fields.Float(
+        compute="_compute_price_of_motor",
+        store=True,
+        help="Total price of all products of a motor.  Adds the price multiplied by quantity of all products that are \
+        listable.  This is recomputed when a product's listable status, intitial_quantity, or price is changed.  It \
+        will also be recomputed when the motor cost is changed..",
+    )
 
     # from tests
     hours = fields.Float(compute="_compute_hours")
