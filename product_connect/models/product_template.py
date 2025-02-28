@@ -222,7 +222,7 @@ class ProductTemplate(models.Model):
             variants = product.product_variant_ids
             product.repairs = self.env["repair.order"].search([("product_id", "in", variants.ids)])
 
-    @api.depends("repairs")
+    @api.depends("repairs.state")
     def _compute_open_repair_count(self) -> None:
         for product in self:
             product.open_repair_count = self.env["repair.order"].search_count(
