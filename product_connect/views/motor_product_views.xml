@@ -75,7 +75,7 @@
                        decoration-info="repair_state == 'in_repair'"
                        invisible="repair_state == 'none'"/>
                 <button name="create_repair_order" type="object"
-                        string="" icon="fa-wrench" class="btn-primary"/>
+                        string="" icon="fa-wrench" class="btn-primary" invisible="open_repair_count != 0"/>
                 <button name="action_open_repairs" type="object" string="" title="Open Repairs"
                         icon="fa-list-ul" class="oe_highlight" invisible="open_repair_count == 0"/>
             </list>
