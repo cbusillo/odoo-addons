@@ -28,7 +28,11 @@ class ProductTemplate(models.Model):
     motor = fields.Many2one("motor", ondelete="restrict", readonly=True, index=True)
     motor_tests = fields.One2many("motor.test", related="motor.tests")
     default_code = fields.Char("SKU", index=True, copy=False, readonly=True)
-    standard_price = fields.Float(string="Cost", tracking=True)
+    standard_price = fields.Float(
+        string="Cost",
+        tracking=True,
+        help="Cost that was paid for the product, normally calculated from the motor cost.  Must be at least $0.01 for enabling motor products.",
+    )
     list_price = fields.Float(string="Price", tracking=True, default=0)
     create_date = fields.Datetime(index=True)
 
