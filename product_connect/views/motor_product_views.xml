@@ -42,7 +42,7 @@
                   decoration-muted="repair_state == 'in_repair'"
                   decoration-warning="(not name or not list_price or list_price == 0 or not standard_price or standard_price == 0) and repair_state != 'in_repair'"
                   decoration-danger="has_recent_messages"
-                  default_order="open_repair_count, is_listable desc, sequence, part_type_name, id">
+                  default_order="motor, open_repair_count, is_listable desc, sequence, part_type_name, id">
                 <field name="sequence" column_invisible="1"/>
                 <field name="motor_product_computed_name" column_invisible="1"/>
                 <field name="is_listable" widget="boolean_toggle" class="large-toggle" string="Listable" width="55"/>
