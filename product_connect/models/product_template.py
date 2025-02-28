@@ -89,6 +89,7 @@ class ProductTemplate(models.Model):
             ("may_need_repair", "May Need Repair"),
             ("in_repair", "In Repair"),
             ("repaired", "Repaired"),
+            ("cancelled", "Cancelled Repair"),
         ],
         compute="_compute_repair_state",
         store=True,
@@ -221,11 +222,11 @@ class ProductTemplate(models.Model):
             variants = product.product_variant_ids
             product.repairs = self.env["repair.order"].search([("product_id", "in", variants.ids)])
 
-    @api.depends("repair_state")
+    @api.depends("repairs")
     def _compute_open_repair_count(self) -> None:
         for product in self:
             product.open_repair_count = self.env["repair.order"].search_count(
-                [("product_id", "in", product.product_variant_ids.ids), ("state", "!=", "done")]
+                [("product_id", "in", product.product_variant_ids.ids), ("state", "not in", ["done", "cancel"])]
             )
 
     @api.depends(
@@ -241,11 +242,14 @@ class ProductTemplate(models.Model):
                 product.repair_state = "none"
                 continue
 
-            if product.repairs.filtered(lambda r: r.state != "done"):
+            if product.repairs.filtered(lambda r: r.state not in ["done", "cancel"]):
                 product.repair_state = "in_repair"
                 continue
             if product.repairs.filtered(lambda r: r.state == "done"):
                 product.repair_state = "repaired"
+                continue
+            if product.repairs.filtered(lambda r: r.state == "cancel"):
+                product.repair_state = "cancelled"
                 continue
 
             may_need_repair = any(
