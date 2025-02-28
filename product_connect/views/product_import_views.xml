@@ -80,7 +80,7 @@
                             <group>
                                 <field name="images">
                                     <list string="Images" editable="bottom">
-                                        <field name="image_1920" widget="image_upload"/>
+                                        <field name="image_1920" widget="image" readonly="1"/>
                                         <field name="image_1920_resolution" string="Image Res"/>
                                         <field name="image_1920_file_size_kb" widget="integer"/>
                                         <field name="index"/>

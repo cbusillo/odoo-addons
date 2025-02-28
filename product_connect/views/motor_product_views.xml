@@ -270,9 +270,8 @@
                         </page>
                         <page string="Images">
                             <field name="images">
-                                <list editable="bottom" delete="False">
-                                    <field name="image_256" widget="image" column_invisible="1"/>
-                                    <field name="image_1920" widget="image_upload"/>
+                                <list editable="bottom">
+                                    <field name="image_1920" widget="image" readonly="1"/>
                                     <field name="image_1920_resolution" string="Image Res"/>
                                     <field name="image_1920_file_size_kb" widget="integer"/>
                                     <field name="index"/>
