@@ -71,8 +71,7 @@
                 <field name="width" string="W" optional="hide" width="2"/>
                 <field name="height" string="H" optional="hide" width="2"/>
                 <field name="list_price" optional="show" width="80px" string="Price"/>
-                <field name="standard_price" optional="show" width="80px"
-                       help="Cost that was paid for the product, normally calculated from the motor cost.  Must be at least $0.01 for validation."/>
+                <field name="standard_price" optional="show" width="80px"/>
                 <field name="has_recent_messages" column_invisible="1"/>
                 <field name="repair_state" widget="badge" string="Status"
                        decoration-danger="repair_state == 'may_need_repair'"
