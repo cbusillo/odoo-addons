@@ -48,6 +48,7 @@ class MotorTag(models.Model):
 
 class Motor(models.Model):
     _name = "motor"
+    _rec_name = "motor_number"
     _inherit = ["label.mixin", "mail.thread", "mail.activity.mixin", "mail.tracking.duration.mixin"]
     _description = "Motor Information"
     _track_duration_field = "stage"

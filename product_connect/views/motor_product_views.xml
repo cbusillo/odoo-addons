@@ -7,7 +7,11 @@
         <field name="arch" type="xml">
             <search string="Search Motor Products">
                 <field name="default_code" string="Product"
-                       filter_domain="['|','|',('default_code','ilike',self),('name','ilike',self),('mpn','ilike',self)]"/>
+                       filter_domain="['|','|','|', ('default_code','ilike',self),
+                                  ('name','ilike',self),
+                                  ('mpn','ilike',self),
+                                  ('motor.motor_number','ilike',self)]"/>
+                <field name="motor" domain="[('motor_number', 'ilike', self)]" string="Motor Number"/>
                 <field name="mpn"/>
                 <field name="bin"/>
                 <field name="manufacturer"/>
