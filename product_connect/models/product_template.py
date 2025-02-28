@@ -70,15 +70,15 @@ class ProductTemplate(models.Model):
     template_name_with_dismantle_notes = fields.Char(compute="_compute_template_name_with_dismantle_notes", store=False)
     tech_result = fields.Many2one(comodel_name="motor.dismantle.result", ondelete="restrict", tracking=True)
 
-    is_listable = fields.Boolean(default=False, index=True)
+    is_listable = fields.Boolean(default=False, index=True, tracking=True)
 
-    is_dismantled = fields.Boolean(default=False, tracking=True)
-    is_dismantled_qc = fields.Boolean(default=False)
-    is_cleaned = fields.Boolean(default=False)
-    is_cleaned_qc = fields.Boolean(default=False)
-    is_picture_taken = fields.Boolean(default=False)
-    is_pictured = fields.Boolean(default=False)
-    is_pictured_qc = fields.Boolean(default=False)
+    is_dismantled = fields.Boolean(default=False, tracking=True, string="Dismantled")
+    is_dismantled_qc = fields.Boolean(default=False, tracking=True, string="Dismantled QC")
+    is_cleaned = fields.Boolean(default=False, tracking=True, string="Cleaned")
+    is_cleaned_qc = fields.Boolean(default=False, tracking=True, string="Cleaned QC")
+    is_picture_taken = fields.Boolean(default=False, tracking=True, string="Picture Taken")
+    is_pictured = fields.Boolean(default=False, tracking=True, string="Pictured")
+    is_pictured_qc = fields.Boolean(default=False, tracking=True, string="Pictured QC")
     is_ready_to_list = fields.Boolean(compute="_compute_ready_to_list", store=True)
 
     repairs = fields.One2many(related="product_variant_ids.repairs")
