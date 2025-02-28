@@ -369,7 +369,7 @@
         <field name="name">motor.kanban</field>
         <field name="model">motor</field>
         <field name="arch" type="xml">
-            <kanban default_order="priority desc, sequence, date_deadline"
+            <kanban default_order="priority desc, date_deadline desc, motor_number desc"
                     class="o_project_kanban o_kanban_small_column o_kanban_project_tasks">
                 <progressbar field="stage" colors='{"0": "bg-secondary", "50": "bg-warning", "100": "bg-success"}'/>
                 <templates>

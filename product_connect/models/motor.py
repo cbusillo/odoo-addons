@@ -73,7 +73,6 @@ class Motor(models.Model):
         )
         return all_stages
 
-    sequence = fields.Integer(default=10)
     priority = fields.Selection(
         [
             ("0", "Low"),
