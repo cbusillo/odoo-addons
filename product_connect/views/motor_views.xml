@@ -466,7 +466,7 @@
 
     <!-- Action -->
     <record model="ir.actions.act_window" id="action_motor_form">
-        <field name="name">Motors</field>
+        <field name="name">Motor List</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">motor</field>
         <field name="view_mode">list,kanban,form</field>
