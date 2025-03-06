@@ -479,6 +479,7 @@
         <field name="view_mode">kanban,list,pivot,graph,form</field>
         <field name="view_id" ref="view_motor_kanban"/>
         <field name="context">{'group_by': 'stage'}</field>
+        <field name="search_view_id" ref="view_motor_search"/>
     </record>
 
     <record id="view_motor_cohort" model="ir.ui.view">
