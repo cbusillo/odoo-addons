@@ -443,8 +443,8 @@
         <field name="arch" type="xml">
             <search>
                 <field name="motor_number" string="Search Motors"
-                       filter_domain="['|', '|', '|', '|', '|', ('motor_number', '=ilike', self), ('location', '=ilike', self), ('manufacturer', 'ilike', self), ('model', 'ilike', self), ('serial_number', 'ilike', self), ('year', 'ilike', self)]"/>
-                <field name="motor_number" filter_domain="[('motor_number', '=ilike', self)]"/>
+                       filter_domain="['|', '|', '|', '|', '|', ('motor_number', 'ilike', self), ('location', '=ilike', self), ('manufacturer', 'ilike', self), ('model', 'ilike', self), ('serial_number', 'ilike', self), ('year', 'ilike', self)]"/>
+                <field name="motor_number" filter_domain="[('motor_number', 'ilike', self)]"/>
                 <field name="location" filter_domain="[('location', '=ilike', self)]"/>
                 <field name="manufacturer"/>
                 <field name="model"/>
