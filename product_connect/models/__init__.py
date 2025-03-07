@@ -13,4 +13,5 @@ from . import (
     repair_order,
     res_users,
     shopify_sync,
+    stock_move,
 )
