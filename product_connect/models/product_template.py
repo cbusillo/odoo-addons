@@ -31,7 +31,8 @@ class ProductTemplate(models.Model):
     standard_price = fields.Float(
         string="Cost",
         tracking=True,
-        help="Cost that was paid for the product, normally calculated from the motor cost.  Must be at least $0.01 for enabling motor products.",
+        help="Cost that was paid for the product, normally calculated from the motor cost.  Must be at least $0.01 for "
+        "enabling motor products.",
     )
     list_price = fields.Float(string="Price", tracking=True, default=0)
     create_date = fields.Datetime(index=True)
@@ -93,6 +94,7 @@ class ProductTemplate(models.Model):
         ],
         compute="_compute_repair_state",
         store=True,
+        tracking=True,
     )
 
     shopify_product_id = fields.Char(
@@ -112,10 +114,10 @@ class ProductTemplate(models.Model):
         self,
         domain: list,
         fields: list,
-        groupby: list,
+        groupby: str | list[str],
         offset: int = 0,
         limit: int | None = None,
-        orderby: str = "",
+        orderby: str | None = "",
         lazy: bool = True,
     ) -> list[dict[str, Any]]:
         groups = super().read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
@@ -210,6 +212,12 @@ class ProductTemplate(models.Model):
             if product.motor and any(f in vals for f in ui_refresh_fields):
                 product.motor.notify_changes()
         return result
+
+    def _track_template(self, changes):
+        self.ensure_one()
+        res = super()._track_template(changes)
+        if "repair_state" in changes:
+            last_repair = self.repairs[:1]
 
     def _compute_name_with_tags_length(self) -> None:
         for product in self:
@@ -689,7 +697,7 @@ class ProductTemplate(models.Model):
             value = getattr(value, field_part, "")
             if isinstance(value, (list, tuple)):
                 value = ", ".join(str(v) for v in value)
-        return value
+        return str(value)
 
     @staticmethod
     def _apply_tag_values(content: str, values: dict[str, str]) -> str:
