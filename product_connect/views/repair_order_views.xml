@@ -14,6 +14,15 @@
             <xpath expr="//button[@name='action_repair_end'][2]" position="attributes">
                 <attribute name="string">Finish Repair</attribute>
             </xpath>
+            <xpath expr="//field[@name='parts_availability']" position="after">
+                <field name="product_list_price"/>
+                <field name="product_standard_price"/>
+                <field name="repair_cost"/>
+            </xpath>
+            <xpath expr="//list/field[@name='product_uom_qty']" position="after">
+                <field name="line_cost" optional="show"/>
+                <field name="line_price" optional="show"/>
+            </xpath>
         </field>
     </record>
 </odoo>
