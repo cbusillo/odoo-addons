@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class RepairOrder(models.Model):
@@ -13,13 +13,14 @@ class RepairOrder(models.Model):
     product_standard_price = fields.Float(related="product_id.product_tmpl_id.standard_price", string="Product Cost")
     repair_cost = fields.Float(compute="_compute_total_estimated_cost", store=True)
 
-    def action_repair_done(self):
     @api.depends("move_ids.quantity", "move_ids.product_id.product_tmpl_id.standard_price")
     def _compute_total_estimated_cost(self) -> None:
         for order in self:
             order.repair_cost = sum(
                 m.product_id.product_tmpl_id.standard_price * m.product_uom_qty for m in order.move_ids
             )
+
+    def action_repair_done(self) -> "odoo.values.repair_order":
         res = super().action_repair_done()
         for order in self:
             for move in order.move_ids:
