@@ -6,7 +6,7 @@ import zipfile
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
-from typing import Self
+from typing import Self, Any
 
 import odoo
 import qrcode
@@ -66,7 +66,7 @@ class Motor(models.Model):
     stage_name = fields.Char(related="stage.name")
 
     @api.model
-    def _read_group_stages(self, *_args) -> "odoo.model.motor_stage":
+    def _read_group_stages(self, *_args: Any) -> "odoo.model.motor_stage":
         all_stages = self.env["motor.stage"].search([])
         self.env["motor"].search([("stage", "=", False), ("active", "in", [True, False])]).write(
             {"stage": all_stages.search([("name", "=", "Checkin")], limit=1).id}
@@ -162,7 +162,7 @@ class Motor(models.Model):
         compute="_compute_price_of_motor",
         store=True,
         help="Total price of all products of a motor.  Adds the price multiplied by quantity of all products that are \
-        listable.  This is recomputed when a product's listable status, intitial_quantity, or price is changed.  It \
+        listable.  This is recomputed when a product's listable status, initial_quantity, or price is changed.  It \
         will also be recomputed when the motor cost is changed..",
     )
 
