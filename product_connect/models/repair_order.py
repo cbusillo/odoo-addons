@@ -14,11 +14,9 @@ class RepairOrder(models.Model):
             for move in order.move_ids:
                 pass
                 # decrement quantity from shopify
-            cost = sum([m.product_tmpl_id.standard_price * m.quantity for m in order.move_ids])
-            cost_per_unit = (
-                cost / order.product_id.product_tmpl_id.qty_available
-                if order.product_id.product_tmpl_id.is_ready_for_sale
-                else order.product_id.product_tmpl_id.initial_quantity
-            )
-            order.product_id.standard_price += cost_per_unit
+            product = order.product_id.product_tmpl_id
+            cost = sum(m.product_tmpl_id.standard_price * m.quantity for m in order.move_ids)
+            quantity = product.qty_available if product.is_ready_for_sale else product.initial_quantity
+            cost_per_unit = cost / quantity if quantity else 0.0
+            product.standard_price += cost_per_unit
         return res
