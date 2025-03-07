@@ -7,7 +7,7 @@ from rich.console import Console
 # noinspection PyPackageRequirements
 from rich.table import Table
 
-TARGET_EXTENSIONS = [
+TARGET_EXTENSIONS = {
     "*.py",
     "*.xml",
     "*.js",
@@ -17,22 +17,23 @@ TARGET_EXTENSIONS = [
     "*.yaml",
     "*.conf",
     "*.sh",
-]
-EXCLUDE_DIRS = [
+}
+EXCLUDE_DIRS = {
     ".git",
     "__pycache__",
     ".venv",
     "node_modules",
     ".idea",
-]
-EXCLUDE_FILES = [
+}
+EXCLUDE_FILES = {
     "*.min.js",
     "*.mmdb",
     "pluralize.js",
-]
+    ".DS_Store",
+}
 
 
-def matches_pattern(file: Path, patterns: list[str]) -> bool:
+def matches_pattern(file: Path, patterns: set[str]) -> bool:
     return any(file.match(pattern) for pattern in patterns)
 
 
