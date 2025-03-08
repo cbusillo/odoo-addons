@@ -14,3 +14,6 @@ def migrate(cr: Cursor, version: str) -> None:
 
     util.remove_column(cr, "motor", "technician")
     util.remove_column(cr, "res_users", "is_technician")
+    util.remove_model(cr, "product.import.image.wizard")
+    util.remove_model(cr, "product.import.image")
+    util.remove_model(cr, "motor.product.image")
