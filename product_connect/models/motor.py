@@ -136,11 +136,13 @@ class Motor(models.Model):
     location = fields.Char()
     vendor = fields.Many2one("res.partner")
     lot_id = fields.Char(size=5)
-    manufacturer = fields.Many2one("product.manufacturer", domain="[('is_motor_manufacturer', '=', True)]")
-    horsepower = fields.Float(digits=(3, 1), string="HP")
+    manufacturer = fields.Many2one(
+        "product.manufacturer", domain="[('is_motor_manufacturer', '=', True)]", required=True
+    )
+    horsepower = fields.Float(digits=(3, 1), string="HP", required=True)
     horsepower_formatted = fields.Char(compute="_compute_horsepower_formatted")
-    stroke = fields.Many2one("motor.stroke")
-    configuration = fields.Many2one("motor.configuration")
+    stroke = fields.Many2one("motor.stroke", required=True)
+    configuration = fields.Many2one("motor.configuration", required=True)
     model = fields.Char()
     sub_model = fields.Char()
     serial_number = fields.Char()
@@ -453,6 +455,19 @@ class Motor(models.Model):
         product_templates = self.env["motor.product.template"].search([])
 
         for motor in self:
+            missing_fields = []
+            if not motor.cost:
+                missing_fields.append("Cost")
+            if not motor.horsepower:
+                missing_fields.append("Horsepower")
+            if not motor.year:
+                missing_fields.append("Year")
+            if not motor.model:
+                missing_fields.append("Model")
+
+            if missing_fields:
+                raise UserError(self.env._("Motor is missing required fields: %s") % ", ".join(missing_fields))
+
             current_product_ids = set(motor.products.ids)
 
             for product_template in product_templates:
@@ -627,8 +642,12 @@ class Motor(models.Model):
         self.env["bus.bus"]._sendone(channel, "notification", message)
 
     def print_motor_labels(self, printer_job_type: str = "motor_label") -> None:
-        report_name = "product_connect.report_motortemplatelabel4x2noprice"
-        report_object = self.env["ir.actions.report"]._get_report_from_name(report_name)
-        pdf_data, _ = report_object._render_qweb_pdf(report_name, res_ids=self.ids)
+        for motor in self:
+            if not motor.horsepower:
+                raise UserError(self.env._("Motor is missing HP."))
+            report_name = "product_connect.report_motortemplatelabel4x2noprice"
+            report_object = self.env["ir.actions.report"]._get_report_from_name(report_name)
+            pdf_data, _ = report_object._render_qweb_pdf(report_name, res_ids=motor.ids)
 
-        self._print_labels(pdf_data, odoo_job_type=printer_job_type, job_name="Motor Label")
+            motor._print_labels(pdf_data, odoo_job_type=printer_job_type, job_name="Motor Label")
+            motor.message_post(body="Motor label printed")

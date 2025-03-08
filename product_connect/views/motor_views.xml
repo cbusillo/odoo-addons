@@ -118,7 +118,7 @@
                                 <field name="motor_number" readonly="1"/>
                                 <field name="location"/>
                                 <field name="manufacturer" widget="resettable_selection_badge" required="1"/>
-                                <field name="horsepower"/>
+                                <field name="horsepower" required="1"/>
                                 <field name="stroke" required="1" widget="resettable_selection_badge"/>
                                 <field name="configuration" required="1" widget="resettable_selection_badge"/>
                                 <field name="model"/>
