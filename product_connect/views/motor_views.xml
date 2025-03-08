@@ -17,7 +17,6 @@
                 <field name="stroke" optional="hide"/>
                 <field name="configuration" optional="hide"/>
                 <field name="color" optional="hide"/>
-                <field name="color"/>
                 <field name="hours" optional="hide" widget="integer"/>
                 <field name="shaft_length" optional="hide"/>
                 <field name="cost" widget="monetary"/>
