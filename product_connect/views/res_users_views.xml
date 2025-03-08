@@ -8,7 +8,6 @@
             <data>
                 <xpath expr="//page[@name='preferences']" position="inside">
                     <group string="Motor Settings">
-                        <field name="is_technician"/>
                         <field name="folded_motor_stages" widget="many2many_tags"/>
                     </group>
                 </xpath>

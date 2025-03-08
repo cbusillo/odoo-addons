@@ -134,12 +134,6 @@ class Motor(models.Model):
     active = fields.Boolean(default=True)
     motor_number = fields.Char()
     location = fields.Char()
-    technician = fields.Many2one(
-        "res.users",
-        string="Tech Name",
-        domain="['|', ('id', '=', technician), '&', ('is_technician', '=', True), ('active', '=', True)]",
-        ondelete="restrict",
-    )
     vendor = fields.Many2one("res.partner")
     lot_id = fields.Char(size=5)
     manufacturer = fields.Many2one("product.manufacturer", domain="[('is_motor_manufacturer', '=', True)]")

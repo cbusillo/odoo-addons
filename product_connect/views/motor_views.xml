@@ -8,7 +8,6 @@
                 <field name="has_notes" widget="boolean_toggle" string="Notes"/>
                 <field name="motor_number" string="Motor"/>
                 <field name="location" optional="show"/>
-                <field name="technician" optional="hide"/>
                 <field name="create_date" optional="show" widget="date_only" readonly="1"/>
                 <field name="year"/>
                 <field name="manufacturer" string="Manu"/>
@@ -118,7 +117,6 @@
                             <group>
                                 <field name="motor_number" readonly="1"/>
                                 <field name="location"/>
-                                <field name="technician" widget="resettable_selection_badge" required="1"/>
                                 <field name="manufacturer" widget="resettable_selection_badge" required="1"/>
                                 <field name="horsepower"/>
                                 <field name="stroke" required="1" widget="resettable_selection_badge"/>

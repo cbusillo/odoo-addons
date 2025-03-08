@@ -5,7 +5,6 @@ class Users(models.Model):
     _name = "res.users"
     _inherit = "res.users"
 
-    is_technician = fields.Boolean(default=True)
     folded_motor_stages = fields.Many2many("motor.stage", "folded_motor_stage_user_rel", "user_id", "setting_id")
 
     def __str__(self) -> str:
