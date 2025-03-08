@@ -26,6 +26,7 @@
         "data/motor_stat_data.xml",
         "data/product_condition_data.xml",
         "data/res_config_data.xml",
+        "data/mail_templates.xml",
         "report/motor_product_reports.xml",
         "report/motor_reports.xml",
         "report/product_reports.xml",

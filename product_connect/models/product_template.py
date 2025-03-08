@@ -213,11 +213,12 @@ class ProductTemplate(models.Model):
                 product.motor.notify_changes()
         return result
 
-    def _track_template(self, changes):
+    def _track_template(self, changes: set[str]) -> dict[str, tuple[str, dict]]:
         self.ensure_one()
         res = super()._track_template(changes)
         if "repair_state" in changes:
-            last_repair = self.repairs[:1]
+            res["repair_state"] = ("product_connect.mail_template_repair_state_change", {})
+        return res
 
     def _compute_name_with_tags_length(self) -> None:
         for product in self:
