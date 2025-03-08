@@ -450,15 +450,12 @@
                 <field name="model"/>
                 <field name="serial_number"/>
                 <field name="year"/>
-                <filter name="filter_has_repaired"
-                        string="Has Repaired Products"
-                        domain="[('products.repair_state', '=', 'repaired')]"/>
-                <filter name="filter_has_in_repair"
-                        string="Has Products In Repair"
-                        domain="[('products.repair_state', '=', 'in_repair')]"/>
-                <filter name="filter_has_may_need_repair"
-                        string="Has Products That May Need Repair"
-                        domain="[('products.repair_state', '=', 'may_need_repair')]"/>
+                <filter name="filter_has_repaired" string="Has Repaired Products"
+                        domain="[('products.repair_state', '=', 'repaired'), ('products.is_ready_for_sale', '=', False)]"/>
+                <filter name="filter_has_in_repair" string="Has Products In Repair"
+                        domain="[('products.repair_state', '=', 'in_repair'), ('products.is_ready_for_sale', '=', False)]"/>
+                <filter name="filter_has_may_need_repair" string="Has Products That May Need Repair"
+                        domain="[('products.repair_state', '=', 'may_need_repair'), ('products.is_ready_for_sale', '=', False)]"/>
             </search>
         </field>
     </record>
