@@ -54,7 +54,7 @@ class ProductTemplate(models.Model):
     height = fields.Integer()
 
     bin = fields.Char(index=True)
-    initial_quantity = fields.Float(string="Quantity")
+    initial_quantity = fields.Float(string="Quantity", index=True)
 
     has_recent_messages = fields.Boolean(compute="_compute_has_recent_messages", store=True)
 
@@ -65,7 +65,9 @@ class ProductTemplate(models.Model):
     motor_product_computed_name = fields.Char(compute="_compute_motor_product_computed_name", store=True)
     is_qty_listing = fields.Boolean(related="motor_product_template.is_quantity_listing")
 
-    reference_product = fields.Many2one("product.template", compute="_compute_reference_product", store=True)
+    reference_product = fields.Many2one(
+        "product.template", compute="_compute_reference_product", store=True, index=True
+    )
 
     dismantle_notes = fields.Text()
     template_name_with_dismantle_notes = fields.Char(compute="_compute_template_name_with_dismantle_notes", store=False)
@@ -73,14 +75,14 @@ class ProductTemplate(models.Model):
 
     is_listable = fields.Boolean(default=False, index=True, tracking=True)
 
-    is_dismantled = fields.Boolean(default=False, tracking=True, string="Dismantled")
+    is_dismantled = fields.Boolean(default=False, tracking=True, string="Dismantled", index=True)
     is_dismantled_qc = fields.Boolean(default=False, tracking=True, string="Dismantled QC")
-    is_cleaned = fields.Boolean(default=False, tracking=True, string="Cleaned")
+    is_cleaned = fields.Boolean(default=False, tracking=True, string="Cleaned", index=True)
     is_cleaned_qc = fields.Boolean(default=False, tracking=True, string="Cleaned QC")
     is_picture_taken = fields.Boolean(default=False, tracking=True, string="Picture Taken")
-    is_pictured = fields.Boolean(default=False, tracking=True, string="Pictured")
+    is_pictured = fields.Boolean(default=False, tracking=True, string="Pictured", index=True)
     is_pictured_qc = fields.Boolean(default=False, tracking=True, string="Pictured QC")
-    is_ready_to_list = fields.Boolean(compute="_compute_ready_to_list", store=True)
+    is_ready_to_list = fields.Boolean(compute="_compute_ready_to_list", store=True, index=True)
 
     repairs = fields.One2many(related="product_variant_ids.repairs")
     open_repair_count = fields.Integer(compute="_compute_open_repair_count", store=True, index=True)

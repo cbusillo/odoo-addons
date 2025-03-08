@@ -133,18 +133,18 @@ class Motor(models.Model):
             "context": {"default_motor": self.id},
         }
 
-    active = fields.Boolean(default=True)
-    motor_number = fields.Char()
+    active = fields.Boolean(default=True, index=True)
+    motor_number = fields.Char(index=True)
     location = fields.Char()
     vendor = fields.Many2one("res.partner")
     lot_id = fields.Char(size=5)
     manufacturer = fields.Many2one(
-        "product.manufacturer", domain="[('is_motor_manufacturer', '=', True)]", required=True
+        "product.manufacturer", domain="[('is_motor_manufacturer', '=', True)]", required=True, index=True
     )
     horsepower = fields.Float(digits=(3, 1), string="HP", required=True)
     horsepower_formatted = fields.Char(compute="_compute_horsepower_formatted")
-    stroke = fields.Many2one("motor.stroke", required=True)
-    configuration = fields.Many2one("motor.configuration", required=True)
+    stroke = fields.Many2one("motor.stroke", required=True, index=True)
+    configuration = fields.Many2one("motor.configuration", required=True, index=True)
     model = fields.Char()
     sub_model = fields.Char()
     serial_number = fields.Char()
@@ -153,7 +153,7 @@ class Motor(models.Model):
     def _get_years(self) -> list[tuple[str, str]]:
         return [(str(year), str(year)) for year in range(fields.Date.today().year + 1, 1960, -1)]
 
-    year = fields.Selection(_get_years, string="Model Year")
+    year = fields.Selection(_get_years, string="Model Year", index=True)
     color = fields.Many2one("product.color", domain="[('applicable_tags.name', '=', 'Motors')]")
     cost = fields.Float()
     price = fields.Float(
