@@ -117,7 +117,7 @@
                         </table>
                         <div class="footer">
                             <div>
-                                <strong>Total Items:</strong> <t t-esc="len(docs)"/>
+                                <strong>Total Items:</strong> <t t-out="len(docs)"/>
                             </div>
                             <div class="page-number">
                                 Page <span class="page"/> of <span class="topage"/>

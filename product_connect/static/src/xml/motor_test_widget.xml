@@ -10,48 +10,34 @@
                             <div class="card mb-4">
                                 <div class="card-header bg-primary text-white p-2 rounded-top">
                                     <h3 class="card-title mb-0">
-                                        <t t-esc="sectionEntry[0]"/>
+                                        <t t-out="sectionEntry[0]"/>
                                     </h3>
                                 </div>
                                 <div class="card-body">
                                     <t t-foreach="sectionEntry[1]" t-as="test" t-key="test.id">
                                         <div class="o_motor_test mb-3" t-att-data-test-id="test.id">
                                             <strong>
-                                                <t t-esc="test.data.name"/>
+                                                <t t-out="test.data.name"/>
                                             </strong>
                                             <div>
                                                 <t t-if="test.data.result_type === 'yes_no' || test.data.result_type === 'selection'">
-                                                    <ResettableBadgeSelectionField
-                                                            id="test.id"
-                                                            name="test.data.result_type + '_result'"
-                                                            record="test"
-                                                            domain="getSelectionFieldDomain(test.id)"
-                                                            t-on-click="onFieldChanged"
-                                                    />
+                                                    <ResettableBadgeSelectionField id="test.id"
+                                                                                   name="test.data.result_type + '_result'"
+                                                                                   record="test"
+                                                                                   domain="getSelectionFieldDomain(test.id)"
+                                                                                   t-on-click="onFieldChanged"/>
                                                 </t>
                                                 <t t-if="test.data.result_type === 'numeric'">
-                                                    <FloatField
-                                                            id="test.id"
-                                                            name="'numeric_result'"
-                                                            record="test"
-                                                            t-on-change="onFieldChanged"
-                                                    />
+                                                    <FloatField id="test.id" name="'numeric_result'" record="test"
+                                                                t-on-change="onFieldChanged"/>
                                                 </t>
                                                 <t t-if="test.data.result_type === 'text'">
-                                                    <CharField
-                                                            id="test.id"
-                                                            name="'text_result'"
-                                                            record="test"
-                                                            t-on-change="onFieldChanged"
-                                                    />
+                                                    <CharField id="test.id" name="'text_result'" record="test"
+                                                               t-on-change="onFieldChanged"/>
                                                 </t>
                                                 <t t-if="test.data.result_type === 'file'">
-                                                    <PdfViewerField
-                                                            id="test.id"
-                                                            name="'file_result'"
-                                                            record="test"
-                                                            t-on-change="onFieldChanged"
-                                                    />
+                                                    <PdfViewerField id="test.id" name="'file_result'" record="test"
+                                                                    t-on-change="onFieldChanged"/>
                                                 </t>
                                             </div>
                                         </div>
