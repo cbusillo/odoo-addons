@@ -267,7 +267,6 @@ class Motor(models.Model):
 
         return motors
 
-    @api.model
     def write(self, vals: "odoo.values.motor") -> bool:
         vals = self._sanitize_vals(vals)
         if "stage" in vals:
