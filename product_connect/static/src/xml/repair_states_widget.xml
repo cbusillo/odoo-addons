@@ -1,0 +1,11 @@
+<templates>
+    <t t-name="product_connect.RepairStatesWidget">
+        <t t-foreach="state.repairStates" t-as="repairState" t-key="repairState.id">
+            <span class="repair-state-icon-clickable" t-on-click="onIconClick" t-att-data-state-id="repairState.id"
+                  style="padding: 5px; margin-right: 4px; cursor: pointer">
+                <i t-att-class="'fa text-' + repairState.color + ' ' + repairState.icon"
+                   t-att-title="repairState.title"></i>
+            </span>
+        </t>
+    </t>
+</templates>

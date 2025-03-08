@@ -21,7 +21,8 @@
                 <field name="shaft_length" optional="hide"/>
                 <field name="cost" widget="monetary"/>
                 <field name="price" widget="monetary" optional="hide"/>
-                <field name="product_repair_status_badges" widget="html" optional="show"/>
+                <field name="product_repair_states_with_icons" widget="repair_states_widget" optional="show"
+                       string="Repairs"/>
             </list>
         </field>
     </record>
@@ -486,8 +487,6 @@
             </p>
         </field>
     </record>
-
-    <!-- Menu items -->
 
     <record id="server_action_motor_print_labels" model="ir.actions.server">
         <field name="name">Print Motor Label(s)</field>

@@ -746,7 +746,7 @@ class ProductTemplate(models.Model):
         domain = [("product_id", "in", self.product_variant_ids.ids)]
         return {
             "type": "ir.actions.act_window",
-            "name": "Repairs",
+            "name": "Repair Orders",
             "res_model": "repair.order",
             "view_mode": "list,form",
             "domain": domain,
