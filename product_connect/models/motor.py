@@ -1,4 +1,5 @@
 import base64
+import json
 import re
 import shutil
 import tempfile
@@ -7,6 +8,7 @@ from datetime import datetime
 from io import BytesIO
 from pathlib import Path
 from typing import Self, Any
+from urllib.parse import quote
 
 import odoo
 import qrcode
@@ -242,6 +244,13 @@ class Motor(models.Model):
         ],
     )
 
+    product_repair_status_badges = fields.Html(
+        compute="_compute_product_repair_status_badges",
+        store=False,
+        string="Repairs",
+        sanitize_attributes=False,
+    )
+
     @api.model_create_multi
     def create(self, vals_list: list["odoo.values.motor"]) -> Self:
         vals_list = [self._sanitize_vals(vals) for vals in vals_list]
@@ -343,6 +352,32 @@ class Motor(models.Model):
         for motor in self:
             hide_parts = motor.parts.filtered(lambda p: p.is_missing and p.template.hide_compression_page)
             motor.hide_compression_page = bool(hide_parts)
+
+    def _compute_product_repair_status_badges(self) -> None:
+        icon_mapping = {
+            "may_need_repair": ("fa-exclamation-triangle", "May Need Repair"),
+            "in_repair": ("fa-wrench", "In Repair"),
+            "repaired": ("fa-check-circle", "Repaired"),
+            "cancelled": ("fa-times-circle", "Cancelled Repair"),
+        }
+        action = self.env.ref("repair.action_repair_order_tree")
+        menu_id = self.env.ref("repair.menu_repair_order").id
+        for motor in self:
+            repair_states = motor.products.mapped("repair_state")
+            repair_states = sorted({state for state in repair_states if state and state != "none"})
+            icon_html = ""
+            if repair_states:
+                domain = [["motor", "=", motor.id]]
+                domain_str = json.dumps(domain)
+                domain_encoded = quote(domain_str)
+                url = f"/web#action={action.id}&menu_id={menu_id}&model=repair.order&view_type=list&domain={domain_encoded}"
+
+                for state in repair_states:
+                    icon, title = icon_mapping.get(state, ("fa-info-circle", state))
+                    icon_html += (
+                        f'<a href="{url}"><i class="fa {icon}" title="{title}" style="margin-right: 4px;"></i></a>'
+                    )
+            motor.product_repair_status_badges = icon_html
 
     def set_all_cylinders_untestable(self) -> None:
         for motor in self:

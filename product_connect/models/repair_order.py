@@ -7,6 +7,7 @@ class RepairOrder(models.Model):
     motor = fields.Many2one(
         "motor", related="product_id.motor", store=True, index=True, readonly=True, ondelete="restrict"
     )
+    motor_number = fields.Char(related="motor.motor_number", store=True, readonly=True)
     product_list_price = fields.Float(
         related="product_id.product_tmpl_id.list_price", readonly=False, string="Product Price"
     )
