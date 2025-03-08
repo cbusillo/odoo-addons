@@ -34,19 +34,19 @@
         <field name="arch" type="xml">
             <form string="Motor Check-In" js_class="motor_form">
                 <header>
-                    <field name="stage" widget="statusbar_duration"
-                           options="{'clickable': '1'}" domain="[('name', '!=', 'Hold')]"/>
+                    <field name="stage" widget="statusbar_duration" options="{'clickable': '1'}"
+                           domain="[('name', '!=', 'Hold')]"/>
                 </header>
 
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button class="oe_stat_button" type="object" name="action_view_products"
-                                icon="fa-cubes" groups="stock.group_stock_manager">
+                        <button class="oe_stat_button" type="object" name="action_view_products" icon="fa-cubes"
+                                groups="stock.group_stock_manager">
                             <field string="Products" name="product_count" widget="statinfo"/>
                         </button>
 
-                        <button class="oe_stat_button" type="object" name="action_view_tests"
-                                icon="fa-check-square" groups="stock.group_stock_manager">
+                        <button class="oe_stat_button" type="object" name="action_view_tests" icon="fa-check-square"
+                                groups="stock.group_stock_manager">
                             <div class="o_stat_info">
                                 <span class="o_stat_text">Completed tests</span>
                                 <span class="o_stat_value">
@@ -60,9 +60,7 @@
                                 groups="stock.group_stock_manager">
                             <field string="Download Images" name="image_count" widget="statinfo"/>
                         </button>
-                        <a class="oe_stat_button btn btn-primary"
-                           role="button"
-                           onclick="
+                        <a class="oe_stat_button btn btn-primary" role="button" onclick="
                                const chatterBox = document.querySelector('.o-mail-ChatterContainer');
                                const toggleButton = this;
                                if (chatterBox) {
@@ -70,14 +68,11 @@
                                    toggleButton.classList.toggle('btn-primary');
                                    toggleButton.classList.toggle('btn-outline-secondary');
                                }">
-                            <i class="fa fa-2x fa-comments me-2"></i>Comments
-                        </a>
+                            <i class="fa fa-2x fa-comments me-2"></i>Comments </a>
                     </div>
 
-
                     <field name="active" invisible="1"/>
-                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
-                            invisible="active"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
 
                     <div class="row">
                         <div class="col-md-9">
@@ -119,8 +114,7 @@
                     <notebook class="motor_main_notebook">
                         <page id="basic_info" string="Basic Info">
                             <button name="print_motor_labels" type="object" class="btn btn-primary mb-2">
-                                <i class="fa fa-print"/>&#160;Print Motor Label
-                            </button>
+                                <i class="fa fa-print"/>&#160;Print Motor Label </button>
                             <group>
                                 <field name="motor_number" readonly="1"/>
                                 <field name="location"/>
@@ -144,8 +138,7 @@
                         <page string="Images">
                             <header>
                                 <button name="download_zip_of_images" type="object" class="btn btn-primary">
-                                    <i class="fa fa-download"/>&#160;Download Images
-                                </button>
+                                    <i class="fa fa-download"/>&#160;Download Images </button>
                             </header>
                             <field name="images" class="motor_image_adder">
                                 <list editable="bottom" delete="False">
@@ -286,26 +279,20 @@
                                     <div class="mb-3">
                                         <button name="create_motor_products" type="object"
                                                 class="btn btn-primary btn-sm">
-                                            <i class="fa fa-ship"/>&#160;Create Motor Products
-                                        </button>
+                                            <i class="fa fa-ship"/>&#160;Create Motor Products </button>
                                         <button name="apply_cost" type="object" class="btn btn-primary btn-sm ms-2">
-                                            <i class="fa fa-dollar"/>&#160;Apply Cost
-                                        </button>
+                                            <i class="fa fa-dollar"/>&#160;Apply Cost </button>
                                         <button name="print_motor_pull_list" type="object"
                                                 class="btn btn-primary btn-sm ms-2">
-                                            <i class="fa fa-print"/>&#160;Print Pull List
-                                        </button>
+                                            <i class="fa fa-print"/>&#160;Print Pull List </button>
                                         <button name="print_motor_product_labels" type="object"
                                                 class="btn btn-primary btn-sm ms-2">
-                                            <i class="fa fa-print"/>&#160;Print Product Labels
-                                        </button>
+                                            <i class="fa fa-print"/>&#160;Print Product Labels </button>
                                         <button name="enable_ready_for_sale" type="object"
                                                 class="btn btn-primary btn-sm ms-2">
-                                            <i class="fa fa-upload"/>&#160;Enable All
-                                        </button>
+                                            <i class="fa fa-upload"/>&#160;Enable All </button>
                                     </div>
-                                    <field name="products_not_enabled" mode="list"
-                                           context="{'list_view_ref': 'product_connect.view_motor_product_list',
+                                    <field name="products_not_enabled" mode="list" context="{'list_view_ref': 'product_connect.view_motor_product_list',
                                            'form_view_ref': 'product_connect.view_motor_product_form'}"/>
                                 </page>
                                 <page string="Reference" limit="200">
@@ -378,14 +365,11 @@
                             <!-- Image display -->
                             <t t-if="record.image_icon.raw_value">
                                 <field name="image_icon" invisible="1"/>
-                                <div class="o_kanban_image"
-                                     style="float: left; margin-right: 10px;">
+                                <div class="o_kanban_image" style="float: left; margin-right: 10px;">
                                     <field name="priority" widget="priority" style="margin-right: 5px;"/>
                                     <img t-att-src="'/web/image/motor/' + record.id.raw_value + '/image_icon'"
-                                         style="border-radius: 5px; max-width: none;"
-                                         alt="Motor Image"/>
+                                         style="border-radius: 5px; max-width: none;" alt="Motor Image"/>
                                 </div>
-
 
                             </t>
                             <!-- Motor details -->
@@ -420,7 +404,6 @@
                                         <span style="margin-right: 5px;">Active:</span>
                                         <field name="active" widget="boolean_toggle" style="display: inline-block;"/>
                                     </div>
-
 
                                     <field name="tags" widget="many2many_tags"/>
                                     <div invisible="not date_deadline">
@@ -460,7 +443,6 @@
         </field>
     </record>
 
-
     <!-- Action -->
     <record model="ir.actions.act_window" id="action_motor_form">
         <field name="name">Motor List</field>
@@ -483,18 +465,13 @@
         <field name="name">motor.cohort</field>
         <field name="model">motor</field>
         <field name="arch" type="xml">
-            <cohort string="Motor Stage Progress"
-                    date_start="create_date"
-                    date_stop="date_last_stage_update"
-                    interval="week"
-                    mode="churn"
-                    timeline="backward">
+            <cohort string="Motor Stage Progress" date_start="create_date" date_stop="date_last_stage_update"
+                    interval="week" mode="churn" timeline="backward">
                 <field name="stage"/>
                 <field name="manufacturer"/>
             </cohort>
         </field>
     </record>
-
 
     <!-- Update the main motor action to include all views -->
     <record id="action_motor_analysis" model="ir.actions.act_window">
@@ -514,7 +491,6 @@
 
     <!-- Menu items -->
 
-
     <record id="server_action_motor_print_labels" model="ir.actions.server">
         <field name="name">Print Motor Label(s)</field>
         <field name="model_id" ref="model_motor"/>
@@ -531,10 +507,8 @@
     <menuitem id="menu_subheader_config_motor" name="Motors" parent="stock.menu_stock_config_settings"/>
     <menuitem id="menu_motor_stages" name="Motor Stages" parent="menu_subheader_motor" action="action_motor_stages"
               sequence="10"/>
-    <menuitem id="menu_motor" name="Motor List" parent="menu_subheader_motor" action="action_motor_form"
-              sequence="20"/>
+    <menuitem id="menu_motor" name="Motor List" parent="menu_subheader_motor" action="action_motor_form" sequence="20"/>
     <menuitem id="menu_motor_analysis" name="Motors Analysis" parent="menu_subheader_motor"
               action="action_motor_analysis" sequence="30"/>
-
 
 </odoo>
