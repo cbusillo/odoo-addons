@@ -25,7 +25,7 @@ export class RepairStatesWidget extends Component {
             name: 'Repair Orders',
             res_model: 'repair.order',
             views: [[false, 'list'], [false, 'form']],
-            domain: [['motor_id', '=', motorId]],
+            domain: [['motor', '=', motorId]],
             target: 'current',
         });
     }

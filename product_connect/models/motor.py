@@ -153,10 +153,12 @@ class Motor(models.Model):
 
     year = fields.Selection(_get_years, string="Model Year", index=True)
     color = fields.Many2one("product.color", domain="[('applicable_tags.name', '=', 'Motors')]")
-    cost = fields.Float()
-    price = fields.Float(
+    currency_id = fields.Many2one("res.currency", default=lambda self: self.env.company.currency_id, required=True)
+    cost = fields.Monetary(currency_field="currency_id")
+    price = fields.Monetary(
         compute="_compute_price_of_motor",
         store=True,
+        currency_field="currency_id",
         help="Total price of all products of a motor.  Adds the price multiplied by quantity of all products that are \
         listable.  This is recomputed when a product's listable status, initial_quantity, or price is changed.  It \
         will also be recomputed when the motor cost is changed..",
