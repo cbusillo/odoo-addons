@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
-    <t t-name="addons.product_connect.SearchMpnOnlineWidget">
+    <t t-name="product_connect.SearchMpnOnlineWidget">
         <div class="search-mpn-online-container">
             <t t-if="formattedValue">
                 <button t-on-click="searchOnline" tabindex="-1" class="search-mpn-online-btn">S</button>

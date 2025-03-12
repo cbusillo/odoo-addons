@@ -1,5 +1,5 @@
 <templates xml:space="preserve">
-    <div t-name="addons.product_connect.ResettableBadgeSelectionWidget" class="d-flex flex-wrap gap-1 mb-3">
+    <div t-name="product_connect.ResettableBadgeSelectionWidget" class="d-flex flex-wrap gap-1 mb-3">
         <t t-if="props.readonly">
             <span t-out="string" t-att-raw-value="value"/>
         </t>

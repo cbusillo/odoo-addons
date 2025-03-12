@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
-    <t t-name="addons.product_connect.MotorTestWidget">
+    <t t-name="product_connect.MotorTestWidget">
         <div class="container">
             <div class="row">
                 <t t-if="this.motorTestsBySection.sections and Object.keys(this.motorTestsBySection.sections).length > 0">

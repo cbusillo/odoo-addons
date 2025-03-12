@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates id="template" xml:space="preserve">
-    <t t-name="addons.product_connect.QRCodeWidget">
+    <t t-name="product_connect.QRCodeWidget">
         <div class="d-flex flex-column flex-md-row">
             <t t-if="props.readonly">
                 <span class="mb-2 mb-md-0" t-out="formattedValue"/>

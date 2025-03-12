@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-<t t-name="addons.product_connect.ImageUploadWidget">
+<t t-name="product_connect.ImageUploadWidget">
   <div class="d-inline-block position-relative opacity-trigger-hover">
     <button class="btn btn-primary" t-on-click="onClick">Upload</button>
       <input type="file" class="d-none" t-ref="fileInput" accept="image/*" t-on-change="onFileChange"

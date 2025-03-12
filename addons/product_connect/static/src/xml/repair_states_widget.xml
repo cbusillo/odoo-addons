@@ -1,5 +1,5 @@
 <templates>
-    <t t-name="addons.product_connect.RepairStatesWidget">
+    <t t-name="product_connect.RepairStatesWidget">
         <t t-foreach="state.repairStates" t-as="repairState" t-key="repairState.id">
             <button type="button" class="btn btn-outline-secondary repair-state-icon-clickable" t-on-click="onIconClick"
                     t-att-data-state-id="repairState.id" style="padding: 2px 4px; margin: 0 2px;">
