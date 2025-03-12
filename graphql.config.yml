@@ -1,5 +1,0 @@
-schema:
-  - https://${SHOPIFY_STORE_URL}.myshopify.com/admin/api/${SHOPIFY_API_VERSION}/graphql.json:
-      headers:
-        # noinspection SpellCheckingInspection
-        X-Shopify-Access-Token: ${SHOPIFY_API_TOKEN}
