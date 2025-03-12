@@ -65,13 +65,13 @@ def index_codebase(root: str, exclude_dirs: set[str] | None = None) -> dict[str,
         exclude_dirs = EXCLUDE_DIRS
     summary: dict[str, dict[str, Any]] = {}
 
-    for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [d for d in dirnames if d not in exclude_dirs]
+    for dir_path, dir_names, filenames in os.walk(root):
+        dir_names[:] = [d for d in dir_names if d not in exclude_dirs]
         filenames = [f for f in filenames if f not in EXCLUDE_FILES]
-        relative_path = os.path.relpath(dirpath, root)
+        relative_path = os.path.relpath(dir_path, root)
         file_details: dict[str, Any] = {}
         for file in filenames:
-            file_path = Path(dirpath) / file
+            file_path = Path(dir_path) / file
             if file.endswith(".py"):
                 funcs, classes, error = parse_python_file(file_path)
                 if error:
@@ -110,7 +110,7 @@ def generate_markdown_summary(summary: dict[str, dict[str, Any]]) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Index your codebase and generate a Markdown summary.")
-    parser.add_argument("root", help="Root directory of your codebase")
+    parser.add_argument("root", help="Root directory of your codebase", default=".")
     parser.add_argument("-o", "--output", default="codebase_summary.md", help="Output Markdown file")
     args = parser.parse_args()
 
@@ -137,7 +137,7 @@ prompt_content = """
 - Odoo Framework Integration plugin
 - Odoo 18 Enterprise
 - Owl.js 2.0
-- Python 3.13.1
+- Python 3.13
 - Shopify GraphQL API
 
 # Code Standards
@@ -152,13 +152,6 @@ prompt_content = """
 
 # Workflow
 
-## Analysis Tools:
-
-- Use the JetBrains mcpServer plugin to get the context directly from IntelliJ.
-- Use the brave-search MCP tool to search the web for new or related information if needed.
-- Use the postgres MCP tool to query the database for relevant information if needed.
-- Use the edit_file MCP tool on existing files to edit them.
-
 ## Code Review Process:
 
 - Retrieve and examine relevant code, models, and views before analysis or explanation. For example, check model fields,
@@ -169,8 +162,8 @@ prompt_content = """
 # Project Structure
 
 ## Base Path
-- Module location: /Users/cbusillo/Developer/odoo-addons/addons/addons.product_connect
 - JetBrains Project Root: /Users/cbusillo/Developer/odoo-addons/
+- Module location: addons/product_connect
 
 ## Key Directories
 - models/: Business logic and database models

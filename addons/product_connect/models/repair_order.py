@@ -24,7 +24,7 @@ class RepairOrder(models.Model):
     def action_repair_done(self) -> "odoo.values.repair_order":
         res = super().action_repair_done()
         for order in self:
-            for move in order.move_ids: # TODO: Add code to decrement product quantity from Shopify
+            for _move in order.move_ids: # TODO: Add code to decrement product quantity from Shopify
                 pass
             product = order.product_id.product_tmpl_id
             cost = sum(m.product_tmpl_id.standard_price * m.quantity for m in order.move_ids)

@@ -82,7 +82,7 @@ class NotificationManagerMixin(models.AbstractModel):
         record: models.Model | None = None,
         error: Exception | None = None,
     ) -> None:
-        error_traceback = None
+        error_traceback = ""
         if error:
             error_traceback = "".join(traceback.format_exception(type(error), error, error.__traceback__))
 

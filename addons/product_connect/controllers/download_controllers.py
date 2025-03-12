@@ -17,6 +17,7 @@ class SingleDownloadController(http.Controller):
 
         attachment.sudo().unlink()
 
+        # noinspection PyTypeChecker
         return request.make_response(
             file_content,
             [

@@ -72,8 +72,8 @@ class ProductInventoryWizard(models.TransientModel):
             )
 
     def notify_user(
-        self, message: "str", title: str or None, message_type: Literal["info", "success", "warning", "danger"] | None
-    ):
+        self, message: "str", title: str | None, message_type: Literal["info", "success", "warning", "danger"] | None
+    ) -> None:
         self.env["bus.bus"]._sendone(
             self.env.user.partner_id,
             "simple_notification",
@@ -131,7 +131,7 @@ class ProductInventoryWizard(models.TransientModel):
         )
 
     @api.onchange("scan_box")
-    def _onchange_scan_box(self) -> None or "odoo.values.ir_actions_act_window":
+    def _onchange_scan_box(self) -> "odoo.values.ir_actions_act_window" | None:
         if not self.scan_box:
             return
 
@@ -166,7 +166,7 @@ class ProductInventoryWizard(models.TransientModel):
 
     def action_print_product_labels(
         self,
-    ) -> "odoo.values.ir_actions_client" or "odoo.values.ir_actions_act_window":
+    ) -> "odoo.values.ir_actions_client" | "odoo.values.ir_actions_act_window":
         product_ids_selected = self.products.filtered(lambda p: p.is_selected).mapped("product.id")
         products_to_print = self.env["product.template"].search([("id", "in", product_ids_selected)])
         if not products_to_print:

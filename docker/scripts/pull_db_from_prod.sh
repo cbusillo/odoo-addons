@@ -4,6 +4,7 @@ set -euo pipefail
 echo "Fetching db from production..."
 
 BACKUP_PATH="/tmp/prod_db_backup.sql.gz"
+# shellcheck disable=SC2029
 ssh "$ODOO_PROD_USER"@"$ODOO_PROD_SERVER" "cd /tmp && sudo -u '$ODOO_PROD_DB_USER' pg_dump -Fc '$ODOO_PROD_DB'" | gzip > "$BACKUP_PATH"
 
 export PGPASSWORD="$ODOO_DB_PASSWORD"

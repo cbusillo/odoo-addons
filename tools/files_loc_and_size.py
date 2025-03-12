@@ -37,7 +37,7 @@ def matches_pattern(file: Path, patterns: set[str]) -> bool:
     return any(file.match(pattern) for pattern in patterns)
 
 
-def calculate_loc_and_size(start_dir: str = "."):
+def calculate_loc_and_size(start_dir: str = ".") -> None:
     total_lines = 0
     total_size = 0
     results = []
