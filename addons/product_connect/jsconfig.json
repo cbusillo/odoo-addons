@@ -1,0 +1,5 @@
+{
+  "include": [
+    "./product_connect/static/src/**/*"
+  ]
+}
