@@ -10,8 +10,11 @@ def sanitize_database() -> None:
         
         # Neutralize email sending
         env['ir.mail_server'].search([]).write({'active': False})
+        # noinspection PyTypeChecker
         env['ir.config_parameter'].sudo().set_param('mail.catchall.domain', False)
+        # noinspection PyTypeChecker
         env['ir.config_parameter'].sudo().set_param('mail.catchall.alias', False)
+        # noinspection PyTypeChecker
         env['ir.config_parameter'].sudo().set_param('mail.bounce.alias', False)
 
         # Deactivate scheduled actions
