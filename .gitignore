@@ -190,5 +190,3 @@ cython_debug/
 *.override.yml
 odoo.*.cfg
 odoo.*.conf
-codebase_summary.md
-graphql.config.yml
