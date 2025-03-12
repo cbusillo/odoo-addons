@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_motor_product_template_list" model="ir.ui.view">
+        <field name="name">motor.product.template.list</field>
+        <field name="model">motor.product.template</field>
+        <field name="arch" type="xml">
+            <list string="Motor Products" editable="bottom" open_form_view="1">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="part_type"/>
+                <field name="manufacturers" widget="many2many_tags"/>
+                <field name="configurations" widget="many2many_tags"/>
+                <field name="strokes" widget="many2many_tags"/>
+                <field name="excluded_by_parts" widget="many2many_tags"/>
+                <field name="sequence"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_motor_product_template_form" model="ir.ui.view">
+        <field name="name">motor.product.template.form</field>
+        <field name="model">motor.product.template</field>
+        <field name="arch" type="xml">
+            <form string="Motor Product">
+                <sheet>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="name"/>
+                            <field name="part_type"/>
+                            <field name="initial_quantity" string="Quantity"/>
+                            <field name="bin"/>
+                            <field name="weight"/>
+                        </group>
+                        <group string="Additional Options">
+                            <field name="is_quantity_listing" widget="boolean_toggle"/>
+                            <field name="include_year_in_name" widget="boolean_toggle"/>
+                            <field name="include_hp_in_name" widget="boolean_toggle"/>
+                            <field name="include_model_in_name" widget="boolean_toggle"/>
+                            <field name="include_oem_in_name" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Manufacturer and Configuration" colspan="2">
+                            <group colspan="2">
+                                <field name="strokes" widget="many2many_checkboxes"/>
+                            </group>
+                            <group>
+                                <field name="manufacturers" widget="many2many_checkboxes"/>
+                            </group>
+                            <group>
+                                <field name="configurations" widget="many2many_checkboxes"/>
+                            </group>
+                        </group>
+
+                        <group string="Exclusions" colspan="2">
+                            <field name="excluded_by_parts"/>
+                            <field name="excluded_by_tests">
+                                <list editable="bottom">
+                                    <field name="conditional_test"/>
+                                    <field name="conditional_operator"/>
+                                    <field name="condition_value"/>
+                                </list>
+                            </field>
+                        </group>
+                        <group string="Repairs" colspan="2">
+                            <field name="repair_by_tech_results" widget="many2many_checkboxes"/>
+                            <field name="repair_by_tests">
+                                <list editable="bottom">
+                                    <field name="conditional_test"/>
+                                    <field name="conditional_operator"/>
+                                    <field name="condition_value"/>
+                                </list>
+                            </field>
+
+                        </group>
+                        <group string="HTML Description" colspan="2">
+                            <field name="website_description" widget="html_template"
+                                   options="{'codeview': true, 'resizable': true, 'minHeight': '400px'}"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_motor_product_template" model="ir.actions.act_window">
+        <field name="name">Motor Products</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">motor.product.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_product_motor_product" name="Motor Products" parent="menu_subheader_config_motor"
+              action="action_motor_product_template" sequence="50"/>
+</odoo>

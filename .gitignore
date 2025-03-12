@@ -148,7 +148,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+ .env*
 .venv
 env/
 venv/
@@ -188,5 +188,5 @@ cython_debug/
 #.idea/
 
 odoo.*.cfg
-init_done.flag
-product_connect/services/generated
+odoo.*.conf
+codebase_summary.md
