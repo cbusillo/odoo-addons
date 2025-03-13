@@ -323,10 +323,10 @@ class Motor(models.Model):
         for motor in self:
             motor.has_notes = bool(motor.notes)
 
-    @api.depends("images.image_1920")
+    @api.depends("images.image_128")
     def _compute_icon(self) -> None:
         for motor in self:
-            motor.image_icon = next((image.image_1920 for image in motor.images if image.image_1920), False)
+            motor.image_icon = next((image.image_128 for image in motor.images if image.image_128), False)
 
     @api.depends("horsepower")
     def _compute_horsepower_formatted(self) -> None:
