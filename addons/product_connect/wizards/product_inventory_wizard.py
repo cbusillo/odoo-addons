@@ -131,9 +131,9 @@ class ProductInventoryWizard(models.TransientModel):
         )
 
     @api.onchange("scan_box")
-    def _onchange_scan_box(self) -> "odoo.values.ir_actions_act_window" | None:
+    def _onchange_scan_box(self) -> None | dict[str, dict[str, str]]:
         if not self.scan_box:
-            return
+            return None
 
         if self.scan_box[0].isalpha():
             self._handle_bin_scan()
@@ -166,7 +166,7 @@ class ProductInventoryWizard(models.TransientModel):
 
     def action_print_product_labels(
         self,
-    ) -> "odoo.values.ir_actions_client" | "odoo.values.ir_actions_act_window":
+    ) -> "odoo.values.ir_actions_client":
         product_ids_selected = self.products.filtered(lambda p: p.is_selected).mapped("product.id")
         products_to_print = self.env["product.template"].search([("id", "in", product_ids_selected)])
         if not products_to_print:
